@@ -51,7 +51,7 @@ class UserPasswordNotification extends Mailable
     public function content(): Content
     {
         // ガード名を取得
-        $guard = $this->getGuardFromUserClass($this->user::class);
+        $guard = $this->user::class::getGuardName();
 
         // ログインURLを取得
         $loginUrl = $this->getLoginUrl($guard);
