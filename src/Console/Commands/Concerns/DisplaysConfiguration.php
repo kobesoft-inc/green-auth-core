@@ -101,9 +101,5 @@ trait DisplaysConfiguration
         $this->line('1. ' . __('green-auth::install.next_steps.update_auth_config'));
         $this->line('2. ' . __('green-auth::install.next_steps.run_migrations'));
         $this->line('3. ' . __('green-auth::install.next_steps.register_resources'));
-        
-        if (isset($this->config['use_custom_login']) && $this->config['use_custom_login']) {
-            $this->line('4. ' . __('green-auth::install.next_steps.update_login_page'));
-        }
     }
 }

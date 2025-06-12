@@ -232,9 +232,6 @@ trait CollectsConfiguration
 
         if ($this->config['generate_resources']) {
             $this->config['resource_namespace'] = $this->ask(__('green-auth::install.prompts.resource_namespace'), 'App\\Filament\\Resources');
-            $this->config['use_custom_login'] = $this->confirm(__('green-auth::install.prompts.use_custom_login'), true);
-        } else {
-            $this->config['use_custom_login'] = false;
         }
         
         // ユーザーメニュー設定

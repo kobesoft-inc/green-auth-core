@@ -163,15 +163,7 @@ use Green\AuthCore\Permission\BasePermission;
 
 class PostPermissions extends BasePermission
 {
-    public static function permissions(): array
-    {
-        return [
-            'posts.view' => '投稿の表示',
-            'posts.create' => '投稿の作成',
-            'posts.edit' => '投稿の編集',
-            'posts.delete' => '投稿の削除',
-        ];
-    }
+    static string $id = 'post';
 }
 ```
 
@@ -344,7 +336,6 @@ vendor/bin/pest --coverage
 
 Green Auth CoreはLaravelのセキュリティベストプラクティスに従います：
 
-- bcrypt/argon2によるパスワードハッシュ化
 - 全フォームでのCSRF保護
 - Eloquent ORMによるSQLインジェクション防止
 - FilamentコンポーネントでのXSS保護
