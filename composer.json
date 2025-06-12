@@ -1,0 +1,39 @@
+{
+  "name": "kobesoft/green-auth-core",
+  "type": "library",
+  "autoload": {
+    "psr-4": {
+      "Green\\AuthCore\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Green\\AuthCore\\Tests\\": "tests/"
+    }
+  },
+  "require": {
+    "filament/filament": "^3.3",
+    "kalnoy/nestedset": "^6.0"
+  },
+  "require-dev": {
+    "pestphp/pest": "^2.0",
+    "pestphp/pest-plugin-laravel": "^2.0",
+    "orchestra/testbench": "^8.0",
+    "laravel/framework": "*"
+  },
+  "scripts": {
+    "test": "vendor/bin/pest"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Green\\AuthCore\\GreenAuthServiceProvider"
+      ]
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  }
+}
