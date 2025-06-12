@@ -12,7 +12,7 @@ trait HasUserActions
     /**
      * レコードアクションを作成
      */
-    public static function makeRecordActions(): array
+    public static function getRecordActions(): array
     {
         $actions = [];
 

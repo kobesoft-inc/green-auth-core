@@ -17,7 +17,7 @@ trait ManagesUserPasswords
      * @param string $modelClass モデルクラス名
      * @return array フォームコンポーネント配列
      */
-    public static function makePasswordFields(string $modelClass): array
+    public static function getPasswordFormComponents(string $modelClass): array
     {
         return [
             Forms\Components\Checkbox::make('auto_generate_password')

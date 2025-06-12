@@ -17,7 +17,7 @@ trait HasRoleColumns
      * 
      * @return Tables\Columns\TextColumn 名前カラム
      */
-    public static function makeNameColumn(): Tables\Columns\TextColumn
+    public static function getNameColumn(): Tables\Columns\TextColumn
     {
         return Tables\Columns\TextColumn::make('name')
             ->label(__('green-auth::roles.name'))
@@ -31,7 +31,7 @@ trait HasRoleColumns
      * 
      * @return Tables\Columns\ImageColumn|null ユーザーカラム（トレイトがない場合はnull）
      */
-    public static function makeUsersColumn(): ?Tables\Columns\ImageColumn
+    public static function getUsersColumn(): ?Tables\Columns\ImageColumn
     {
         if (!static::hasUsersTrait()) {
             return null;
@@ -68,7 +68,7 @@ trait HasRoleColumns
      * 
      * @return Tables\Columns\TextColumn|null グループカラム（トレイトがない場合はnull）
      */
-    public static function makeGroupsColumn(): ?Tables\Columns\TextColumn
+    public static function getGroupsColumn(): ?Tables\Columns\TextColumn
     {
         if (!static::hasGroupsTrait()) {
             return null;
@@ -84,7 +84,7 @@ trait HasRoleColumns
      * 
      * @return Tables\Columns\TextColumn 作成日時カラム
      */
-    public static function makeCreatedAtColumn(): Tables\Columns\TextColumn
+    public static function getCreatedAtColumn(): Tables\Columns\TextColumn
     {
         return Tables\Columns\TextColumn::make('created_at')
             ->label(__('green-auth::roles.created_at'))
@@ -98,7 +98,7 @@ trait HasRoleColumns
      * 
      * @return SelectFilter|null ユーザーフィルター（トレイトがない場合はnull）
      */
-    public static function makeUsersFilter(): ?SelectFilter
+    public static function getUsersFilter(): ?SelectFilter
     {
         if (!static::hasUsersTrait()) {
             return null;
@@ -117,7 +117,7 @@ trait HasRoleColumns
      * @return SelectFilter|null グループフィルター（トレイトがない場合はnull）
      * @throws Exception
      */
-    public static function makeGroupsFilter(): ?SelectFilter
+    public static function getGroupsFilter(): ?SelectFilter
     {
         if (!static::hasGroupsTrait()) {
             return null;
@@ -139,9 +139,23 @@ trait HasRoleColumns
     public static function getTableFilters(): array
     {
         return array_filter([
-            static::makeUsersFilter(),
-            static::makeGroupsFilter(),
+            static::getUsersFilter(),
+            static::getGroupsFilter(),
         ]);
+    }
+
+    /**
+     * バルクアクション配列を取得
+     *
+     * @return array バルクアクション配列
+     */
+    public static function getBulkActions(): array
+    {
+        return [
+            \Filament\Tables\Actions\BulkActionGroup::make([
+                \Filament\Tables\Actions\DeleteBulkAction::make(),
+            ]),
+        ];
     }
 
     public static function table(Table $table): Table
@@ -149,30 +163,26 @@ trait HasRoleColumns
         $columns = [];
 
         // Basic columns (description integrated into name column)
-        $columns[] = static::makeNameColumn();
+        $columns[] = static::getNameColumn();
 
         // Users column (if exists)
-        if ($usersColumn = static::makeUsersColumn()) {
+        if ($usersColumn = static::getUsersColumn()) {
             $columns[] = $usersColumn;
         }
 
         // Groups column (if exists)
-        if ($groupsColumn = static::makeGroupsColumn()) {
+        if ($groupsColumn = static::getGroupsColumn()) {
             $columns[] = $groupsColumn;
         }
 
         // Timestamp column
-        $columns[] = static::makeCreatedAtColumn();
+        $columns[] = static::getCreatedAtColumn();
 
         return $table
             ->columns($columns)
             ->filters(static::getTableFilters())
-            ->actions(static::makeRecordActions())
-            ->bulkActions([
-                \Filament\Tables\Actions\BulkActionGroup::make([
-                    \Filament\Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])
+            ->actions(static::getRecordActions())
+            ->bulkActions(static::getBulkActions())
             ->defaultSort('name');
     }
 }

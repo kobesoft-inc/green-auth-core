@@ -15,7 +15,7 @@ trait HasGroupForms
      *
      * @return Forms\Components\TextInput 名前入力コンポーネント
      */
-    public static function makeNameInput(): Forms\Components\TextInput
+    public static function getNameFormComponent(): Forms\Components\TextInput
     {
         return Forms\Components\TextInput::make('name')
             ->label('グループ名')
@@ -29,7 +29,7 @@ trait HasGroupForms
      *
      * @return Forms\Components\Textarea 説明入力コンポーネント
      */
-    public static function makeDescriptionInput(): Forms\Components\Textarea
+    public static function getDescriptionFormComponent(): Forms\Components\Textarea
     {
         return Forms\Components\Textarea::make('description')
             ->label('説明')
@@ -42,7 +42,7 @@ trait HasGroupForms
      *
      * @return Forms\Components\Select|null 親グループ選択コンポーネント
      */
-    public static function makeParentSelect(): ?Forms\Components\Select
+    public static function getParentFormComponent(): ?Forms\Components\Select
     {
         if (!static::hasParentGroupTrait()) {
             return null;
@@ -86,7 +86,7 @@ trait HasGroupForms
      *
      * @return Forms\Components\Select|null ロール選択コンポーネント（トレイトがない場合はnull）
      */
-    public static function makeRolesSelect(): ?Forms\Components\Select
+    public static function getRolesFormComponent(): ?Forms\Components\Select
     {
         if (!static::hasRolesTrait()) {
             return null;
@@ -112,15 +112,15 @@ trait HasGroupForms
         $schema = [];
 
         // 基本フィールド
-        if ($parentSelect = static::makeParentSelect()) {
+        if ($parentSelect = static::getParentFormComponent()) {
             $schema[] = $parentSelect;
         }
 
-        $schema[] = static::makeNameInput();
-        $schema[] = static::makeDescriptionInput();
+        $schema[] = static::getNameFormComponent();
+        $schema[] = static::getDescriptionFormComponent();
 
         // ロール選択（存在する場合）
-        if ($rolesSelect = static::makeRolesSelect()) {
+        if ($rolesSelect = static::getRolesFormComponent()) {
             $schema[] = $rolesSelect;
         }
 

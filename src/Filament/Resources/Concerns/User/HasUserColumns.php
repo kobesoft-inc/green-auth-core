@@ -16,7 +16,7 @@ trait HasUserColumns
      * 
      * @return Tables\Columns\Column 名前表示用カラム
      */
-    public static function makeNameColumn(): Tables\Columns\Column
+    public static function getNameColumn(): Tables\Columns\Column
     {
         if (static::hasAvatarTrait()) {
             return UserColumn::make('name')
@@ -36,7 +36,7 @@ trait HasUserColumns
      * 
      * @return Tables\Columns\TextColumn メールアドレス表示用カラム
      */
-    public static function makeEmailColumn(): Tables\Columns\TextColumn
+    public static function getEmailColumn(): Tables\Columns\TextColumn
     {
         return Tables\Columns\TextColumn::make('email')
             ->label(__('green-auth::users.email'))
@@ -49,7 +49,7 @@ trait HasUserColumns
      * 
      * @return Tables\Columns\TextColumn|null ユーザー名表示用カラム（トレイトがない場合はnull）
      */
-    public static function makeUsernameColumn(): ?Tables\Columns\TextColumn
+    public static function getUsernameColumn(): ?Tables\Columns\TextColumn
     {
         if (!static::hasUsernameTrait()) {
             return null;
@@ -69,7 +69,7 @@ trait HasUserColumns
      * 
      * @return Tables\Columns\TextColumn|null グループ表示用カラム（トレイトがない場合はnull）
      */
-    public static function makeGroupsColumn(): ?Tables\Columns\TextColumn
+    public static function getGroupsColumn(): ?Tables\Columns\TextColumn
     {
         if (!static::hasGroupsTrait()) {
             return null;
@@ -86,7 +86,7 @@ trait HasUserColumns
      * 
      * @return Tables\Columns\TextColumn|null ロール表示用カラム（トレイトがない場合はnull）
      */
-    public static function makeRolesColumn(): ?Tables\Columns\TextColumn
+    public static function getRolesColumn(): ?Tables\Columns\TextColumn
     {
         if (!static::hasRolesTrait()) {
             return null;
@@ -103,7 +103,7 @@ trait HasUserColumns
      * 
      * @return Tables\Columns\IconColumn|null 停止状態表示用アイコンカラム（トレイトがない場合はnull）
      */
-    public static function makeSuspendedColumn(): ?Tables\Columns\IconColumn
+    public static function getSuspendedColumn(): ?Tables\Columns\IconColumn
     {
         if (!static::hasSuspensionTrait()) {
             return null;
@@ -124,7 +124,7 @@ trait HasUserColumns
      * 
      * @return Tables\Columns\TextColumn|null 最終ログイン日時表示用カラム（トレイトがない場合はnull）
      */
-    public static function makeLastLoginColumn(): ?Tables\Columns\TextColumn
+    public static function getLastLoginColumn(): ?Tables\Columns\TextColumn
     {
         if (!static::hasLoginLogTrait()) {
             return null;
@@ -144,7 +144,7 @@ trait HasUserColumns
      * 
      * @return Tables\Columns\TextColumn 作成日時表示用カラム
      */
-    public static function makeCreatedAtColumn(): Tables\Columns\TextColumn
+    public static function getCreatedAtColumn(): Tables\Columns\TextColumn
     {
         return Tables\Columns\TextColumn::make('created_at')
             ->label(__('green-auth::users.created_at'))
@@ -158,7 +158,7 @@ trait HasUserColumns
      * 
      * @return Tables\Columns\TextColumn 更新日時表示用カラム
      */
-    public static function makeUpdatedAtColumn(): Tables\Columns\TextColumn
+    public static function getUpdatedAtColumn(): Tables\Columns\TextColumn
     {
         return Tables\Columns\TextColumn::make('updated_at')
             ->label(__('green-auth::users.updated_at'))
@@ -172,7 +172,7 @@ trait HasUserColumns
      * 
      * @return Tables\Filters\SelectFilter|null グループフィルター（トレイトがない場合はnull）
      */
-    public static function makeGroupsFilter(): ?Tables\Filters\SelectFilter
+    public static function getGroupsFilter(): ?Tables\Filters\SelectFilter
     {
         if (!static::hasGroupsTrait()) {
             return null;
@@ -190,7 +190,7 @@ trait HasUserColumns
      * 
      * @return Tables\Filters\SelectFilter|null ロールフィルター（トレイトがない場合はnull）
      */
-    public static function makeRolesFilter(): ?Tables\Filters\SelectFilter
+    public static function getRolesFilter(): ?Tables\Filters\SelectFilter
     {
         if (!static::hasRolesTrait()) {
             return null;
@@ -208,7 +208,7 @@ trait HasUserColumns
      * 
      * @return Tables\Filters\TernaryFilter|null 停止状態フィルター（トレイトがない場合はnull）
      */
-    public static function makeSuspendedFilter(): ?Tables\Filters\TernaryFilter
+    public static function getSuspendedFilter(): ?Tables\Filters\TernaryFilter
     {
         if (!static::hasSuspensionTrait()) {
             return null;
@@ -227,7 +227,7 @@ trait HasUserColumns
      * 
      * @return Tables\Filters\TernaryFilter メール認証フィルター
      */
-    public static function makeEmailVerifiedFilter(): Tables\Filters\TernaryFilter
+    public static function getEmailVerifiedFilter(): Tables\Filters\TernaryFilter
     {
         return Tables\Filters\TernaryFilter::make('email_verified')
             ->label(__('green-auth::users.filters.email_verified'))
@@ -248,54 +248,64 @@ trait HasUserColumns
         $columns = [];
 
         // 基本カラム
-        $columns[] = static::makeNameColumn();
-        $columns[] = static::makeEmailColumn();
+        $columns[] = static::getNameColumn();
+        $columns[] = static::getEmailColumn();
 
         // ユーザー名カラム
-        if ($usernameColumn = static::makeUsernameColumn()) {
+        if ($usernameColumn = static::getUsernameColumn()) {
             $columns[] = $usernameColumn;
         }
 
         // グループカラム
-        if ($groupsColumn = static::makeGroupsColumn()) {
+        if ($groupsColumn = static::getGroupsColumn()) {
             $columns[] = $groupsColumn;
         }
 
         // ロールカラム
-        if ($rolesColumn = static::makeRolesColumn()) {
+        if ($rolesColumn = static::getRolesColumn()) {
             $columns[] = $rolesColumn;
         }
 
         // 停止ステータスカラム
-        if ($suspendedColumn = static::makeSuspendedColumn()) {
+        if ($suspendedColumn = static::getSuspendedColumn()) {
             $columns[] = $suspendedColumn;
         }
 
         // 最終ログイン日時カラム
-        if ($lastLoginColumn = static::makeLastLoginColumn()) {
+        if ($lastLoginColumn = static::getLastLoginColumn()) {
             $columns[] = $lastLoginColumn;
         }
 
         // タイムスタンプカラム
-        $columns[] = static::makeCreatedAtColumn();
-        $columns[] = static::makeUpdatedAtColumn();
+        $columns[] = static::getCreatedAtColumn();
+        $columns[] = static::getUpdatedAtColumn();
 
         // フィルターの収集
         $filters = array_filter([
-            static::makeGroupsFilter(),
-            static::makeRolesFilter(),
-            static::makeSuspendedFilter(),
-            static::makeEmailVerifiedFilter(),
+            static::getGroupsFilter(),
+            static::getRolesFilter(),
+            static::getSuspendedFilter(),
+            static::getEmailVerifiedFilter(),
         ]);
 
         return $table
             ->columns($columns)
             ->filters($filters)
-            ->actions(static::makeRecordActions())
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->actions(static::getRecordActions())
+            ->bulkActions(static::getBulkActions());
+    }
+
+    /**
+     * バルクアクション配列を取得
+     *
+     * @return array バルクアクション配列
+     */
+    public static function getBulkActions(): array
+    {
+        return [
+            Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\DeleteBulkAction::make(),
+            ]),
+        ];
     }
 }
