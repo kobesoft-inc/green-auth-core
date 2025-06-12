@@ -14,7 +14,7 @@ trait HasUserForms
      * 
      * @return Forms\Components\TextInput 名前入力用TextInputコンポーネント
      */
-    public static function makeNameInput(): Forms\Components\TextInput
+    public static function getNameFormComponent(): Forms\Components\TextInput
     {
         return Forms\Components\TextInput::make('name')
             ->label(__('green-auth::users.name'))
@@ -27,7 +27,7 @@ trait HasUserForms
      * 
      * @return Forms\Components\FileUpload|null アバター入力用FileUploadコンポーネント（トレイトがない場合はnull）
      */
-    public static function makeAvatarInput(): ?Forms\Components\FileUpload
+    public static function getAvatarFormComponent(): ?Forms\Components\FileUpload
     {
         if (!static::hasAvatarTrait()) {
             return null;
@@ -53,7 +53,7 @@ trait HasUserForms
      * 
      * @return Forms\Components\Select|null グループ選択用Selectコンポーネント（トレイトがない場合はnull）
      */
-    public static function makeGroupsSelect(): ?Forms\Components\Select
+    public static function getGroupsFormComponent(): ?Forms\Components\Select
     {
         if (!static::hasGroupsTrait()) {
             return null;
@@ -84,7 +84,7 @@ trait HasUserForms
      * 
      * @return Forms\Components\Select|null ロール選択用Selectコンポーネント（トレイトがない場合はnull）
      */
-    public static function makeRolesSelect(): ?Forms\Components\Select
+    public static function getRolesFormComponent(): ?Forms\Components\Select
     {
         if (!static::hasRolesTrait()) {
             return null;
@@ -111,33 +111,33 @@ trait HasUserForms
         $schema = [];
 
         // Avatar
-        if ($avatarInput = static::makeAvatarInput()) {
+        if ($avatarInput = static::getAvatarFormComponent()) {
             $schema[] = $avatarInput;
         }
 
         // Basic fields
-        $schema[] = static::makeNameInput();
+        $schema[] = static::getNameFormComponent();
         
         // Email address input
-        $schema[] = static::makeEmailInput();
+        $schema[] = static::getEmailFormComponent();
         
         // Username input (if available)
-        if ($usernameInput = static::makeUsernameInput()) {
+        if ($usernameInput = static::getUsernameFormComponent()) {
             $schema[] = $usernameInput;
         }
 
         // Password management fields (create only)
-        $passwordFields = static::makePasswordFields(static::getModel());
+        $passwordFields = static::getPasswordFormComponents(static::getModel());
         foreach ($passwordFields as $field) {
             $schema[] = $field->visibleOn('create');
         }
 
         // Access control fields
-        if ($groupsSelect = static::makeGroupsSelect()) {
+        if ($groupsSelect = static::getGroupsFormComponent()) {
             $schema[] = $groupsSelect;
         }
 
-        if ($rolesSelect = static::makeRolesSelect()) {
+        if ($rolesSelect = static::getRolesFormComponent()) {
             $schema[] = $rolesSelect;
         }
 
@@ -149,7 +149,7 @@ trait HasUserForms
      * 
      * @return Forms\Components\TextInput メールアドレス入力用TextInputコンポーネント
      */
-    protected static function makeEmailInput(): Forms\Components\TextInput
+    protected static function getEmailFormComponent(): Forms\Components\TextInput
     {
         $modelClass = static::getModel();
         
@@ -181,7 +181,7 @@ trait HasUserForms
      * 
      * @return Forms\Components\TextInput|null ユーザー名入力用TextInputコンポーネント（トレイトがない場合はnull）
      */
-    public static function makeUsernameInput(): ?Forms\Components\TextInput
+    public static function getUsernameFormComponent(): ?Forms\Components\TextInput
     {
         if (!static::hasUsernameTrait()) {
             return null;

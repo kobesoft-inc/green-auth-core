@@ -17,7 +17,7 @@ trait HasRoleForms
     /**
      * ロール名入力フィールドを作成
      */
-    public static function makeNameInput(): Forms\Components\TextInput
+    public static function getNameFormComponent(): Forms\Components\TextInput
     {
         return Forms\Components\TextInput::make('name')
             ->label(__('green-auth::roles.name'))
@@ -28,7 +28,7 @@ trait HasRoleForms
     /**
      * 説明入力フィールドを作成
      */
-    public static function makeDescriptionInput(): Forms\Components\Textarea
+    public static function getDescriptionFormComponent(): Forms\Components\Textarea
     {
         return Forms\Components\Textarea::make('description')
             ->label(__('green-auth::roles.description'))
@@ -39,7 +39,7 @@ trait HasRoleForms
      * 権限選択コンポーネントを作成
      * HasPermissionsトレイトを使用している場合のみ権限選択UIを返す
      */
-    public static function makePermissionsSections(): array
+    public static function getPermissionsFormComponents(): array
     {
         if (!static::hasPermissionsTrait()) {
             return [];
@@ -57,14 +57,14 @@ trait HasRoleForms
         // 権限をグループごとに分類し、各グループのセクションを作成
         return $permissions
             ->groupBy(fn($permission) => $permission::getGroup() ?? __('green-auth::roles.other'))
-            ->map(fn($permissions, $group) => static::createPermissionCheckboxList($group, $permissions))
+            ->map(fn($permissions, $group) => static::getPermissionCheckboxListFormComponent($group, $permissions))
             ->toArray();
     }
 
     /**
      * 権限グループのセクションを作成
      */
-    protected static function createPermissionCheckboxList(string $groupName, Collection $permissions): Forms\Components\CheckboxList
+    protected static function getPermissionCheckboxListFormComponent(string $groupName, Collection $permissions): Forms\Components\CheckboxList
     {
         return Forms\Components\CheckboxList::make("permissions")
             ->label($groupName)
@@ -79,9 +79,9 @@ trait HasRoleForms
     public static function getFormSchema(): array
     {
         return array_filter([
-            static::makeNameInput(),
-            static::makeDescriptionInput(),
-            ...static::makePermissionsSections()
+            static::getNameFormComponent(),
+            static::getDescriptionFormComponent(),
+            ...static::getPermissionsFormComponents()
         ]);
     }
 

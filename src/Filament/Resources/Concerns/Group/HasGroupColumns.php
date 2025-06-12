@@ -15,7 +15,7 @@ trait HasGroupColumns
      * 
      * @return Tables\Columns\TextColumn 名前カラム
      */
-    public static function makeNameColumn(): Tables\Columns\TextColumn
+    public static function getNameColumn(): Tables\Columns\TextColumn
     {
         return Tables\Columns\TextColumn::make('name')
             ->label(__('green-auth::groups.name'))
@@ -46,7 +46,7 @@ trait HasGroupColumns
      * 
      * @return Tables\Columns\TextColumn|null 親グループカラム（トレイトがない場合はnull）
      */
-    public static function makeParentColumn(): ?Tables\Columns\TextColumn
+    public static function getParentColumn(): ?Tables\Columns\TextColumn
     {
         if (!static::hasParentGroupTrait()) {
             return null;
@@ -63,7 +63,7 @@ trait HasGroupColumns
      * 
      * @return Tables\Columns\TextColumn|null 子グループ数カラム（トレイトがない場合はnull）
      */
-    public static function makeChildrenCountColumn(): ?Tables\Columns\TextColumn
+    public static function getChildrenCountColumn(): ?Tables\Columns\TextColumn
     {
         if (!static::hasParentGroupTrait()) {
             return null;
@@ -80,7 +80,7 @@ trait HasGroupColumns
      * 
      * @return Tables\Columns\ImageColumn|null ユーザーカラム（トレイトがない場合はnull）
      */
-    public static function makeUsersColumn(): ?Tables\Columns\ImageColumn
+    public static function getUsersColumn(): ?Tables\Columns\ImageColumn
     {
         if (!static::hasUsersTrait()) {
             return null;
@@ -117,7 +117,7 @@ trait HasGroupColumns
      * 
      * @return Tables\Columns\TextColumn|null ロールカラム（トレイトがない場合はnull）
      */
-    public static function makeRolesColumn(): ?Tables\Columns\TextColumn
+    public static function getRolesColumn(): ?Tables\Columns\TextColumn
     {
         if (!static::hasRolesTrait()) {
             return null;
@@ -133,7 +133,7 @@ trait HasGroupColumns
      * 
      * @return Tables\Columns\TextColumn 作成日時カラム
      */
-    public static function makeCreatedAtColumn(): Tables\Columns\TextColumn
+    public static function getCreatedAtColumn(): Tables\Columns\TextColumn
     {
         return Tables\Columns\TextColumn::make('created_at')
             ->label(__('green-auth::groups.created_at'))
@@ -147,7 +147,7 @@ trait HasGroupColumns
      * 
      * @return Tables\Filters\SelectFilter|null ユーザーフィルター（トレイトがない場合はnull）
      */
-    public static function makeUsersFilter(): ?Tables\Filters\SelectFilter
+    public static function getUsersFilter(): ?Tables\Filters\SelectFilter
     {
         if (!static::hasUsersTrait()) {
             return null;
@@ -165,7 +165,7 @@ trait HasGroupColumns
      * 
      * @return Tables\Filters\SelectFilter|null ロールフィルター（トレイトがない場合はnull）
      */
-    public static function makeRolesFilter(): ?Tables\Filters\SelectFilter
+    public static function getRolesFilter(): ?Tables\Filters\SelectFilter
     {
         if (!static::hasRolesTrait()) {
             return null;
@@ -186,9 +186,54 @@ trait HasGroupColumns
     public static function getTableFilters(): array
     {
         return array_filter([
-            static::makeUsersFilter(),
-            static::makeRolesFilter(),
+            static::getUsersFilter(),
+            static::getRolesFilter(),
         ]);
+    }
+
+    /**
+     * バルクアクション配列を取得
+     * 
+     * @return array バルクアクション配列
+     */
+    public static function getBulkActions(): array
+    {
+        return [
+            Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\DeleteBulkAction::make()
+                    ->deselectRecordsAfterCompletion()
+                    ->action(function ($records) {
+                        // 削除可能なレコードのみを削除
+                        $deletableRecords = collect($records)->filter(function ($record) {
+                            if (static::hasParentGroupTrait() && $record->children()->exists()) {
+                                return false; // 子グループがある場合は削除しない
+                            }
+                            return true;
+                        });
+
+                        // 削除対象がない場合は通知
+                        if ($deletableRecords->isEmpty()) {
+                            \Filament\Notifications\Notification::make()
+                                ->title(__('green-auth::groups.cannot_delete_groups_with_children'))
+                                ->warning()
+                                ->send();
+                            return;
+                        }
+
+                        // 削除可能なレコードを削除
+                        $deletableRecords->each(fn($record) => $record->delete());
+
+                        // 一部のみ削除された場合の通知
+                        if ($deletableRecords->count() < count($records)) {
+                            \Filament\Notifications\Notification::make()
+                                ->title(__('green-auth::groups.partial_delete_completed'))
+                                ->body(__('green-auth::groups.some_groups_not_deleted_due_to_children'))
+                                ->warning()
+                                ->send();
+                        }
+                    }),
+            ]),
+        ];
     }
 
     public static function table(Table $table): Table
@@ -196,61 +241,26 @@ trait HasGroupColumns
         $columns = [];
 
         // 基本カラム（説明は名前カラムに統合）
-        $columns[] = static::makeNameColumn();
+        $columns[] = static::getNameColumn();
 
         // ユーザーカラム（存在する場合）
-        if ($usersColumn = static::makeUsersColumn()) {
+        if ($usersColumn = static::getUsersColumn()) {
             $columns[] = $usersColumn;
         }
 
         // ロールカラム（存在する場合）
-        if ($rolesColumn = static::makeRolesColumn()) {
+        if ($rolesColumn = static::getRolesColumn()) {
             $columns[] = $rolesColumn;
         }
 
         // タイムスタンプカラム
-        $columns[] = static::makeCreatedAtColumn();
+        $columns[] = static::getCreatedAtColumn();
 
         return $table
             ->columns($columns)
             ->filters(static::getTableFilters())
-            ->actions(static::makeRecordActions())
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()
-                        ->deselectRecordsAfterCompletion()
-                        ->action(function ($records) {
-                            // 削除可能なレコードのみを削除
-                            $deletableRecords = collect($records)->filter(function ($record) {
-                                if (static::hasParentGroupTrait() && $record->children()->exists()) {
-                                    return false; // 子グループがある場合は削除しない
-                                }
-                                return true;
-                            });
-
-                            // 削除対象がない場合は通知
-                            if ($deletableRecords->isEmpty()) {
-                                \Filament\Notifications\Notification::make()
-                                    ->title(__('green-auth::groups.cannot_delete_groups_with_children'))
-                                    ->warning()
-                                    ->send();
-                                return;
-                            }
-
-                            // 削除可能なレコードを削除
-                            $deletableRecords->each(fn($record) => $record->delete());
-
-                            // 一部のみ削除された場合の通知
-                            if ($deletableRecords->count() < count($records)) {
-                                \Filament\Notifications\Notification::make()
-                                    ->title(__('green-auth::groups.partial_delete_completed'))
-                                    ->body(__('green-auth::groups.some_groups_not_deleted_due_to_children'))
-                                    ->warning()
-                                    ->send();
-                            }
-                        }),
-                ]),
-            ])
+            ->actions(static::getRecordActions())
+            ->bulkActions(static::getBulkActions())
             ->defaultSort(function ($query) {
                 // NestedSet用のソート（_lftカラムを使用）
                 if (method_exists($query->getModel(), 'getLftName')) {
