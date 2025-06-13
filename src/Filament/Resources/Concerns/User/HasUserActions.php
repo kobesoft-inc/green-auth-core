@@ -1,11 +1,11 @@
 <?php
 
-namespace Green\AuthCore\Filament\Resources\Concerns\User;
+namespace Green\Auth\Filament\Resources\Concerns\User;
 
 use Filament\Tables;
-use Green\AuthCore\Filament\Actions\ChangeUserPasswordAction;
-use Green\AuthCore\Filament\Actions\SuspendUserAction;
-use Green\AuthCore\Filament\Actions\UnsuspendUserAction;
+use Green\Auth\Filament\Actions\ChangeUserPasswordAction;
+use Green\Auth\Filament\Actions\SuspendUserAction;
+use Green\Auth\Filament\Actions\UnsuspendUserAction;
 
 trait HasUserActions
 {
@@ -23,7 +23,7 @@ trait HasUserActions
 
         // 操作アクション（ActionGroupでまとめる）
         $operationActions = [];
-        
+
         if ($passwordAction = static::makePasswordResetAction()) {
             $operationActions[] = $passwordAction;
         }

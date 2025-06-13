@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Models\Concerns\Group;
+namespace Green\Auth\Models\Concerns\Group;
 
 trait HasPermissions
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Filament\Resources\Concerns\Group;
+namespace Green\Auth\Filament\Resources\Concerns\Group;
 
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;

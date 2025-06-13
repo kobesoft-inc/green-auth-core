@@ -1,9 +1,9 @@
 <?php
 
-namespace Green\AuthCore\Filament\Actions;
+namespace Green\Auth\Filament\Actions;
 
 use Filament\Actions\CreateAction;
-use Green\AuthCore\Filament\Actions\Concerns\ManagesUserPasswords;
+use Green\Auth\Filament\Actions\Concerns\ManagesUserPasswords;
 
 class CreateUserAction extends CreateAction
 {
@@ -29,16 +29,16 @@ class CreateUserAction extends CreateAction
     {
         // モデルクラスを取得
         $modelClass = $this->getModel();
-        
+
         // データ準備
         [$preparedData, $plainPassword, $passwordData] = $this->prepareUserData($data, $modelClass);
-        
+
         // レコード作成
         $record = $modelClass::create($preparedData);
-        
+
         // 通知処理
         $this->notifyUser($record, $plainPassword, $passwordData);
-        
+
         return $record;
     }
 

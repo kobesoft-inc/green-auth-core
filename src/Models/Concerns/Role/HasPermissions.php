@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Models\Concerns\Role;
+namespace Green\Auth\Models\Concerns\Role;
 
 trait HasPermissions
 {
@@ -76,7 +76,7 @@ trait HasPermissions
 
         // ワイルドカードを正規表現に変換
         $pattern = str_replace('*', '.*', preg_quote($rolePermission, '/'));
-        
+
         return preg_match("/^{$pattern}$/", $checkPermission) === 1;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Filament\Resources\Concerns;
+namespace Green\Auth\Filament\Resources\Concerns;
 
 trait HasModelLabels
 {
@@ -28,15 +28,15 @@ trait HasModelLabels
         $modelClass = static::getModel();
         $modelBaseName = class_basename($modelClass);
         $modelKey = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $modelBaseName));
-        
+
         $translationKey = 'green-auth::admin.models.' . $modelKey;
         $translation = __($translationKey);
-        
+
         // If translation exists, return it
         if ($translation !== $translationKey) {
             return $translation;
         }
-        
+
         // Fallback to parent method
         return $plural ? parent::getPluralModelLabel() : parent::getModelLabel();
     }

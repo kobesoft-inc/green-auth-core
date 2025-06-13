@@ -1,9 +1,9 @@
 <?php
 
-namespace Green\AuthCore\Filament\Resources\Concerns\User;
+namespace Green\Auth\Filament\Resources\Concerns\User;
 
 use Filament\Forms;
-use Green\AuthCore\Filament\Actions\Concerns\ManagesUserPasswords;
+use Green\Auth\Filament\Actions\Concerns\ManagesUserPasswords;
 
 trait HasUserForms
 {
@@ -11,7 +11,7 @@ trait HasUserForms
 
     /**
      * 名前入力コンポーネントを作成
-     * 
+     *
      * @return Forms\Components\TextInput 名前入力用TextInputコンポーネント
      */
     public static function getNameFormComponent(): Forms\Components\TextInput
@@ -24,7 +24,7 @@ trait HasUserForms
 
     /**
      * アバター入力コンポーネントを作成
-     * 
+     *
      * @return Forms\Components\FileUpload|null アバター入力用FileUploadコンポーネント（トレイトがない場合はnull）
      */
     public static function getAvatarFormComponent(): ?Forms\Components\FileUpload
@@ -50,7 +50,7 @@ trait HasUserForms
 
     /**
      * グループ選択コンポーネントを作成
-     * 
+     *
      * @return Forms\Components\Select|null グループ選択用Selectコンポーネント（トレイトがない場合はnull）
      */
     public static function getGroupsFormComponent(): ?Forms\Components\Select
@@ -81,7 +81,7 @@ trait HasUserForms
 
     /**
      * ロール選択コンポーネントを作成
-     * 
+     *
      * @return Forms\Components\Select|null ロール選択用Selectコンポーネント（トレイトがない場合はnull）
      */
     public static function getRolesFormComponent(): ?Forms\Components\Select
@@ -103,7 +103,7 @@ trait HasUserForms
 
     /**
      * フォームスキーマを取得
-     * 
+     *
      * @return array フォームコンポーネントの配列
      */
     public static function getFormSchema(): array
@@ -117,10 +117,10 @@ trait HasUserForms
 
         // Basic fields
         $schema[] = static::getNameFormComponent();
-        
+
         // Email address input
         $schema[] = static::getEmailFormComponent();
-        
+
         // Username input (if available)
         if ($usernameInput = static::getUsernameFormComponent()) {
             $schema[] = $usernameInput;
@@ -146,13 +146,13 @@ trait HasUserForms
 
     /**
      * メールアドレス入力コンポーネントを作成
-     * 
+     *
      * @return Forms\Components\TextInput メールアドレス入力用TextInputコンポーネント
      */
     protected static function getEmailFormComponent(): Forms\Components\TextInput
     {
         $modelClass = static::getModel();
-        
+
         return Forms\Components\TextInput::make('email')
             ->label(__('green-auth::users.email'))
             ->email()
@@ -178,7 +178,7 @@ trait HasUserForms
 
     /**
      * ユーザー名入力コンポーネントを作成
-     * 
+     *
      * @return Forms\Components\TextInput|null ユーザー名入力用TextInputコンポーネント（トレイトがない場合はnull）
      */
     public static function getUsernameFormComponent(): ?Forms\Components\TextInput
@@ -190,7 +190,7 @@ trait HasUserForms
         $modelClass = static::getModel();
         $modelInstance = new $modelClass();
         $usernameColumn = $modelInstance->getUsernameColumn();
-        
+
         return Forms\Components\TextInput::make($usernameColumn)
             ->label(__('green-auth::users.username'))
             ->maxLength(255)
@@ -215,25 +215,25 @@ trait HasUserForms
 
     /**
      * ソフトデリートスコープを適用
-     * 
+     *
      * @param mixed $rule バリデーションルール
      * @return mixed 修正されたバリデーションルール
      */
     protected static function applySoftDeleteScope($rule)
     {
         $modelClass = static::getModel();
-        
+
         if (method_exists($modelClass, 'withTrashed')) {
             // ソフトデリートが有効な場合、削除済みレコードを除外
             return $rule->withoutTrashed();
         }
-        
+
         return $rule;
     }
 
     /**
      * Filamentフォームを取得
-     * 
+     *
      * @param Forms\Form $form フォームインスタンス
      * @return Forms\Form 設定済みフォームインスタンス
      */

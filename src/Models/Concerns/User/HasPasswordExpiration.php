@@ -1,14 +1,14 @@
 <?php
 
-namespace Green\AuthCore\Models\Concerns\User;
+namespace Green\Auth\Models\Concerns\User;
 
 use Carbon\Carbon;
-use Green\AuthCore\Models\Concerns\HasModelConfig;
+use Green\Auth\Models\Concerns\HasModelConfig;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * パスワード有効期限機能を提供するトレイト
- * 
+ *
  * @mixin Model
  */
 trait HasPasswordExpiration
@@ -64,7 +64,7 @@ trait HasPasswordExpiration
     public function isPasswordExpired(): bool
     {
         $expiresAt = $this->getPasswordExpiresAt();
-        
+
         if (!$expiresAt) {
             return false;
         }
@@ -81,7 +81,7 @@ trait HasPasswordExpiration
     {
         $expirationDays = $this->getPasswordExpirationDays();
         $column = $this->getPasswordExpiresAtColumn();
-        
+
         if ($expirationDays > 0) {
             $this->{$column} = Carbon::now()->addDays($expirationDays);
         } else {

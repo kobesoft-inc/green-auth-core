@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Permission;
+namespace Green\Auth\Permission;
 
 /**
  * パーミッション定義のベースクラス

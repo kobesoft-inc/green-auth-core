@@ -1,12 +1,12 @@
 <?php
 
-namespace Green\AuthCore;
+namespace Green\Auth;
 
 use Filament\Contracts\Plugin;
 use Filament\Navigation\MenuItem;
 use Filament\Panel;
-use Green\AuthCore\Filament\Pages\Auth\ChangePassword;
-use Green\AuthCore\Filament\Pages\Auth\PasswordExpired;
+use Green\Auth\Filament\Pages\Auth\ChangePassword;
+use Green\Auth\Filament\Pages\Auth\PasswordExpired;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 

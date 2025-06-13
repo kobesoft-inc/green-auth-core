@@ -3,7 +3,7 @@
   "type": "library",
   "autoload": {
     "psr-4": {
-      "Green\\AuthCore\\": "src/"
+      "Green\\Auth\\": "src/"
     }
   },
   "autoload-dev": {
@@ -27,7 +27,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Green\\AuthCore\\GreenAuthServiceProvider"
+        "Green\\Auth\\GreenAuthServiceProvider"
       ]
     }
   },

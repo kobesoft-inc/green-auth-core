@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Models\Concerns;
+namespace Green\Auth\Models\Concerns;
 
 use Illuminate\Support\Str;
 
@@ -11,14 +11,14 @@ trait HasModelConfig
 {
     /**
      * ガード名のキャッシュ
-     * 
+     *
      * @var string|null ガード名
      */
     private static ?string $guardName = null;
 
     /**
      * 設定値を取得（guard対応、クラス定数フォールバック）
-     * 
+     *
      * @param string $key 設定キー
      * @param mixed $default デフォルト値
      * @return mixed 設定値
@@ -26,30 +26,30 @@ trait HasModelConfig
     protected static function config(string $key, $default = null)
     {
         $guard = static::getGuardName();
-        
+
         // 設定ファイル > クラス定数 > デフォルト値の順で取得
-        return config("green-auth.guards.{$guard}.{$key}") 
-            ?? config("green-auth.{$key}") 
-            ?? static::constant($key) 
+        return config("green-auth.guards.{$guard}.{$key}")
+            ?? config("green-auth.{$key}")
+            ?? static::constant($key)
             ?? $default;
     }
 
     /**
      * クラス定数を取得
-     * 
+     *
      * @param string $name 定数名
      * @return mixed 定数値、存在しない場合はnull
      */
     protected static function constant(string $name)
     {
         $constantName = static::class . '::' . $name;
-        
+
         return defined($constantName) ? constant($constantName) : null;
     }
 
     /**
      * ユーザーモデルクラスを取得
-     * 
+     *
      * @return string ユーザーモデルのクラス名
      * @throws \RuntimeException クラスが見つからない場合
      */
@@ -60,7 +60,7 @@ trait HasModelConfig
 
     /**
      * グループモデルクラスを取得
-     * 
+     *
      * @return string グループモデルのクラス名
      * @throws \RuntimeException クラスが見つからない場合
      */
@@ -71,7 +71,7 @@ trait HasModelConfig
 
     /**
      * ロールモデルクラスを取得
-     * 
+     *
      * @return string ロールモデルのクラス名
      * @throws \RuntimeException クラスが見つからない場合
      */
@@ -82,7 +82,7 @@ trait HasModelConfig
 
     /**
      * ログインログモデルクラスを取得
-     * 
+     *
      * @return string ログインログモデルのクラス名
      * @throws \RuntimeException クラスが見つからない場合
      */
@@ -93,7 +93,7 @@ trait HasModelConfig
 
     /**
      * 関連するモデルクラスを取得
-     * 
+     *
      * @param string $modelType モデルタイプ（'user', 'group', 'role'）
      * @return string モデルクラス名
      * @throws \RuntimeException クラスが見つからない場合
@@ -102,10 +102,10 @@ trait HasModelConfig
     {
         $modelTypeLower = strtolower($modelType);
         $modelTypeUcfirst = ucfirst($modelTypeLower);
-        
+
         // 設定から取得（guard対応、クラス定数フォールバック）
         $configClass = static::config("models.{$modelTypeLower}");
-        
+
         if ($configClass && class_exists($configClass)) {
             return $configClass;
         }
@@ -123,7 +123,7 @@ trait HasModelConfig
 
     /**
      * ユーザー・グループ間のピボットテーブル名を取得
-     * 
+     *
      * @return string ピボットテーブル名
      */
     protected static function getUserGroupsPivotTable(): string
@@ -133,7 +133,7 @@ trait HasModelConfig
 
     /**
      * ユーザー・ロール間のピボットテーブル名を取得
-     * 
+     *
      * @return string ピボットテーブル名
      */
     protected static function getUserRolesPivotTable(): string
@@ -143,7 +143,7 @@ trait HasModelConfig
 
     /**
      * グループ・ロール間のピボットテーブル名を取得
-     * 
+     *
      * @return string ピボットテーブル名
      */
     protected static function getGroupRolesPivotTable(): string
@@ -153,7 +153,7 @@ trait HasModelConfig
 
     /**
      * ピボットテーブル名を取得
-     * 
+     *
      * @param string $tableKey テーブルキー（'user_groups', 'user_roles', 'group_roles'）
      * @return string テーブル名
      */
@@ -164,7 +164,7 @@ trait HasModelConfig
 
     /**
      * 外部キー名を推測
-     * 
+     *
      * @param string $modelClass モデルクラス名
      * @return string 外部キー名（例：'user_id'）
      */
@@ -175,7 +175,7 @@ trait HasModelConfig
 
     /**
      * 現在のガードを取得
-     * 
+     *
      * @return string ガード名
      * @throws \RuntimeException ガードが特定できない場合
      */
@@ -205,7 +205,7 @@ trait HasModelConfig
 
     /**
      * 現在のモデルタイプを取得 ('User', 'Group', 'Role')
-     * 
+     *
      * @return string モデルタイプ（'User', 'Group', 'Role'）
      * @throws \RuntimeException モデルタイプが特定できない場合
      */

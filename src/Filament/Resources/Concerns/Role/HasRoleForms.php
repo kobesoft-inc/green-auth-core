@@ -1,9 +1,9 @@
 <?php
 
-namespace Green\AuthCore\Filament\Resources\Concerns\Role;
+namespace Green\Auth\Filament\Resources\Concerns\Role;
 
 use Filament\Forms;
-use Green\AuthCore\Facades\PermissionManager;
+use Green\Auth\Facades\PermissionManager;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 

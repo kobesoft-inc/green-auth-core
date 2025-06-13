@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Console\Commands\Concerns;
+namespace Green\Auth\Console\Commands\Concerns;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -31,10 +31,10 @@ trait GeneratesModels
         $table = $this->config['tables'][Str::plural(strtolower($type))] ?? null;
 
         $content = $this->generateModelContent($name, $namespace, $baseClass, $traits, $table, $type);
-        
+
         $path = app_path(str_replace('App\\', '', $namespace) . "/{$name}.php");
         $this->ensureDirectoryExists(dirname($path));
-        
+
         if (!file_exists($path) || $this->option('force')) {
             File::put($path, $content);
         }
@@ -49,19 +49,19 @@ trait GeneratesModels
         if ($type === 'login_log') {
             return $this->generateSimpleLoginLogModel($name, $namespace, $baseClass, $table);
         }
-        
+
         // Userモデルで、Laravelの標準UserモデルをベースとしFilamentを使用する場合の特別処理
         if ($type === 'user' && $baseClass === 'Illuminate\\Foundation\\Auth\\User') {
             return $this->generateLaravelUserModel($name, $namespace, $baseClass, $traits, $table);
         }
-        
+
         $useStatements = collect($traits)->map(fn($trait) => "use {$trait};")->implode("\n");
         $traitNames = collect($traits)->map(fn($trait) => "    use " . class_basename($trait) . ";")->implode("\n");
-        
+
         // デフォルトのテーブル名と異なる場合のみtableプロパティを生成
         $defaultTableName = $this->getDefaultTableName($type);
         $tableProperty = $table && $table !== $defaultTableName ? "\n    protected \$table = '$table';" : '';
-        
+
         // 機能に基づいたプロパティを生成
         $constantsProperty = $this->generateConstantsProperty($type);
         $fillableProperty = $this->generateFillableProperty($type);
@@ -80,7 +80,7 @@ $traitNames$tableProperty$constantsProperty$fillableProperty$hiddenProperty$cast
 }
 ";
     }
-    
+
     /**
      * Laravel標準UserモデルをベースとしたUserモデルを生成
      */
@@ -92,21 +92,21 @@ $traitNames$tableProperty$constantsProperty$fillableProperty$hiddenProperty$cast
             $interfaces[] = 'HasAvatar';
         }
         $implementsClause = 'implements ' . implode(', ', $interfaces);
-        
+
         // use文を生成
         $useStatements = collect($traits)->map(fn($trait) => "use {$trait};")->implode("\n");
         $filamentUseStatements = "use Filament\\Models\\Contracts\\FilamentUser;";
         if ($this->config['features']['avatar']) {
             $filamentUseStatements .= "\nuse Filament\\Models\\Contracts\\HasAvatar;";
         }
-        
+
         // トレイト使用を生成
         $traitNames = collect($traits)->map(fn($trait) => "    use " . class_basename($trait) . ";")->implode("\n");
-        
+
         // デフォルトのテーブル名と異なる場合のみtableプロパティを生成
         $defaultTableName = $this->getDefaultTableName('user');
         $tableProperty = $table && $table !== $defaultTableName ? "\n    protected \$table = '$table';" : '';
-        
+
         // 機能に基づいたプロパティを生成
         $constantsProperty = $this->generateConstantsProperty('user');
         $fillableProperty = $this->generateFillableProperty('user');
@@ -135,7 +135,7 @@ $traitNames$tableProperty$constantsProperty$fillableProperty$hiddenProperty$cast
         // デフォルトのテーブル名と異なる場合のみtableプロパティを生成
         $defaultTableName = $this->getDefaultTableName('login_log');
         $tableProperty = $table && $table !== $defaultTableName ? "\n    protected \$table = '$table';" : '';
-        
+
         if ($tableProperty) {
             return "<?php
 
@@ -156,7 +156,7 @@ class $name extends \\$baseClass
 ";
         }
     }
-    
+
     /**
      * モデルタイプからデフォルトのテーブル名を取得
      */
@@ -205,23 +205,23 @@ class $name extends \\$baseClass
                        $this->config['features']['password_expiration'] &&
                        $this->config['features']['account_suspension'] &&
                        $this->config['features']['avatar'];
-                       
+
             case 'group':
                 // GroupはBaseGroupに全ての機能が含まれている
                 return $this->config['features']['groups'] &&
                        $this->config['features']['roles'] &&
                        $this->config['features']['permissions'];
-                       
+
             case 'role':
                 // RoleはBaseRoleに全ての機能が含まれている
                 return $this->config['features']['roles'] &&
                        $this->config['features']['permissions'] &&
                        $this->config['features']['groups'];
-                       
+
             case 'login_log':
                 // LoginLogは単純なので常にBaseを使用
                 return $this->config['features']['login_logging'];
-                
+
             default:
                 return false;
         }
@@ -233,7 +233,7 @@ class $name extends \\$baseClass
     protected function generateFillableProperty(string $type): string
     {
         $fillable = $this->getFillableFields($type);
-        
+
         if (empty($fillable)) {
             return '';
         }
@@ -251,7 +251,7 @@ class $name extends \\$baseClass
     protected function generateHiddenProperty(string $type): string
     {
         $hidden = $this->getHiddenFields($type);
-        
+
         if (empty($hidden)) {
             return '';
         }
@@ -269,7 +269,7 @@ class $name extends \\$baseClass
     protected function generateCastsProperty(string $type): string
     {
         $casts = $this->getCastFields($type);
-        
+
         if (empty($casts)) {
             return '';
         }
@@ -322,19 +322,19 @@ class $name extends \\$baseClass
     {
         // Laravel標準のUserモデルのフィールドを含む
         $fillable = ['name', 'email', 'password'];
-        
+
         if ($this->config['features']['username']) {
             $fillable[] = 'username';
         }
-        
+
         if ($this->config['features']['password_expiration']) {
             $fillable[] = 'password_expires_at';
         }
-        
+
         if ($this->config['features']['account_suspension']) {
             $fillable[] = 'suspended_at';
         }
-        
+
         if ($this->config['features']['avatar']) {
             $fillable[] = 'avatar';
         }
@@ -360,7 +360,7 @@ class $name extends \\$baseClass
         }
 
         $fillable = ['name', 'description'];
-        
+
         if ($this->config['features']['permissions']) {
             $fillable[] = 'permissions';
         }
@@ -373,8 +373,8 @@ class $name extends \\$baseClass
      */
     protected function getLoginLogFillableFields(): array
     {
-        return $this->config['features']['login_logging'] 
-            ? ['user_id', 'guard_name', 'ip_address', 'user_agent'] 
+        return $this->config['features']['login_logging']
+            ? ['user_id', 'guard_name', 'ip_address', 'user_agent']
             : [];
     }
 
@@ -423,11 +423,11 @@ class $name extends \\$baseClass
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-        
+
         if ($this->config['features']['password_expiration']) {
             $casts['password_expires_at'] = 'datetime';
         }
-        
+
         if ($this->config['features']['account_suspension']) {
             $casts['suspended_at'] = 'datetime';
         }
@@ -452,8 +452,8 @@ class $name extends \\$baseClass
      */
     protected function getLoginLogCastFields(): array
     {
-        return $this->config['features']['login_logging'] 
-            ? ['created_at' => 'datetime'] 
+        return $this->config['features']['login_logging']
+            ? ['created_at' => 'datetime']
             : [];
     }
 
@@ -464,7 +464,7 @@ class $name extends \\$baseClass
     {
         // Baseモデルを使用する場合、既に含まれているトレイトは追加しない
         $isUsingBaseModel = $this->shouldUseBaseModel($type);
-        
+
         $generators = [
             'user' => fn() => $this->getUserTraits($isUsingBaseModel),
             'group' => fn() => $this->getGroupTraits($isUsingBaseModel),
@@ -504,31 +504,31 @@ class $name extends \\$baseClass
             if ($this->config['features']['username']) {
                 $traits[] = 'Green\\AuthCore\\Models\\Concerns\\User\\HasUsername';
             }
-            
+
             if ($this->config['features']['groups']) {
                 $traits[] = 'Green\\AuthCore\\Models\\Concerns\\User\\BelongsToGroups';
             }
-            
+
             if ($this->config['features']['roles']) {
                 $traits[] = 'Green\\AuthCore\\Models\\Concerns\\User\\HasRoles';
             }
-            
+
             if ($this->config['features']['permissions']) {
                 $traits[] = 'Green\\AuthCore\\Models\\Concerns\\User\\HasPermissions';
             }
-            
+
             if ($this->config['features']['password_expiration']) {
                 $traits[] = 'Green\\AuthCore\\Models\\Concerns\\User\\HasPasswordExpiration';
             }
-            
+
             if ($this->config['features']['account_suspension']) {
                 $traits[] = 'Green\\AuthCore\\Models\\Concerns\\User\\HasSuspension';
             }
-            
+
             if ($this->config['features']['avatar']) {
                 $traits[] = 'Green\\AuthCore\\Models\\Concerns\\User\\HasAvatar';
             }
-            
+
             // Filament用のパネルアクセストレイト（Laravel標準UserモデルとBaseUserの両方で追加）
             $traits[] = 'Green\\AuthCore\\Models\\Concerns\\User\\HasPanelAccess';
         }
@@ -555,11 +555,11 @@ class $name extends \\$baseClass
             'Kalnoy\\Nestedset\\NodeTrait',
             'Green\\AuthCore\\Models\\Concerns\\Group\\HasUsers',
         ];
-        
+
         if ($this->config['features']['roles']) {
             $traits[] = 'Green\\AuthCore\\Models\\Concerns\\Group\\HasRoles';
         }
-        
+
         if ($this->config['features']['permissions']) {
             $traits[] = 'Green\\AuthCore\\Models\\Concerns\\Group\\HasPermissions';
         }
@@ -583,11 +583,11 @@ class $name extends \\$baseClass
 
         // Eloquent Modelを継承する場合は全てのトレイトを追加
         $traits = ['Green\\AuthCore\\Models\\Concerns\\Role\\HasUsers'];
-        
+
         if ($this->config['features']['groups']) {
             $traits[] = 'Green\\AuthCore\\Models\\Concerns\\Role\\HasGroups';
         }
-        
+
         if ($this->config['features']['permissions']) {
             $traits[] = 'Green\\AuthCore\\Models\\Concerns\\Role\\HasPermissions';
         }

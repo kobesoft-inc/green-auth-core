@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Models\Concerns\User;
+namespace Green\Auth\Models\Concerns\User;
 
 trait HasPermissions
 {
@@ -65,7 +65,7 @@ trait HasPermissions
         if (is_string($abilities) && empty($arguments)) {
             return $this->hasPermission($abilities);
         }
-        
+
         // それ以外はLaravel標準の動作
         return parent::can($abilities, $arguments);
     }

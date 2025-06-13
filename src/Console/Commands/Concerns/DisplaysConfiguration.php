@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Console\Commands\Concerns;
+namespace Green\Auth\Console\Commands\Concerns;
 
 trait DisplaysConfiguration
 {
@@ -11,7 +11,7 @@ trait DisplaysConfiguration
     {
         $this->newLine();
         $this->info(__('green-auth::install.summary.title'));
-        
+
         $this->displayBasicSettings();
         $this->displayFeatureSettings();
         $this->displayPasswordSettings();
@@ -73,7 +73,7 @@ trait DisplaysConfiguration
 
         $this->newLine();
         $this->info(__('green-auth::install.summary.password_rules'));
-        
+
         $passwordSettings = [
             [__('green-auth::install.password_rules_labels.min_length'), $this->config['password']['min_length']],
             [__('green-auth::install.password_rules_labels.require_uppercase'), $this->config['password']['require_uppercase'] ? __('green-auth::install.values.yes') : __('green-auth::install.values.no')],
@@ -82,12 +82,12 @@ trait DisplaysConfiguration
             [__('green-auth::install.password_rules_labels.require_symbols'), $this->config['password']['require_symbols'] ? __('green-auth::install.values.yes') : __('green-auth::install.values.no')],
             [__('green-auth::install.password_rules_labels.check_compromised'), $this->config['password']['uncompromised'] ? __('green-auth::install.values.yes') : __('green-auth::install.values.no')],
         ];
-        
+
         if ($this->config['features']['password_expiration']) {
             $passwordSettings[] = [__('green-auth::install.password_rules_labels.expires_days'), $this->config['password']['expires_days']];
             $passwordSettings[] = [__('green-auth::install.password_rules_labels.warning_days'), $this->config['password']['warning_days']];
         }
-        
+
         $this->table(['Password Rule', 'Value'], $passwordSettings);
     }
 

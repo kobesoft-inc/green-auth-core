@@ -62,7 +62,7 @@ php artisan green-auth:install --force
 php artisan vendor:publish --tag=green-auth-config
 
 # 全リソースを公開
-php artisan vendor:publish --provider="Green\AuthCore\GreenAuthServiceProvider"
+php artisan vendor:publish --provider="Green\Auth\GreenAuthServiceProvider"
 
 # マイグレーション実行
 php artisan migrate
@@ -97,7 +97,7 @@ Green Auth CoreはFilament管理パネルの完全統合を提供：
 
 ```php
 // カスタムユーザーモデルの例
-class User extends \Green\AuthCore\Models\BaseUser
+class User extends \Green\Auth\Models\BaseUser
 {
     // カスタム属性とメソッド
 }
@@ -116,7 +116,7 @@ class User extends \Green\AuthCore\Models\BaseUser
 ネスト構造を持つ階層グループシステム：
 
 ```php
-class Group extends \Green\AuthCore\Models\BaseGroup
+class Group extends \Green\Auth\Models\BaseGroup
 {
     // ネストセット機能を継承
 }
@@ -133,7 +133,7 @@ class Group extends \Green\AuthCore\Models\BaseGroup
 柔軟なロールベースアクセス制御：
 
 ```php
-class Role extends \Green\AuthCore\Models\BaseRole
+class Role extends \Green\Auth\Models\BaseRole
 {
     // ロール固有の機能
 }
@@ -159,7 +159,7 @@ Green Auth Coreは洗練された権限システムを実装：
 ### カスタム権限の作成
 
 ```php
-use Green\AuthCore\Permission\BasePermission;
+use Green\Auth\Permission\BasePermission;
 
 class PostPermissions extends BasePermission
 {
@@ -171,7 +171,7 @@ class PostPermissions extends BasePermission
 
 ```php
 // サービスプロバイダーで
-use Green\AuthCore\Facades\PermissionManager;
+use Green\Auth\Facades\PermissionManager;
 
 PermissionManager::register([
     PostPermissions::class,
@@ -267,8 +267,8 @@ return [
 ### ベースモデルの拡張
 
 ```php
-use Green\AuthCore\Models\BaseUser;
-use Green\AuthCore\Models\Concerns\HasCustomAttribute;
+use Green\Auth\Models\BaseUser;
+use Green\Auth\Models\Concerns\HasCustomAttribute;
 
 class User extends BaseUser
 {
@@ -288,7 +288,7 @@ class User extends BaseUser
 ### カスタムFilamentリソース
 
 ```php
-use Green\AuthCore\Filament\Resources\BaseUserResource;
+use Green\Auth\Filament\Resources\BaseUserResource;
 
 class UserResource extends BaseUserResource
 {

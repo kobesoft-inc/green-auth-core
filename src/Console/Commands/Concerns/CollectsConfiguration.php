@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Console\Commands\Concerns;
+namespace Green\Auth\Console\Commands\Concerns;
 
 trait CollectsConfiguration
 {
@@ -12,7 +12,7 @@ trait CollectsConfiguration
         $result = $this->ask(__($prompt), $default);
         return strtolower($result) === 'n' ? null : $result;
     }
-    
+
     /**
      * 基本設定を収集
      */
@@ -37,7 +37,7 @@ trait CollectsConfiguration
 
         // Userモデル名を先に取得
         $userModel = $this->ask(__('green-auth::install.prompts.user_model'), 'User');
-        
+
         // Userモデル名からGroup/Roleのデフォルト値を生成
         $defaultGroup = $this->generateDefaultModelName($userModel, 'Group');
         $defaultRole = $this->generateDefaultModelName($userModel, 'Role');
@@ -49,14 +49,14 @@ trait CollectsConfiguration
             'role' => $this->askForModel('green-auth::install.prompts.role_model', $defaultRole),
             'login_log' => $this->askForModel('green-auth::install.prompts.login_log_model', 'LoginLog'),
         ];
-        
+
         // 'n'が入力された場合、対応する機能を無効化
         $this->config['features'] = [
             'groups' => $this->config['models']['group'] !== null,
             'roles' => $this->config['models']['role'] !== null,
             'login_logging' => $this->config['models']['login_log'] !== null,
         ];
-        
+
         // 機能選択
         $this->collectFeatureConfiguration();
     }
@@ -77,7 +77,7 @@ trait CollectsConfiguration
         } else {
             $this->config['features']['permissions'] = false;
         }
-        
+
         $this->config['features']['password_expiration'] = $this->confirm(__('green-auth::install.prompts.enable_password_expiration'), true);
         $this->config['features']['account_suspension'] = $this->confirm(__('green-auth::install.prompts.enable_account_suspension'), true);
         $this->config['features']['avatar'] = $this->confirm(__('green-auth::install.prompts.enable_avatar'), true);
@@ -102,7 +102,7 @@ trait CollectsConfiguration
 
         $this->config['auth'] = [
             'login_with_email' => $this->confirm(__('green-auth::install.prompts.login_with_email'), true),
-            'login_with_username' => $this->config['features']['username'] 
+            'login_with_username' => $this->config['features']['username']
                 ? $this->confirm(__('green-auth::install.prompts.login_with_username'), false)
                 : false,
         ];
@@ -113,7 +113,7 @@ trait CollectsConfiguration
         } else {
             $this->config['user_permissions']['multiple_groups'] = false;
         }
-        
+
         if ($this->config['features']['roles']) {
             $this->config['user_permissions']['multiple_roles'] = $this->confirm(__('green-auth::install.prompts.multiple_roles'), true);
         } else {
@@ -136,7 +136,7 @@ trait CollectsConfiguration
     protected function collectPasswordRules(): void
     {
         $defaults = $this->getDefaultPasswordRules();
-        
+
         $this->newLine();
         $this->info(__('green-auth::install.prompts.password_rules_config'));
         $this->newLine();
@@ -167,27 +167,27 @@ trait CollectsConfiguration
 
         // テーブル名をカスタマイズするか聞く
         $customizeTables = $this->confirm(__('green-auth::install.prompts.customize_table_names'), false);
-        
+
         if ($customizeTables) {
             $this->config['tables'] = [
                 'users' => $this->ask(__('green-auth::install.prompts.table_users'), 'users'),
             ];
-            
+
             // 機能が有効な場合のみテーブル名を収集
             if ($this->config['features']['groups']) {
                 $this->config['tables']['groups'] = $this->ask(__('green-auth::install.prompts.table_groups'), 'groups');
                 $this->config['tables']['user_groups'] = $this->ask(__('green-auth::install.prompts.table_user_groups'), 'user_groups');
             }
-            
+
             if ($this->config['features']['roles']) {
                 $this->config['tables']['roles'] = $this->ask(__('green-auth::install.prompts.table_roles'), 'roles');
                 $this->config['tables']['user_roles'] = $this->ask(__('green-auth::install.prompts.table_user_roles'), 'user_roles');
             }
-            
+
             if ($this->config['features']['groups'] && $this->config['features']['roles']) {
                 $this->config['tables']['group_roles'] = $this->ask(__('green-auth::install.prompts.table_group_roles'), 'group_roles');
             }
-            
+
             if ($this->config['features']['login_logging']) {
                 $this->config['tables']['login_logs'] = $this->ask(__('green-auth::install.prompts.table_login_logs'), 'login_logs');
             }
@@ -196,21 +196,21 @@ trait CollectsConfiguration
             $this->config['tables'] = [
                 'users' => 'users',
             ];
-            
+
             if ($this->config['features']['groups']) {
                 $this->config['tables']['groups'] = 'groups';
                 $this->config['tables']['user_groups'] = 'user_groups';
             }
-            
+
             if ($this->config['features']['roles']) {
                 $this->config['tables']['roles'] = 'roles';
                 $this->config['tables']['user_roles'] = 'user_roles';
             }
-            
+
             if ($this->config['features']['groups'] && $this->config['features']['roles']) {
                 $this->config['tables']['group_roles'] = 'group_roles';
             }
-            
+
             if ($this->config['features']['login_logging']) {
                 $this->config['tables']['login_logs'] = 'login_logs';
             }
@@ -233,18 +233,18 @@ trait CollectsConfiguration
         if ($this->config['generate_resources']) {
             $this->config['resource_namespace'] = $this->ask(__('green-auth::install.prompts.resource_namespace'), 'App\\Filament\\Resources');
         }
-        
+
         // ユーザーメニュー設定
         $this->config['user_menu']['allow_password_change'] = $this->confirm(__('green-auth::install.prompts.allow_password_change'), true);
     }
-    
+
     /**
      * パスワードルールを表示
      */
     protected function displayPasswordRules(): void
     {
         $defaults = $this->getDefaultPasswordRules();
-        
+
         $this->newLine();
         $this->info(__('green-auth::install.messages.default_password_rules'));
         $this->table([__('green-auth::install.labels.rule'), __('green-auth::install.labels.value')], [
@@ -255,7 +255,7 @@ trait CollectsConfiguration
             [__('green-auth::install.labels.require_symbols'), $defaults['require_symbols'] ? __('green-auth::install.labels.yes') : __('green-auth::install.labels.no')],
             [__('green-auth::install.labels.check_compromised'), $defaults['uncompromised'] ? __('green-auth::install.labels.yes') : __('green-auth::install.labels.no')],
         ]);
-        
+
         if (isset($this->config['features']['password_expiration']) && $this->config['features']['password_expiration']) {
             $this->table([__('green-auth::install.labels.expiration_rule'), __('green-auth::install.labels.value')], [
                 [__('green-auth::install.labels.expires_days'), $defaults['expires_days']],
@@ -263,7 +263,7 @@ trait CollectsConfiguration
             ]);
         }
     }
-    
+
     /**
      * デフォルトのパスワードルールを取得
      */
@@ -277,12 +277,12 @@ trait CollectsConfiguration
             'require_symbols' => false,
             'uncompromised' => true,
         ];
-        
+
         if ($this->config['features']['password_expiration']) {
             $defaults['expires_days'] = 90;
             $defaults['warning_days'] = 7;
         }
-        
+
         return $defaults;
     }
 
@@ -295,7 +295,7 @@ trait CollectsConfiguration
         if (str_contains($userModel, 'User')) {
             return str_replace('User', $baseModel, $userModel);
         }
-        
+
         // Userという単語がない場合は標準のモデル名を返す
         return $baseModel;
     }

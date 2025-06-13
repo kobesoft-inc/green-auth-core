@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Filament\Pages\Auth;
+namespace Green\Auth\Filament\Pages\Auth;
 
 use Filament\Actions\Action;
 use Filament\Forms\Components\Component;
@@ -16,8 +16,8 @@ use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Green\AuthCore\Password\PasswordComplexity;
-use Green\AuthCore\Rules\PasswordRule;
+use Green\Auth\Password\PasswordComplexity;
+use Green\Auth\Rules\PasswordRule;
 
 class ChangePassword extends Page implements HasForms
 {

@@ -1,19 +1,19 @@
 <?php
 
-namespace Green\AuthCore\Filament\Actions;
+namespace Green\Auth\Filament\Actions;
 
 use Filament\Tables\Actions\Action;
-use Green\AuthCore\Filament\Actions\Concerns\ManagesUserPasswords;
+use Green\Auth\Filament\Actions\Concerns\ManagesUserPasswords;
 use Illuminate\Database\Eloquent\Model;
 
 class ChangeUserPasswordAction extends Action
 {
     use ManagesUserPasswords;
-    
+
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->name('changePassword')
             ->label(__('green-auth::passwords.change_password'))
             ->icon('heroicon-o-key')

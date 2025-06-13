@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Filament\Resources\Concerns\Role;
+namespace Green\Auth\Filament\Resources\Concerns\Role;
 
 use Exception;
 use Filament\Tables;
@@ -14,7 +14,7 @@ trait HasRoleColumns
 
     /**
      * カスタマイズ可能な名前カラムを作成
-     * 
+     *
      * @return Tables\Columns\TextColumn 名前カラム
      */
     public static function getNameColumn(): Tables\Columns\TextColumn
@@ -28,7 +28,7 @@ trait HasRoleColumns
 
     /**
      * カスタマイズ可能なユーザーカラムを作成
-     * 
+     *
      * @return Tables\Columns\ImageColumn|null ユーザーカラム（トレイトがない場合はnull）
      */
     public static function getUsersColumn(): ?Tables\Columns\ImageColumn
@@ -65,7 +65,7 @@ trait HasRoleColumns
 
     /**
      * カスタマイズ可能なグループカラムを作成
-     * 
+     *
      * @return Tables\Columns\TextColumn|null グループカラム（トレイトがない場合はnull）
      */
     public static function getGroupsColumn(): ?Tables\Columns\TextColumn
@@ -81,7 +81,7 @@ trait HasRoleColumns
 
     /**
      * カスタマイズ可能な作成日時カラムを作成
-     * 
+     *
      * @return Tables\Columns\TextColumn 作成日時カラム
      */
     public static function getCreatedAtColumn(): Tables\Columns\TextColumn
@@ -95,7 +95,7 @@ trait HasRoleColumns
 
     /**
      * ユーザーフィルターを作成
-     * 
+     *
      * @return SelectFilter|null ユーザーフィルター（トレイトがない場合はnull）
      */
     public static function getUsersFilter(): ?SelectFilter

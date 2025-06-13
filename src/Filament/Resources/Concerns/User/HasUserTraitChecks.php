@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Filament\Resources\Concerns\User;
+namespace Green\Auth\Filament\Resources\Concerns\User;
 
 /**
  * ユーザーモデルのトレイト存在チェック機能を提供するトレイト
@@ -9,7 +9,7 @@ trait HasUserTraitChecks
 {
     /**
      * モデルがアバタートレイトを持っているかチェック
-     * 
+     *
      * @return bool アバタートレイトの有無
      */
     protected static function hasAvatarTrait(): bool
@@ -19,7 +19,7 @@ trait HasUserTraitChecks
 
     /**
      * モデルがグループトレイトを持っているかチェック
-     * 
+     *
      * @return bool グループトレイトの有無
      */
     protected static function hasGroupsTrait(): bool
@@ -29,7 +29,7 @@ trait HasUserTraitChecks
 
     /**
      * モデルがロールトレイトを持っているかチェック
-     * 
+     *
      * @return bool ロールトレイトの有無
      */
     protected static function hasRolesTrait(): bool
@@ -39,7 +39,7 @@ trait HasUserTraitChecks
 
     /**
      * モデルが停止トレイトを持っているかチェック
-     * 
+     *
      * @return bool 停止トレイトの有無
      */
     protected static function hasSuspensionTrait(): bool
@@ -49,7 +49,7 @@ trait HasUserTraitChecks
 
     /**
      * モデルがログインログトレイトを持っているかチェック
-     * 
+     *
      * @return bool ログインログトレイトの有無
      */
     protected static function hasLoginLogTrait(): bool
@@ -59,7 +59,7 @@ trait HasUserTraitChecks
 
     /**
      * モデルがユーザー名トレイトを持っているかチェック
-     * 
+     *
      * @return bool ユーザー名トレイトの有無
      */
     protected static function hasUsernameTrait(): bool

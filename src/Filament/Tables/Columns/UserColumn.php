@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Filament\Tables\Columns;
+namespace Green\Auth\Filament\Tables\Columns;
 
 use Closure;
 use Filament\Tables\Columns\Column;
@@ -59,7 +59,7 @@ class UserColumn extends Column
     public function size(int | Closure $size): static
     {
         $this->size = $size;
-        
+
         // imageSize は動的に計算されるように変更
         if (!$size instanceof Closure) {
             $this->imageSize = $size . 'px';
@@ -240,7 +240,7 @@ class UserColumn extends Column
     public function getDisplayName(mixed $state): ?string
     {
         $nameAttribute = $this->getNameAttribute($state);
-        
+
         if (!$nameAttribute) {
             return null;
         }
@@ -287,7 +287,7 @@ class UserColumn extends Column
     public function getUserColumnViewData(): array
     {
         $state = $this->getState();
-        
+
         return [
             'imageUrl' => $this->getImageUrl($state),
             'name' => $this->getDisplayName($state),

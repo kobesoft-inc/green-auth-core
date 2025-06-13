@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Filament\Resources\Concerns\Role;
+namespace Green\Auth\Filament\Resources\Concerns\Role;
 
 /**
  * ロールモデルのトレイト存在チェック機能を提供するトレイト
@@ -9,7 +9,7 @@ trait HasRoleTraitChecks
 {
     /**
      * モデルがユーザートレイトを持っているかチェック
-     * 
+     *
      * @return bool ユーザートレイトの有無
      */
     protected static function hasUsersTrait(): bool
@@ -19,7 +19,7 @@ trait HasRoleTraitChecks
 
     /**
      * モデルがグループトレイトを持っているかチェック
-     * 
+     *
      * @return bool グループトレイトの有無
      */
     protected static function hasGroupsTrait(): bool
@@ -29,7 +29,7 @@ trait HasRoleTraitChecks
 
     /**
      * モデルが権限トレイトを持っているかチェック
-     * 
+     *
      * @return bool 権限トレイトの有無
      */
     protected static function hasPermissionsTrait(): bool

@@ -1,12 +1,12 @@
 <?php
 
-namespace Green\AuthCore\Filament\Actions\Concerns;
+namespace Green\Auth\Filament\Actions\Concerns;
 
 use Filament\Forms;
-use Green\AuthCore\Mail\UserPasswordNotification;
-use Green\AuthCore\Password\PasswordComplexity;
-use Green\AuthCore\Password\PasswordGenerator;
-use Green\AuthCore\Password\PasswordValidator;
+use Green\Auth\Mail\UserPasswordNotification;
+use Green\Auth\Password\PasswordComplexity;
+use Green\Auth\Password\PasswordGenerator;
+use Green\Auth\Password\PasswordValidator;
 use Illuminate\Database\Eloquent\Model;
 
 trait ManagesUserPasswords

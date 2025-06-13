@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Console\Commands\Concerns;
+namespace Green\Auth\Console\Commands\Concerns;
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
@@ -384,7 +384,7 @@ return new class extends Migration
         $constraints[] = "Schema::table('users', function (Blueprint \$table) {
             \$table->dropUnique(['email']);
         });";
-        
+
         $constraints[] = "Schema::table('users', function (Blueprint \$table) {
             \$table->unique(['email', 'deleted_at']);
         });";
@@ -421,7 +421,7 @@ return new class extends Migration
         $constraints[] = "Schema::table('users', function (Blueprint \$table) {
             \$table->dropUnique(['email', 'deleted_at']);
         });";
-        
+
         $constraints[] = "Schema::table('users', function (Blueprint \$table) {
             \$table->unique(['email']);
         });";

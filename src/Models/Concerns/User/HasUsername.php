@@ -1,8 +1,8 @@
 <?php
 
-namespace Green\AuthCore\Models\Concerns\User;
+namespace Green\Auth\Models\Concerns\User;
 
-use Green\AuthCore\Models\Concerns\HasModelConfig;
+use Green\Auth\Models\Concerns\HasModelConfig;
 
 /**
  * ユーザー名機能を提供するトレイト
@@ -44,7 +44,7 @@ trait HasUsername
     {
         $instance = new static();
         $column = $instance->getUsernameColumn();
-        
+
         return static::where($column, $username)->first();
     }
 

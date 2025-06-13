@@ -1,11 +1,11 @@
 <?php
 
-namespace Green\AuthCore\Console\Commands;
+namespace Green\Auth\Console\Commands;
 
-use Green\AuthCore\Console\Commands\Concerns\CollectsConfiguration;
-use Green\AuthCore\Console\Commands\Concerns\DisplaysConfiguration;
-use Green\AuthCore\Console\Commands\Concerns\GeneratesFiles;
-use Green\AuthCore\Console\Commands\Concerns\GeneratesModels;
+use Green\Auth\Console\Commands\Concerns\CollectsConfiguration;
+use Green\Auth\Console\Commands\Concerns\DisplaysConfiguration;
+use Green\Auth\Console\Commands\Concerns\GeneratesFiles;
+use Green\Auth\Console\Commands\Concerns\GeneratesModels;
 use Illuminate\Console\Command;
 
 class InstallCommand extends Command
@@ -18,7 +18,7 @@ class InstallCommand extends Command
     /**
      * コンソールコマンドの名前とシグネチャ
      */
-    protected $signature = 'green-auth:install 
+    protected $signature = 'green-auth:install
                             {--force : Overwrite existing files}
                             {--skip-models : Skip model generation}
                             {--skip-migrations : Skip migration generation}
@@ -36,7 +36,7 @@ class InstallCommand extends Command
 
     /**
      * コンソールコマンドの実行
-     * 
+     *
      * @return int 実行結果コード
      */
     public function handle(): int

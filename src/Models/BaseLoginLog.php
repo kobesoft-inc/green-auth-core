@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Models;
+namespace Green\Auth\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -51,7 +51,7 @@ abstract class BaseLoginLog extends Model
 
     /**
      * ユーザーとのリレーション
-     * 
+     *
      * @return BelongsTo ユーザーモデルとの所属関係
      */
     public function user(): BelongsTo
@@ -62,7 +62,7 @@ abstract class BaseLoginLog extends Model
 
     /**
      * ログインログを作成
-     * 
+     *
      * @param mixed $user ユーザーモデルまたはID
      * @param string $guardName ガード名
      * @param Request|null $request リクエストインスタンス
@@ -88,7 +88,7 @@ abstract class BaseLoginLog extends Model
 
     /**
      * ユーザーエージェントを解析
-     * 
+     *
      * @param string $userAgent ユーザーエージェント文字列
      * @return array ブラウザ情報配列
      */
@@ -153,13 +153,13 @@ abstract class BaseLoginLog extends Model
 
     /**
      * ブラウザ情報の文字列表現を取得
-     * 
+     *
      * @return string ブラウザ情報文字列
      */
     public function getBrowserInfo(): string
     {
         $parts = [];
-        
+
         if ($this->browser_name && $this->browser_name !== 'Unknown') {
             $parts[] = $this->browser_name;
             if ($this->browser_version) {
@@ -180,7 +180,7 @@ abstract class BaseLoginLog extends Model
 
     /**
      * 特定ユーザーのログインに絞り込むスコープ
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query クエリビルダー
      * @param mixed $userId ユーザーID
      * @return \Illuminate\Database\Eloquent\Builder 絞り込まれたクエリ
@@ -192,7 +192,7 @@ abstract class BaseLoginLog extends Model
 
     /**
      * 特定ガードのログインに絞り込むスコープ
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query クエリビルダー
      * @param string $guardName ガード名
      * @return \Illuminate\Database\Eloquent\Builder 絞り込まれたクエリ
@@ -204,7 +204,7 @@ abstract class BaseLoginLog extends Model
 
     /**
      * 日付範囲内のログインに絞り込むスコープ
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query クエリビルダー
      * @param mixed $startDate 開始日
      * @param mixed $endDate 終了日
@@ -217,7 +217,7 @@ abstract class BaseLoginLog extends Model
 
     /**
      * 特定IPアドレスからのログインに絞り込むスコープ
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query クエリビルダー
      * @param string $ipAddress IPアドレス
      * @return \Illuminate\Database\Eloquent\Builder 絞り込まれたクエリ
@@ -229,7 +229,7 @@ abstract class BaseLoginLog extends Model
 
     /**
      * 最近のログインに絞り込むスコープ
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query クエリビルダー
      * @param int $hours 時間数（デフォルト24時間）
      * @return \Illuminate\Database\Eloquent\Builder 絞り込まれたクエリ

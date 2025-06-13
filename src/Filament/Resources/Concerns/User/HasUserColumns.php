@@ -1,10 +1,10 @@
 <?php
 
-namespace Green\AuthCore\Filament\Resources\Concerns\User;
+namespace Green\Auth\Filament\Resources\Concerns\User;
 
 use Filament\Tables;
 use Filament\Tables\Table;
-use Green\AuthCore\Filament\Tables\Columns\UserColumn;
+use Green\Auth\Filament\Tables\Columns\UserColumn;
 use Illuminate\Database\Eloquent\Builder;
 
 trait HasUserColumns
@@ -13,7 +13,7 @@ trait HasUserColumns
 
     /**
      * 名前カラム
-     * 
+     *
      * @return Tables\Columns\Column 名前表示用カラム
      */
     public static function getNameColumn(): Tables\Columns\Column
@@ -33,7 +33,7 @@ trait HasUserColumns
 
     /**
      * メールアドレスカラム
-     * 
+     *
      * @return Tables\Columns\TextColumn メールアドレス表示用カラム
      */
     public static function getEmailColumn(): Tables\Columns\TextColumn
@@ -46,7 +46,7 @@ trait HasUserColumns
 
     /**
      * ユーザー名カラム
-     * 
+     *
      * @return Tables\Columns\TextColumn|null ユーザー名表示用カラム（トレイトがない場合はnull）
      */
     public static function getUsernameColumn(): ?Tables\Columns\TextColumn
@@ -66,7 +66,7 @@ trait HasUserColumns
 
     /**
      * グループカラム
-     * 
+     *
      * @return Tables\Columns\TextColumn|null グループ表示用カラム（トレイトがない場合はnull）
      */
     public static function getGroupsColumn(): ?Tables\Columns\TextColumn
@@ -83,7 +83,7 @@ trait HasUserColumns
 
     /**
      * ロールカラム
-     * 
+     *
      * @return Tables\Columns\TextColumn|null ロール表示用カラム（トレイトがない場合はnull）
      */
     public static function getRolesColumn(): ?Tables\Columns\TextColumn
@@ -100,7 +100,7 @@ trait HasUserColumns
 
     /**
      * 停止ステータスカラム
-     * 
+     *
      * @return Tables\Columns\IconColumn|null 停止状態表示用アイコンカラム（トレイトがない場合はnull）
      */
     public static function getSuspendedColumn(): ?Tables\Columns\IconColumn
@@ -121,7 +121,7 @@ trait HasUserColumns
 
     /**
      * 最終ログイン日時カラム
-     * 
+     *
      * @return Tables\Columns\TextColumn|null 最終ログイン日時表示用カラム（トレイトがない場合はnull）
      */
     public static function getLastLoginColumn(): ?Tables\Columns\TextColumn
@@ -141,7 +141,7 @@ trait HasUserColumns
 
     /**
      * 作成日時カラム
-     * 
+     *
      * @return Tables\Columns\TextColumn 作成日時表示用カラム
      */
     public static function getCreatedAtColumn(): Tables\Columns\TextColumn
@@ -155,7 +155,7 @@ trait HasUserColumns
 
     /**
      * 更新日時カラム
-     * 
+     *
      * @return Tables\Columns\TextColumn 更新日時表示用カラム
      */
     public static function getUpdatedAtColumn(): Tables\Columns\TextColumn
@@ -169,7 +169,7 @@ trait HasUserColumns
 
     /**
      * グループフィルター
-     * 
+     *
      * @return Tables\Filters\SelectFilter|null グループフィルター（トレイトがない場合はnull）
      */
     public static function getGroupsFilter(): ?Tables\Filters\SelectFilter
@@ -187,7 +187,7 @@ trait HasUserColumns
 
     /**
      * ロールフィルター
-     * 
+     *
      * @return Tables\Filters\SelectFilter|null ロールフィルター（トレイトがない場合はnull）
      */
     public static function getRolesFilter(): ?Tables\Filters\SelectFilter
@@ -205,7 +205,7 @@ trait HasUserColumns
 
     /**
      * 停止ステータスフィルター
-     * 
+     *
      * @return Tables\Filters\TernaryFilter|null 停止状態フィルター（トレイトがない場合はnull）
      */
     public static function getSuspendedFilter(): ?Tables\Filters\TernaryFilter
@@ -224,7 +224,7 @@ trait HasUserColumns
 
     /**
      * メール認証フィルター
-     * 
+     *
      * @return Tables\Filters\TernaryFilter メール認証フィルター
      */
     public static function getEmailVerifiedFilter(): Tables\Filters\TernaryFilter
@@ -239,7 +239,7 @@ trait HasUserColumns
 
     /**
      * テーブル設定
-     * 
+     *
      * @param Table $table テーブルインスタンス
      * @return Table 設定済みテーブル
      */

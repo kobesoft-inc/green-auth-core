@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Filament\Resources\Concerns\Role;
+namespace Green\Auth\Filament\Resources\Concerns\Role;
 
 use Filament\Tables;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Filament\Actions;
+namespace Green\Auth\Filament\Actions;
 
 use Filament\Notifications\Notification;
 use Filament\Tables\Actions\Action;
@@ -20,7 +20,7 @@ class SuspendUserAction
             ->action(function ($record) {
                 if (method_exists($record, 'suspend')) {
                     $record->suspend();
-                    
+
                     Notification::make()
                         ->success()
                         ->title(__('green-auth::notifications.user_suspended'))

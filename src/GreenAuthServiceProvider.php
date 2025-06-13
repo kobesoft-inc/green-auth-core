@@ -1,10 +1,13 @@
 <?php
 
-namespace Green\AuthCore;
+namespace Green\Auth;
 
-use Green\AuthCore\Console\Commands\InstallCommand;
-use Green\AuthCore\Facades\PermissionManager;
-use Green\AuthCore\Permission\Super;
+use Green\Auth\Console\Commands\InstallCommand;
+use Green\Auth\Facades\PermissionManager;
+use Green\Auth\Listeners\LogUserLogin;
+use Green\Auth\Permission\Super;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -30,10 +33,10 @@ class GreenAuthServiceProvider extends ServiceProvider
 
         // PermissionManagerを登録
         $this->app->singleton('green-auth.permission-manager', function () {
-            return new \Green\AuthCore\Permission\PermissionManager();
+            return new \Green\Auth\Permission\PermissionManager();
         });
 
-        $this->app->alias('green-auth.permission-manager', \Green\AuthCore\Permission\PermissionManager::class);
+        $this->app->alias('green-auth.permission-manager', \Green\Auth\Permission\PermissionManager::class);
 
         PermissionManager::register([
             Super::class,
@@ -57,7 +60,10 @@ class GreenAuthServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__ . '/../lang', 'green-auth');
 
         // Livewireコンポーネントの手動登録
-        \Livewire\Livewire::component('green-auth.password-expired', \Green\AuthCore\Filament\Pages\Auth\PasswordExpired::class);
+        \Livewire\Livewire::component('green-auth.password-expired', \Green\Auth\Filament\Pages\Auth\PasswordExpired::class);
+        
+        // イベントリスナーの登録
+        $this->registerEventListeners();
 
         // パブリッシュ可能なリソース
         if ($this->app->runningInConsole()) {
@@ -86,5 +92,18 @@ class GreenAuthServiceProvider extends ServiceProvider
                 __DIR__ . '/../lang' => resource_path('lang/vendor/green-auth'),
             ], 'green-auth-lang');
         }
+    }
+
+    /**
+     * イベントリスナーを登録
+     *
+     * @return void
+     */
+    protected function registerEventListeners(): void
+    {
+        Event::listen(
+            Login::class,
+            LogUserLogin::class
+        );
     }
 }

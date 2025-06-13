@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Mail;
+namespace Green\Auth\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Model;

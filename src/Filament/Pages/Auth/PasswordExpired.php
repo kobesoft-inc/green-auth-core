@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Filament\Pages\Auth;
+namespace Green\Auth\Filament\Pages\Auth;
 
 use Filament\Actions\Action;
 use Filament\Forms\Components\Component;
@@ -11,8 +11,8 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
-use Green\AuthCore\Password\PasswordComplexity;
-use Green\AuthCore\Rules\PasswordRule;
+use Green\Auth\Password\PasswordComplexity;
+use Green\Auth\Rules\PasswordRule;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Filament\Resources\Concerns\Group;
+namespace Green\Auth\Filament\Resources\Concerns\Group;
 
 /**
  * グループモデルのトレイト存在チェック機能を提供するトレイト
@@ -9,7 +9,7 @@ trait HasGroupTraitChecks
 {
     /**
      * モデルが親グループトレイトを持っているかチェック
-     * 
+     *
      * @return bool 親グループトレイトの有無
      */
     protected static function hasParentGroupTrait(): bool
@@ -19,7 +19,7 @@ trait HasGroupTraitChecks
 
     /**
      * モデルがユーザートレイトを持っているかチェック
-     * 
+     *
      * @return bool ユーザートレイトの有無
      */
     protected static function hasUsersTrait(): bool
@@ -29,7 +29,7 @@ trait HasGroupTraitChecks
 
     /**
      * モデルがロールトレイトを持っているかチェック
-     * 
+     *
      * @return bool ロールトレイトの有無
      */
     protected static function hasRolesTrait(): bool

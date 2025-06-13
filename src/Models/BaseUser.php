@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Models;
+namespace Green\Auth\Models;
 
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;

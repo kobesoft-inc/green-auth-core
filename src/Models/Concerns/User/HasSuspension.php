@@ -1,9 +1,9 @@
 <?php
 
-namespace Green\AuthCore\Models\Concerns\User;
+namespace Green\Auth\Models\Concerns\User;
 
 use Carbon\Carbon;
-use Green\AuthCore\Models\Concerns\HasModelConfig;
+use Green\Auth\Models\Concerns\HasModelConfig;
 use Illuminate\Database\Eloquent\Model;
 
 /**

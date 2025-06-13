@@ -1,9 +1,9 @@
 <?php
 
-namespace Green\AuthCore\Filament\Actions;
+namespace Green\Auth\Filament\Actions;
 
 use Filament\Actions\CreateAction;
-use Green\AuthCore\Filament\Actions\Concerns\ManagesUserPasswords;
+use Green\Auth\Filament\Actions\Concerns\ManagesUserPasswords;
 
 class CreateRoleAction extends CreateAction
 {

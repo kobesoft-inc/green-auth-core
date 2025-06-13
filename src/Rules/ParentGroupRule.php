@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Rules;
+namespace Green\Auth\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * 親グループバリデーションルール
- * 
+ *
  * グループの親子関係において循環参照を防ぐためのバリデーション
  */
 class ParentGroupRule implements ValidationRule
@@ -18,7 +18,7 @@ class ParentGroupRule implements ValidationRule
 
     /**
      * コンストラクタ
-     * 
+     *
      * @param string $groupModelClass グループモデルクラス名
      * @param Model|null $currentGroup 現在編集中のグループ（新規作成時はnull）
      */
@@ -30,7 +30,7 @@ class ParentGroupRule implements ValidationRule
 
     /**
      * 親グループの選択が有効かを検証
-     * 
+     *
      * @param string $attribute 属性名
      * @param mixed $value 検証対象の値（親グループID）
      * @param Closure $fail 失敗時のコールバック
@@ -74,7 +74,7 @@ class ParentGroupRule implements ValidationRule
 
     /**
      * IDでグループを検索
-     * 
+     *
      * @param mixed $id グループID
      * @return Model|null グループモデル
      */
@@ -85,7 +85,7 @@ class ParentGroupRule implements ValidationRule
 
     /**
      * 循環参照が発生するかチェック
-     * 
+     *
      * @param Model $potentialParent 親にしようとしているグループ
      * @return bool 循環参照が発生する場合はtrue
      */
@@ -103,7 +103,7 @@ class ParentGroupRule implements ValidationRule
 
     /**
      * 指定されたグループが別のグループの子孫かどうかチェック
-     * 
+     *
      * @param Model $group チェック対象のグループ
      * @param Model $ancestor 祖先候補のグループ
      * @return bool 子孫関係にある場合はtrue
@@ -111,7 +111,7 @@ class ParentGroupRule implements ValidationRule
     protected function isDescendantOf(Model $group, Model $ancestor): bool
     {
         $current = $group;
-        
+
         // 最大10階層まで遡って循環参照をチェック（無限ループ防止）
         for ($i = 0; $i < 10; $i++) {
             if (!isset($current->parent_id) || !$current->parent_id) {
@@ -135,14 +135,14 @@ class ParentGroupRule implements ValidationRule
 
     /**
      * 最大深度を超えるかチェック
-     * 
+     *
      * @param Model $parentGroup 親グループ
      * @return bool 最大深度を超える場合はtrue
      */
     protected function exceedsMaxDepth(Model $parentGroup): bool
     {
         $maxDepth = config('green-auth.groups.max_depth', 10);
-        
+
         if (method_exists($parentGroup, 'getDepth')) {
             return $parentGroup->getDepth() >= $maxDepth;
         }
@@ -154,7 +154,7 @@ class ParentGroupRule implements ValidationRule
 
     /**
      * グループの深度を計算
-     * 
+     *
      * @param Model $group グループ
      * @return int 深度
      */
@@ -183,7 +183,7 @@ class ParentGroupRule implements ValidationRule
 
     /**
      * ファクトリメソッド：グループモデルと現在のレコードから作成
-     * 
+     *
      * @param string $groupModelClass グループモデルクラス名
      * @param Model|null $currentGroup 現在編集中のグループ
      * @return static
@@ -195,7 +195,7 @@ class ParentGroupRule implements ValidationRule
 
     /**
      * ファクトリメソッド：Filamentリソースから作成
-     * 
+     *
      * @param string $resourceClass Filamentリソースクラス名
      * @param Model|null $currentRecord 現在編集中のレコード
      * @return static

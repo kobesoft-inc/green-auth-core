@@ -1,9 +1,9 @@
 <?php
 
-namespace Green\AuthCore\Filament\Resources\Concerns\Group;
+namespace Green\Auth\Filament\Resources\Concerns\Group;
 
 use Filament\Forms;
-use Green\AuthCore\Rules\ParentGroupRule;
+use Green\Auth\Rules\ParentGroupRule;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace Green\AuthCore\Models\Concerns\Role;
+namespace Green\Auth\Models\Concerns\Role;
 
-use Green\AuthCore\Models\Concerns\HasModelConfig;
+use Green\Auth\Models\Concerns\HasModelConfig;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 

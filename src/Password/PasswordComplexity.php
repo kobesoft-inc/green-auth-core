@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Password;
+namespace Green\Auth\Password;
 
 /**
  * パスワード複雑さの要件を定義するクラス
@@ -109,7 +109,7 @@ class PasswordComplexity
         if ($length < $this->minLength) {
             $errors[] = __('green-auth::passwords.password_min_length', ['min' => $this->minLength]);
         }
-        
+
         if ($this->maxLength !== null && $length > $this->maxLength) {
             $errors[] = __('green-auth::passwords.password_max_length', ['max' => $this->maxLength]);
         }
@@ -251,39 +251,39 @@ class PasswordComplexity
     public static function fromArray(array $config): self
     {
         $complexity = new self();
-        
+
         if (isset($config['min_length'])) {
             $complexity->minLength($config['min_length']);
         }
-        
+
         if (isset($config['max_length'])) {
             $complexity->maxLength($config['max_length']);
         }
-        
+
         if (isset($config['require_lowercase'])) {
             $complexity->requireLowercase($config['require_lowercase']);
         }
-        
+
         if (isset($config['require_uppercase'])) {
             $complexity->requireUppercase($config['require_uppercase']);
         }
-        
+
         if (isset($config['require_numbers'])) {
             $complexity->requireNumbers($config['require_numbers']);
         }
-        
+
         if (isset($config['require_symbols'])) {
             $complexity->requireSymbols($config['require_symbols']);
         }
-        
+
         if (isset($config['allowed_symbols'])) {
             $complexity->allowedSymbols($config['allowed_symbols']);
         }
-        
+
         if (isset($config['forbidden_patterns'])) {
             $complexity->forbidPatterns($config['forbidden_patterns']);
         }
-        
+
         return $complexity;
     }
 
@@ -293,12 +293,12 @@ class PasswordComplexity
     public static function fromAppConfig(string $guard): self
     {
         $config = config("green-auth.guards.{$guard}.password", []);
-        
+
         // 設定が空の場合はデフォルトを返す
         if (empty($config)) {
             return self::default();
         }
-        
+
         return self::fromArray($config);
     }
 }

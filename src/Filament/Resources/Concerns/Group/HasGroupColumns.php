@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Filament\Resources\Concerns\Group;
+namespace Green\Auth\Filament\Resources\Concerns\Group;
 
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -12,7 +12,7 @@ trait HasGroupColumns
 
     /**
      * カスタマイズ可能な名前カラムを作成
-     * 
+     *
      * @return Tables\Columns\TextColumn 名前カラム
      */
     public static function getNameColumn(): Tables\Columns\TextColumn
@@ -24,7 +24,7 @@ trait HasGroupColumns
             ->description(fn ($record) => $record->description)
             ->extraAttributes(function ($record) {
                 $textIndent = '0px';
-                
+
                 // NestedSetの深度に基づいてtext-indentを設定
                 if (method_exists($record, 'getDepth')) {
                     $depth = $record->getDepth();
@@ -34,7 +34,7 @@ trait HasGroupColumns
                     $ancestorCount = $record->ancestors->count();
                     $textIndent = ($ancestorCount * 20) . 'px';
                 }
-                
+
                 return [
                     'style' => "text-indent: {$textIndent};"
                 ];
@@ -43,7 +43,7 @@ trait HasGroupColumns
 
     /**
      * カスタマイズ可能な親グループカラムを作成
-     * 
+     *
      * @return Tables\Columns\TextColumn|null 親グループカラム（トレイトがない場合はnull）
      */
     public static function getParentColumn(): ?Tables\Columns\TextColumn
@@ -60,7 +60,7 @@ trait HasGroupColumns
 
     /**
      * カスタマイズ可能な子グループ数カラムを作成
-     * 
+     *
      * @return Tables\Columns\TextColumn|null 子グループ数カラム（トレイトがない場合はnull）
      */
     public static function getChildrenCountColumn(): ?Tables\Columns\TextColumn
@@ -77,7 +77,7 @@ trait HasGroupColumns
 
     /**
      * カスタマイズ可能なユーザーカラムを作成
-     * 
+     *
      * @return Tables\Columns\ImageColumn|null ユーザーカラム（トレイトがない場合はnull）
      */
     public static function getUsersColumn(): ?Tables\Columns\ImageColumn
@@ -114,7 +114,7 @@ trait HasGroupColumns
 
     /**
      * カスタマイズ可能なロールカラムを作成
-     * 
+     *
      * @return Tables\Columns\TextColumn|null ロールカラム（トレイトがない場合はnull）
      */
     public static function getRolesColumn(): ?Tables\Columns\TextColumn
@@ -130,7 +130,7 @@ trait HasGroupColumns
 
     /**
      * カスタマイズ可能な作成日時カラムを作成
-     * 
+     *
      * @return Tables\Columns\TextColumn 作成日時カラム
      */
     public static function getCreatedAtColumn(): Tables\Columns\TextColumn
@@ -144,7 +144,7 @@ trait HasGroupColumns
 
     /**
      * ユーザーフィルターを作成
-     * 
+     *
      * @return Tables\Filters\SelectFilter|null ユーザーフィルター（トレイトがない場合はnull）
      */
     public static function getUsersFilter(): ?Tables\Filters\SelectFilter
@@ -162,7 +162,7 @@ trait HasGroupColumns
 
     /**
      * ロールフィルターを作成
-     * 
+     *
      * @return Tables\Filters\SelectFilter|null ロールフィルター（トレイトがない場合はnull）
      */
     public static function getRolesFilter(): ?Tables\Filters\SelectFilter
@@ -180,7 +180,7 @@ trait HasGroupColumns
 
     /**
      * フィルター配列を取得
-     * 
+     *
      * @return array フィルター配列
      */
     public static function getTableFilters(): array
@@ -193,7 +193,7 @@ trait HasGroupColumns
 
     /**
      * バルクアクション配列を取得
-     * 
+     *
      * @return array バルクアクション配列
      */
     public static function getBulkActions(): array

@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Filament\Pages\Auth;
+namespace Green\Auth\Filament\Pages\Auth;
 
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Actions\Action;
@@ -337,14 +337,8 @@ class Login extends BaseLogin
      */
     protected function recordSuccessfulLogin($user): void
     {
-        $loginLogClass = $this->getLoginLogModel();
-        if ($loginLogClass && class_exists($loginLogClass)) {
-            $loginLogClass::createLog(
-                $user,
-                $this->getGuard(),
-                request()
-            );
-        }
+        // Laravel標準のLoginイベントがAuth::attempt()で自動的に発火されるため、
+        // ここでは何もしない（LogUserLoginリスナーが自動的にログを記録）
     }
 
     /**

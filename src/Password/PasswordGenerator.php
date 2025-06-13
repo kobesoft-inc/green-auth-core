@@ -1,6 +1,6 @@
 <?php
 
-namespace Green\AuthCore\Password;
+namespace Green\Auth\Password;
 
 use InvalidArgumentException;
 
