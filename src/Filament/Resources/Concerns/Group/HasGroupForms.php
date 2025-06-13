@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 trait HasGroupForms
 {
     use HasGroupTraitChecks;
+
     /**
      * 名前入力コンポーネントをカスタマイズできるように
      *
@@ -18,7 +19,7 @@ trait HasGroupForms
     public static function getNameFormComponent(): Forms\Components\TextInput
     {
         return Forms\Components\TextInput::make('name')
-            ->label('グループ名')
+            ->label(static::getLocalizedFieldLabel('group_name'))
             ->required()
             ->maxLength(255)
             ->unique(ignoreRecord: true);
@@ -32,7 +33,7 @@ trait HasGroupForms
     public static function getDescriptionFormComponent(): Forms\Components\Textarea
     {
         return Forms\Components\Textarea::make('description')
-            ->label('説明')
+            ->label(__('green-auth::groups.description'))
             ->maxLength(65535)
             ->columnSpanFull();
     }
@@ -49,7 +50,7 @@ trait HasGroupForms
         }
 
         return Forms\Components\Select::make('parent_id')
-            ->label('親グループ')
+            ->label(static::getLocalizedFieldLabel('parent_group'))
             ->relationship(
                 'parent',
                 'name',
@@ -61,6 +62,7 @@ trait HasGroupForms
                             ->whereNotIn('id', $record->descendants->pluck('id'))
                     )
             )
+            ->placeholder('')
             ->rules([
                 function (?Model $record = null) {
                     return ParentGroupRule::for(static::getModel(), $record);
@@ -68,7 +70,7 @@ trait HasGroupForms
             ])
             ->searchable()
             ->preload()
-            ->placeholder('なし（ルートグループ）')
+            ->placeholder('')
             ->getOptionLabelFromRecordUsing(function ($record) {
                 if (method_exists($record, 'ancestors')) {
                     $ancestors = $record->ancestors->pluck('name')->join(' > ');
@@ -77,8 +79,7 @@ trait HasGroupForms
                     }
                 }
                 return $record->name;
-            })
-;
+            });
     }
 
     /**
@@ -93,12 +94,12 @@ trait HasGroupForms
         }
 
         return Forms\Components\Select::make('roles')
-            ->label('ロール')
+            ->label(static::getTranslatedModelLabel('role', true))
             ->relationship('roles', 'name')
+            ->placeholder('')
             ->multiple()
             ->searchable()
             ->preload()
-            ->placeholder('ロールを選択してください')
             ->columnSpanFull();
     }
 

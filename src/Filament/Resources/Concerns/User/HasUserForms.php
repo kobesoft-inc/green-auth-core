@@ -63,8 +63,9 @@ trait HasUserForms
         $allowMultiple = $modelInstance->canBelongToMultipleGroups();
 
         return Forms\Components\Select::make('groups')
-            ->label(__('green-auth::users.groups'))
+            ->label(static::getLocalizedFieldLabel('groups', true))
             ->relationship('groups', 'name')
+            ->placeholder('')
             ->multiple($allowMultiple)
             ->preload()
             ->searchable()
@@ -94,8 +95,9 @@ trait HasUserForms
         $allowMultiple = method_exists($modelInstance, 'canHaveMultipleRoles') ? $modelInstance->canHaveMultipleRoles() : true;
 
         return Forms\Components\Select::make('roles')
-            ->label(__('green-auth::users.roles'))
+            ->label(static::getLocalizedFieldLabel('roles', true))
             ->relationship('roles', 'name')
+            ->placeholder('')
             ->multiple($allowMultiple)
             ->preload()
             ->searchable();

@@ -38,7 +38,7 @@ class PasswordRule implements ValidationRule
         if (!$this->complexity->isValid($value)) {
             $requirements = $this->complexity->getRequirements();
             $message = __('green-auth::passwords.password_requirements', [
-                'requirements' => implode('、', $requirements)
+                'requirements' => implode(',', $requirements)
             ]);
             $fail($message);
         }

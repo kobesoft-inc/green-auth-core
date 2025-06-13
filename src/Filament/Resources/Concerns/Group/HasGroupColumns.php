@@ -18,7 +18,7 @@ trait HasGroupColumns
     public static function getNameColumn(): Tables\Columns\TextColumn
     {
         return Tables\Columns\TextColumn::make('name')
-            ->label(__('green-auth::groups.name'))
+            ->label(static::getLocalizedFieldLabel('group_name'))
             ->searchable()
             ->sortable()
             ->description(fn ($record) => $record->description)
@@ -53,27 +53,11 @@ trait HasGroupColumns
         }
 
         return Tables\Columns\TextColumn::make('parent.name')
-            ->label(__('green-auth::groups.parent_group'))
+            ->label(static::getLocalizedFieldLabel('parent_group'))
             ->searchable()
             ->sortable();
     }
 
-    /**
-     * カスタマイズ可能な子グループ数カラムを作成
-     *
-     * @return Tables\Columns\TextColumn|null 子グループ数カラム（トレイトがない場合はnull）
-     */
-    public static function getChildrenCountColumn(): ?Tables\Columns\TextColumn
-    {
-        if (!static::hasParentGroupTrait()) {
-            return null;
-        }
-
-        return Tables\Columns\TextColumn::make('children_count')
-            ->label(__('green-auth::groups.child_groups_count'))
-            ->counts('children')
-            ->sortable();
-    }
 
     /**
      * カスタマイズ可能なユーザーカラムを作成
@@ -87,7 +71,7 @@ trait HasGroupColumns
         }
 
         return Tables\Columns\ImageColumn::make('users')
-            ->label(__('green-auth::groups.users'))
+            ->label(static::getTranslatedModelLabel('user', true))
             ->circular()
             ->stacked()
             ->limit(5)
@@ -124,7 +108,7 @@ trait HasGroupColumns
         }
 
         return Tables\Columns\TextColumn::make('roles.name')
-            ->label(__('green-auth::groups.roles'))
+            ->label(static::getTranslatedModelLabel('role', true))
             ->badge();
     }
 

@@ -181,11 +181,6 @@ trait HasModelConfig
      */
     public static function getGuardName(): string
     {
-        // キャッシュから取得
-        if (isset(static::$guardName) && static::$guardName !== null) {
-            return static::$guardName;
-        }
-
         // 設定からモデルクラスを検索してガードを特定
         $modelClass = static::class;
         $guards = config('green-auth.guards', []);

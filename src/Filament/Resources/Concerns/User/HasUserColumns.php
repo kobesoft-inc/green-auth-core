@@ -76,7 +76,7 @@ trait HasUserColumns
         }
 
         return Tables\Columns\TextColumn::make('groups.name')
-            ->label(__('green-auth::users.groups'))
+            ->label(static::getLocalizedFieldLabel('groups', true))
             ->badge()
             ->separator(', ');
     }
@@ -93,7 +93,7 @@ trait HasUserColumns
         }
 
         return Tables\Columns\TextColumn::make('roles.name')
-            ->label(__('green-auth::users.roles'))
+            ->label(static::getLocalizedFieldLabel('roles', true))
             ->badge()
             ->separator(', ');
     }

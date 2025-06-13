@@ -20,7 +20,7 @@ trait HasRoleForms
     public static function getNameFormComponent(): Forms\Components\TextInput
     {
         return Forms\Components\TextInput::make('name')
-            ->label(__('green-auth::roles.name'))
+            ->label(static::getLocalizedFieldLabel('role_name'))
             ->required()
             ->unique(ignoreRecord: true);
     }

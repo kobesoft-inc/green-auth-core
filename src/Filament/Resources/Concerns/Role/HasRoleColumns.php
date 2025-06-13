@@ -20,7 +20,7 @@ trait HasRoleColumns
     public static function getNameColumn(): Tables\Columns\TextColumn
     {
         return Tables\Columns\TextColumn::make('name')
-            ->label(__('green-auth::roles.name'))
+            ->label(static::getLocalizedFieldLabel('role_name'))
             ->searchable()
             ->sortable()
             ->description(fn ($record) => $record->description);
@@ -38,7 +38,7 @@ trait HasRoleColumns
         }
 
         return Tables\Columns\ImageColumn::make('users')
-            ->label(__('green-auth::roles.users'))
+            ->label(static::getTranslatedModelLabel('user', true))
             ->circular()
             ->stacked()
             ->limit(5)
@@ -75,7 +75,7 @@ trait HasRoleColumns
         }
 
         return Tables\Columns\TextColumn::make('groups.name')
-            ->label(__('green-auth::roles.groups'))
+            ->label(static::getTranslatedModelLabel('group', true))
             ->badge();
     }
 
