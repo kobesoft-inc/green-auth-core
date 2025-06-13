@@ -727,9 +727,9 @@ return new class extends Migration
     protected function getBaseResourceClass(string $type): string
     {
         $classMap = [
-            'user' => 'Green\\AuthCore\\Filament\\Resources\\BaseUserResource',
-            'group' => 'Green\\AuthCore\\Filament\\Resources\\BaseGroupResource',
-            'role' => 'Green\\AuthCore\\Filament\\Resources\\BaseRoleResource',
+            'user' => 'Green\\Auth\\Filament\\Resources\\BaseUserResource',
+            'group' => 'Green\\Auth\\Filament\\Resources\\BaseGroupResource',
+            'role' => 'Green\\Auth\\Filament\\Resources\\BaseRoleResource',
         ];
 
         return $classMap[$type] ?? 'Filament\\Resources\\Resource';
@@ -817,9 +817,9 @@ class {$pageClassName} extends BaseManageRecords
     protected function getCreateActionClass(string $type): string
     {
         $classMap = [
-            'user' => 'Green\\AuthCore\\Filament\\Actions\\CreateUserAction',
-            'group' => 'Green\\AuthCore\\Filament\\Actions\\CreateGroupAction',
-            'role' => 'Green\\AuthCore\\Filament\\Actions\\CreateRoleAction',
+            'user' => 'Green\\Auth\\Filament\\Actions\\CreateUserAction',
+            'group' => 'Green\\Auth\\Filament\\Actions\\CreateGroupAction',
+            'role' => 'Green\\Auth\\Filament\\Actions\\CreateRoleAction',
         ];
 
         return $classMap[$type] ?? 'Filament\\Actions\\CreateAction';

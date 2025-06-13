@@ -179,10 +179,10 @@ class $name extends \\$baseClass
         // 全ての機能が有効な場合のみBaseモデルを使用
         if ($this->shouldUseBaseModel($type)) {
             $baseClasses = [
-                'user' => 'Green\\AuthCore\\Models\\BaseUser',
-                'group' => 'Green\\AuthCore\\Models\\BaseGroup',
-                'role' => 'Green\\AuthCore\\Models\\BaseRole',
-                'login_log' => 'Green\\AuthCore\\Models\\BaseLoginLog',
+                'user' => 'Green\\Auth\\Models\\BaseUser',
+                'group' => 'Green\\Auth\\Models\\BaseGroup',
+                'role' => 'Green\\Auth\\Models\\BaseRole',
+                'login_log' => 'Green\\Auth\\Models\\BaseLoginLog',
             ];
             return $baseClasses[$type] ?? 'Illuminate\\Database\\Eloquent\\Model';
         }
@@ -475,7 +475,7 @@ class $name extends \\$baseClass
 
         // HasModelConfigは全てのBaseモデルに含まれているため、Baseモデル使用時は追加しない
         if (!$isUsingBaseModel) {
-            $traits[] = 'Green\\AuthCore\\Models\\Concerns\\HasModelConfig';
+            $traits[] = 'Green\\Auth\\Models\\Concerns\\HasModelConfig';
         }
 
         // LoginLogの場合はSoftDeletesを適用しない
@@ -497,40 +497,40 @@ class $name extends \\$baseClass
         if ($isUsingBaseModel) {
             // HasUsernameはBaseUserに含まれていないので、必要なら追加
             if ($this->config['features']['username']) {
-                $traits[] = 'Green\\AuthCore\\Models\\Concerns\\User\\HasUsername';
+                $traits[] = 'Green\\Auth\\Models\\Concerns\\User\\HasUsername';
             }
         } else {
             // Eloquent Modelを継承する場合は全てのトレイトを追加
             if ($this->config['features']['username']) {
-                $traits[] = 'Green\\AuthCore\\Models\\Concerns\\User\\HasUsername';
+                $traits[] = 'Green\\Auth\\Models\\Concerns\\User\\HasUsername';
             }
 
             if ($this->config['features']['groups']) {
-                $traits[] = 'Green\\AuthCore\\Models\\Concerns\\User\\BelongsToGroups';
+                $traits[] = 'Green\\Auth\\Models\\Concerns\\User\\BelongsToGroups';
             }
 
             if ($this->config['features']['roles']) {
-                $traits[] = 'Green\\AuthCore\\Models\\Concerns\\User\\HasRoles';
+                $traits[] = 'Green\\Auth\\Models\\Concerns\\User\\HasRoles';
             }
 
             if ($this->config['features']['permissions']) {
-                $traits[] = 'Green\\AuthCore\\Models\\Concerns\\User\\HasPermissions';
+                $traits[] = 'Green\\Auth\\Models\\Concerns\\User\\HasPermissions';
             }
 
             if ($this->config['features']['password_expiration']) {
-                $traits[] = 'Green\\AuthCore\\Models\\Concerns\\User\\HasPasswordExpiration';
+                $traits[] = 'Green\\Auth\\Models\\Concerns\\User\\HasPasswordExpiration';
             }
 
             if ($this->config['features']['account_suspension']) {
-                $traits[] = 'Green\\AuthCore\\Models\\Concerns\\User\\HasSuspension';
+                $traits[] = 'Green\\Auth\\Models\\Concerns\\User\\HasSuspension';
             }
 
             if ($this->config['features']['avatar']) {
-                $traits[] = 'Green\\AuthCore\\Models\\Concerns\\User\\HasAvatar';
+                $traits[] = 'Green\\Auth\\Models\\Concerns\\User\\HasAvatar';
             }
 
             // Filament用のパネルアクセストレイト（Laravel標準UserモデルとBaseUserの両方で追加）
-            $traits[] = 'Green\\AuthCore\\Models\\Concerns\\User\\HasPanelAccess';
+            $traits[] = 'Green\\Auth\\Models\\Concerns\\User\\HasPanelAccess';
         }
 
         return $traits;
@@ -553,15 +553,15 @@ class $name extends \\$baseClass
         // Eloquent Modelを継承する場合は全てのトレイトを追加
         $traits = [
             'Kalnoy\\Nestedset\\NodeTrait',
-            'Green\\AuthCore\\Models\\Concerns\\Group\\HasUsers',
+            'Green\\Auth\\Models\\Concerns\\Group\\HasUsers',
         ];
 
         if ($this->config['features']['roles']) {
-            $traits[] = 'Green\\AuthCore\\Models\\Concerns\\Group\\HasRoles';
+            $traits[] = 'Green\\Auth\\Models\\Concerns\\Group\\HasRoles';
         }
 
         if ($this->config['features']['permissions']) {
-            $traits[] = 'Green\\AuthCore\\Models\\Concerns\\Group\\HasPermissions';
+            $traits[] = 'Green\\Auth\\Models\\Concerns\\Group\\HasPermissions';
         }
 
         return $traits;
@@ -582,14 +582,14 @@ class $name extends \\$baseClass
         }
 
         // Eloquent Modelを継承する場合は全てのトレイトを追加
-        $traits = ['Green\\AuthCore\\Models\\Concerns\\Role\\HasUsers'];
+        $traits = ['Green\\Auth\\Models\\Concerns\\Role\\HasUsers'];
 
         if ($this->config['features']['groups']) {
-            $traits[] = 'Green\\AuthCore\\Models\\Concerns\\Role\\HasGroups';
+            $traits[] = 'Green\\Auth\\Models\\Concerns\\Role\\HasGroups';
         }
 
         if ($this->config['features']['permissions']) {
-            $traits[] = 'Green\\AuthCore\\Models\\Concerns\\Role\\HasPermissions';
+            $traits[] = 'Green\\Auth\\Models\\Concerns\\Role\\HasPermissions';
         }
 
         return $traits;

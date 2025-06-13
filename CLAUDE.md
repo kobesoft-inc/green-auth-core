@@ -41,7 +41,7 @@ php artisan green-auth:install --skip-config --skip-migrations
 ## Architecture
 
 ### Core Structure
-- **Namespace**: `Green\AuthCore\`
+- **Namespace**: `Green\Auth\`
 - **Service Provider**: `GreenAuthServiceProvider` - registers config, views, translations, commands
 - **Filament Plugin**: `GreenAuthPlugin` - integrates with Filament admin panels
 - **Permission System**: `PermissionManager` facade manages hierarchical permissions
@@ -87,7 +87,7 @@ Main config file: `config/green-auth.php`
 php artisan vendor:publish --tag=green-auth-config
 
 # All resources
-php artisan vendor:publish --provider="Green\AuthCore\GreenAuthServiceProvider"
+php artisan vendor:publish --provider="Green\Auth\GreenAuthServiceProvider"
 ```
 
 ## Development Guidelines
@@ -109,5 +109,5 @@ Base resources (UserResource, GroupResource, RoleResource) should be extended in
 
 ### Testing
 - Framework: Pest PHP with Laravel plugin
-- Test namespace: `Green\AuthCore\Tests\`
+- Test namespace: `Green\Auth\Tests\`
 - Use Orchestra Testbench for package testing

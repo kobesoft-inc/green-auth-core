@@ -8,7 +8,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Green\\AuthCore\\Tests\\": "tests/"
+      "Green\\Auth\\Tests\\": "tests/"
     }
   },
   "require": {
