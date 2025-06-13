@@ -57,11 +57,11 @@ class UserPasswordNotification extends Mailable
         $loginUrl = $this->getLoginUrl($guard);
 
         return new Content(
-            view: 'green-auth::emails.password-notification',
+            markdown: 'green-auth::emails.password-notification',
             with: [
                 'user' => $this->user,
                 'password' => $this->password,
-                'message' => $this->message_,
+                'message_' => $this->message_,
                 'loginUrl' => $loginUrl,
                 'username' => $this->user->username ?? $this->user->email,
             ]
@@ -83,10 +83,9 @@ class UserPasswordNotification extends Mailable
      * ガードからログインURLを取得
      *
      * @param string $guard ガード名
-     * @return string ログインURL
-     * @throws \RuntimeException ガードが見つからない場合
+     * @return string|null ログインURL
      */
-    private function getLoginUrl(string $guard): string
+    private function getLoginUrl(string $guard): ?string
     {
         // Filamentパネルから対応するガードのログインURLを取得
         foreach (filament()->getPanels() as $panel) {
@@ -96,7 +95,7 @@ class UserPasswordNotification extends Mailable
         }
 
         // ガードが見つからない場合はエラーをスロー
-        throw new \RuntimeException("Unable to determine guard");
+        return null;
     }
 
     /**

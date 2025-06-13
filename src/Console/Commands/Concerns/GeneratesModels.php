@@ -132,13 +132,18 @@ $traitNames$tableProperty$constantsProperty$fillableProperty$hiddenProperty$cast
      */
     protected function generateSimpleLoginLogModel(string $name, string $namespace, string $baseClass, ?string $table): string
     {
-        // $tableプロパティは生成しない（BaseLoginLogで適切に処理される）
+        // デフォルトのテーブル名と異なる場合のみtableプロパティを生成
+        $defaultTableName = $this->getDefaultTableName('login_log');
+        $tableProperty = $table && $table !== $defaultTableName ? "\n    protected \$table = '$table';" : '';
+
         return "<?php
 
 namespace $namespace;
 
-class $name extends \\$baseClass
-{
+use $baseClass;
+
+class $name extends " . class_basename($baseClass) . "
+{" . $tableProperty . "
 }
 ";
     }
@@ -148,7 +153,7 @@ class $name extends \\$baseClass
      */
     protected function getDefaultTableName(string $type): string
     {
-        return match($type) {
+        return match ($type) {
             'user' => 'users',
             'group' => 'groups',
             'role' => 'roles',
@@ -186,23 +191,23 @@ class $name extends \\$baseClass
                 // UserはBaseUserに全ての機能が含まれているため、常に使用可能
                 // username機能はオプショナル（トレイトで追加）
                 return $this->config['features']['groups'] &&
-                       $this->config['features']['roles'] &&
-                       $this->config['features']['permissions'] &&
-                       $this->config['features']['password_expiration'] &&
-                       $this->config['features']['account_suspension'] &&
-                       $this->config['features']['avatar'];
+                    $this->config['features']['roles'] &&
+                    $this->config['features']['permissions'] &&
+                    $this->config['features']['password_expiration'] &&
+                    $this->config['features']['account_suspension'] &&
+                    $this->config['features']['avatar'];
 
             case 'group':
                 // GroupはBaseGroupに全ての機能が含まれている
                 return $this->config['features']['groups'] &&
-                       $this->config['features']['roles'] &&
-                       $this->config['features']['permissions'];
+                    $this->config['features']['roles'] &&
+                    $this->config['features']['permissions'];
 
             case 'role':
                 // RoleはBaseRoleに全ての機能が含まれている
                 return $this->config['features']['roles'] &&
-                       $this->config['features']['permissions'] &&
-                       $this->config['features']['groups'];
+                    $this->config['features']['permissions'] &&
+                    $this->config['features']['groups'];
 
             case 'login_log':
                 // LoginLogは単純なので常にBaseを使用
