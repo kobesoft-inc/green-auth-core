@@ -62,9 +62,6 @@ class Login extends BaseLogin
 
         $user = Auth::user();
 
-        // ログイン成功をログに記録
-        $this->recordSuccessfulLogin($user);
-
         // アカウント停止チェック
         if (method_exists($user, 'isSuspended') && $user->isSuspended()) {
             Auth::logout();
@@ -330,15 +327,6 @@ class Login extends BaseLogin
         return $this->canLoginWithEmail() && !$this->canLoginWithUsername()
             ? ['email' => $data['login'], 'password' => $data['password']]
             : ['login' => $data['login'], 'password' => $data['password']];
-    }
-
-    /**
-     * ログイン成功をログに記録
-     */
-    protected function recordSuccessfulLogin($user): void
-    {
-        // Laravel標準のLoginイベントがAuth::attempt()で自動的に発火されるため、
-        // ここでは何もしない（LogUserLoginリスナーが自動的にログを記録）
     }
 
     /**

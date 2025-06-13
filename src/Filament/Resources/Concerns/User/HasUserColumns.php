@@ -130,13 +130,10 @@ trait HasUserColumns
             return null;
         }
 
-        return Tables\Columns\TextColumn::make('last_login_at')
+        return Tables\Columns\TextColumn::make('latestLoginLog.created_at')
             ->label(__('green-auth::users.last_login'))
-            ->dateTime('Y/m/d H:i')
-            ->sortable()
-            ->getStateUsing(function ($record) {
-                return $record->loginLogs()->latest('created_at')->first()?->created_at;
-            });
+            ->since()
+            ->sortable();
     }
 
     /**

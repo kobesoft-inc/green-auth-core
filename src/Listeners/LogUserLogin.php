@@ -9,13 +9,11 @@ use Illuminate\Queue\InteractsWithQueue;
 
 /**
  * ユーザーログイン履歴記録リスナー
- * 
+ *
  * Laravelの標準Loginイベントを受信してログイン履歴をデータベースに記録
  */
-class LogUserLogin implements ShouldQueue
+class LogUserLogin
 {
-    use InteractsWithQueue;
-
     /**
      * ログイン履歴記録処理を実行
      *
@@ -26,7 +24,7 @@ class LogUserLogin implements ShouldQueue
     {
         // ログインログクラスを取得
         $loginLogClass = $this->getLoginLogClass($event->guard);
-        
+
         if (!$loginLogClass) {
             // ログインログが設定されていない場合はスキップ
             return;
@@ -48,21 +46,7 @@ class LogUserLogin implements ShouldQueue
      */
     protected function getLoginLogClass(string $guard): ?string
     {
-        // 設定からガード固有のログインログクラスを取得
-        $loginLogClass = config("green-auth.guards.{$guard}.login_log_model");
-        
-        if ($loginLogClass && class_exists($loginLogClass)) {
-            return $loginLogClass;
-        }
-
-        // フォールバック: デフォルトのログインログクラスを取得
-        $defaultLoginLogClass = config('green-auth.models.login_log');
-        
-        if ($defaultLoginLogClass && class_exists($defaultLoginLogClass)) {
-            return $defaultLoginLogClass;
-        }
-
-        return null;
+        return config("green-auth.guards.{$guard}.models.login_log");
     }
 
     /**

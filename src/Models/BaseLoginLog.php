@@ -11,6 +11,8 @@ abstract class BaseLoginLog extends Model
 {
     use Concerns\HasModelConfig;
 
+    const UPDATED_AT = null;
+
     /**
      * モデルに関連付けられたテーブル名を取得
      *
@@ -28,8 +30,6 @@ abstract class BaseLoginLog extends Model
      */
     protected $fillable = [
         'user_id',
-        'guard_name',
-        'login_at',
         'ip_address',
         'user_agent',
         'browser_name',
@@ -44,9 +44,7 @@ abstract class BaseLoginLog extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'login_at' => 'datetime',
         'created_at' => 'datetime',
-        'updated_at' => 'datetime',
     ];
 
     /**
@@ -75,8 +73,6 @@ abstract class BaseLoginLog extends Model
 
         return static::create([
             'user_id' => is_object($user) ? $user->id : $user,
-            'guard_name' => $guardName,
-            'login_at' => now(),
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
             'browser_name' => $userAgent['browser_name'],

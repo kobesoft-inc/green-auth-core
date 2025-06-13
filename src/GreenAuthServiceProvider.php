@@ -38,9 +38,13 @@ class GreenAuthServiceProvider extends ServiceProvider
 
         $this->app->alias('green-auth.permission-manager', \Green\Auth\Permission\PermissionManager::class);
 
+        // 権限マネージャーに登録
         PermissionManager::register([
             Super::class,
         ]);
+
+        // イベントリスナーの登録
+        Event::listen(Login::class, LogUserLogin::class);
     }
 
     /**
@@ -61,9 +65,7 @@ class GreenAuthServiceProvider extends ServiceProvider
 
         // Livewireコンポーネントの手動登録
         \Livewire\Livewire::component('green-auth.password-expired', \Green\Auth\Filament\Pages\Auth\PasswordExpired::class);
-        
-        // イベントリスナーの登録
-        $this->registerEventListeners();
+
 
         // パブリッシュ可能なリソース
         if ($this->app->runningInConsole()) {
@@ -92,18 +94,5 @@ class GreenAuthServiceProvider extends ServiceProvider
                 __DIR__ . '/../lang' => resource_path('lang/vendor/green-auth'),
             ], 'green-auth-lang');
         }
-    }
-
-    /**
-     * イベントリスナーを登録
-     *
-     * @return void
-     */
-    protected function registerEventListeners(): void
-    {
-        Event::listen(
-            Login::class,
-            LogUserLogin::class
-        );
     }
 }

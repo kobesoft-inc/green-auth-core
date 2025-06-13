@@ -7,6 +7,7 @@ use Green\Auth\Mail\UserPasswordNotification;
 use Green\Auth\Password\PasswordComplexity;
 use Green\Auth\Password\PasswordGenerator;
 use Green\Auth\Password\PasswordValidator;
+use Green\Auth\Rules\PasswordRule;
 use Illuminate\Database\Eloquent\Model;
 
 trait ManagesUserPasswords
@@ -38,25 +39,7 @@ trait ManagesUserPasswords
                     $requirements = $complexity->getRequirements();
                     return implode(' / ', $requirements);
                 })
-                ->rules([
-                    function () use ($modelClass) {
-                        return function (string $attribute, $value, \Closure $fail) use ($modelClass) {
-                            if (!empty($value)) {
-                                // ガード名を取得してPasswordComplexityを作成
-                                $guard = $modelClass::getGuardName();
-                                $complexity = PasswordComplexity::fromAppConfig($guard);
-                                $validator = new PasswordValidator($complexity);
-
-                                if (!$validator->passes($attribute, $value)) {
-                                    $errors = $validator->getDetailedErrors($value);
-                                    foreach ($errors as $error) {
-                                        $fail($error);
-                                    }
-                                }
-                            }
-                        };
-                    }
-                ]),
+                ->rules([new PasswordRule(PasswordComplexity::fromAppConfig($modelClass::getGuardName()))]),
 
             Forms\Components\Checkbox::make('send_email_notification')
                 ->label(__('green-auth::passwords.send_email_notification'))
