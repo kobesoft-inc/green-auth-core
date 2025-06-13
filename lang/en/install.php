@@ -84,6 +84,7 @@ return [
         'generating_files' => 'Generating files...',
         'publishing_config' => 'Publishing configuration...',
         'config_published' => 'Configuration published',
+        'lang_published' => 'Language files published',
         'generating_models' => 'Generating models...',
         'model_created' => ':model model created',
         'generating_migrations' => 'Generating migrations...',

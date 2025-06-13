@@ -9,6 +9,11 @@ use Illuminate\Support\Str;
 trait GeneratesFiles
 {
     /**
+     * マイグレーションのタイムスタンプ管理用
+     */
+    protected $migrationTimestamp;
+    protected $migrationCounter;
+    /**
      * ファイル生成
      */
     protected function generateFiles(): void
@@ -43,8 +48,14 @@ trait GeneratesFiles
             '--force' => $this->option('force'),
         ]);
 
+        Artisan::call('vendor:publish', [
+            '--tag' => 'green-auth-lang',
+            '--force' => $this->option('force'),
+        ]);
+
         $this->updateConfigFile();
         $this->line('   ' . __('green-auth::install.messages.config_published'));
+        $this->line('   ' . __('green-auth::install.messages.lang_published'));
     }
 
     /**
@@ -107,6 +118,8 @@ trait GeneratesFiles
                     'user_menu' => [
                         'allow_password_change' => $this->config['user_menu']['allow_password_change'] ?? true,
                     ],
+
+                    'labels' => $this->generateLabelsConfig(),
                 ],
             ],
         ];
@@ -191,6 +204,45 @@ return [
     }
 
     /**
+     * モデル名に応じたラベル設定を生成
+     */
+    protected function generateLabelsConfig(): array
+    {
+        $labels = [];
+        
+        // 各モデルタイプごとにラベルを生成
+        foreach (['user', 'group', 'role'] as $type) {
+            if (!isset($this->config['models'][$type]) || !$this->config['models'][$type]) {
+                continue;
+            }
+            
+            $modelName = $this->config['models'][$type];
+            $modelKey = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $modelName));
+            
+            // 標準名の場合
+            if (in_array($modelName, ['User', 'Group', 'Role'])) {
+                $labels[$type] = "green-auth::labels.{$type}";
+                $labels["{$type}_plural"] = "green-auth::labels.{$type}_plural";
+            }
+            // カスタム名の場合（AdminUser, Staff, Employee等）
+            else {
+                // 既知のカスタムモデル名の場合
+                if (in_array($modelKey, ['admin_user', 'admin_group', 'admin_role', 'staff', 'employee', 'section', 'division'])) {
+                    $labels[$type] = "green-auth::labels.{$modelKey}";
+                    $labels["{$type}_plural"] = "green-auth::labels.{$modelKey}_plural";
+                }
+                // その他のカスタムモデル名の場合はデフォルトに戻す
+                else {
+                    $labels[$type] = "green-auth::labels.{$type}";
+                    $labels["{$type}_plural"] = "green-auth::labels.{$type}_plural";
+                }
+            }
+        }
+        
+        return $labels;
+    }
+
+    /**
      * ディレクトリが存在することを確認
      */
     protected function ensureDirectoryExists(string $path): void
@@ -201,14 +253,33 @@ return [
     }
 
     /**
+     * 次のマイグレーションタイムスタンプを取得
+     */
+    protected function getNextMigrationTimestamp(): string
+    {
+        $timestamp = $this->migrationTimestamp->addSeconds($this->migrationCounter)->format('Y_m_d_His');
+        $this->migrationCounter++;
+        return $timestamp;
+    }
+
+    /**
      * マイグレーション生成
      */
     protected function generateMigrations(): void
     {
         $this->info('Generating migrations...');
 
-        foreach ($this->config['models'] as $type => $name) {
-            $this->generateMigration($type, $name);
+        // タイムスタンプ管理用の開始時刻
+        $this->migrationTimestamp = now();
+        $this->migrationCounter = 0;
+
+        // 依存関係を考慮してマイグレーション生成順序を制御
+        $orderedTypes = ['user', 'group', 'role', 'login_log'];
+        
+        foreach ($orderedTypes as $type) {
+            if (isset($this->config['models'][$type])) {
+                $this->generateMigration($type, $this->config['models'][$type]);
+            }
         }
 
         // ピボットテーブルのマイグレーション生成
@@ -220,14 +291,30 @@ return [
      */
     protected function generateMigration(string $type, string $name): void
     {
-        $tableName = $this->config['tables'][Str::plural(strtolower($type))] ?? Str::plural(Str::snake($name));
+        // モデル名が設定されていない場合はスキップ
+        if (!$name) {
+            return;
+        }
 
-        if ($type === 'user' && $tableName === 'users') {
-            // Userモデルの場合は既存のusersテーブルにカラムを追加
-            $this->generateAddColumnsToUsersMigration();
+        // ユーザーモデルの場合の処理
+        if ($type === 'user') {
+            $tableName = $this->config['tables']['users'];
+            
+            // モデル名が "User" かつテーブル名が "users" の場合のみ既存テーブルにカラム追加
+            if ($name === 'User' && $tableName === 'users') {
+                $this->generateAddColumnsToUsersMigration();
+            } else {
+                // それ以外は新規テーブル作成
+                $this->generateCreateTableMigration($type, $name, $tableName);
+            }
         } else {
-            // その他のモデルは新規テーブル作成
-            $this->generateCreateTableMigration($type, $name, $tableName);
+            // その他のモデルは設定からテーブル名を取得
+            $tableKey = Str::plural(strtolower($type));
+            $tableName = $this->config['tables'][$tableKey] ?? null;
+            
+            if ($tableName) {
+                $this->generateCreateTableMigration($type, $name, $tableName);
+            }
         }
     }
 
@@ -242,8 +329,8 @@ return [
             return; // 追加するカラムがない場合はマイグレーションを作成しない
         }
 
-        $timestamp = now()->format('Y_m_d_His');
-        $filename = "{$timestamp}_columns_to_users_table.php";
+        $timestamp = $this->getNextMigrationTimestamp();
+        $filename = "{$timestamp}_add_columns_to_users_table.php";
         $migrationPath = database_path("migrations/{$filename}");
 
         $content = $this->generateAddColumnsToUsersMigrationContent($columns);
@@ -437,7 +524,7 @@ return new class extends Migration
      */
     protected function generateCreateTableMigration(string $type, string $name, string $tableName): void
     {
-        $timestamp = now()->addSecond()->format('Y_m_d_His'); // 1秒ずらして重複を防ぐ
+        $timestamp = $this->getNextMigrationTimestamp();
         $filename = "{$timestamp}_create_{$tableName}_table.php";
         $migrationPath = database_path("migrations/{$filename}");
 
@@ -490,6 +577,7 @@ return new class extends Migration
     protected function getTableColumns(string $type): array
     {
         $generators = [
+            'user' => fn() => $this->getUserTableColumns(),
             'group' => fn() => $this->getGroupTableColumns(),
             'role' => fn() => $this->getRoleTableColumns(),
             'login_log' => fn() => $this->getLoginLogTableColumns(),
@@ -504,7 +592,48 @@ return new class extends Migration
             $columns[] = "\$table->softDeletes();";
         }
 
-        $columns[] = "\$table->timestamps();";
+        // login_logテーブルはupdated_atは不要
+        if ($type === 'login_log') {
+            $columns[] = "\$table->timestamp('created_at')->nullable();";
+        } else {
+            $columns[] = "\$table->timestamps();";
+        }
+
+        return $columns;
+    }
+
+    /**
+     * usersテーブルのカラム定義を取得（新規作成時）
+     */
+    protected function getUserTableColumns(): array
+    {
+        $columns = [
+            "\$table->string('name');",
+            "\$table->string('email')->unique();",
+            "\$table->timestamp('email_verified_at')->nullable();",
+            "\$table->string('password')->nullable();",
+            "\$table->rememberToken();",
+        ];
+
+        if ($this->config['features']['username']) {
+            if ($this->config['use_soft_deletes']) {
+                $columns[] = "\$table->string('username')->nullable();";
+            } else {
+                $columns[] = "\$table->string('username')->unique()->nullable();";
+            }
+        }
+
+        if ($this->config['features']['password_expiration']) {
+            $columns[] = "\$table->timestamp('password_expires_at')->nullable();";
+        }
+
+        if ($this->config['features']['account_suspension']) {
+            $columns[] = "\$table->timestamp('suspended_at')->nullable();";
+        }
+
+        if ($this->config['features']['avatar']) {
+            $columns[] = "\$table->string('avatar')->nullable();";
+        }
 
         return $columns;
     }
@@ -559,17 +688,18 @@ return new class extends Migration
             return [];
         }
 
+        $userModel = $this->config['namespace'] . '\\' . $this->config['models']['user'];
+        $userTable = $this->config['tables']['users'];
+
         return [
-            "\$table->unsignedBigInteger('user_id');",
-            "\$table->string('guard_name');",
-            "\$table->datetime('login_at');",
+            "\$table->foreignIdFor(\\{$userModel}::class)->constrained('{$userTable}')->cascadeOnDelete();",
             "\$table->string('ip_address')->nullable();",
             "\$table->text('user_agent')->nullable();",
             "\$table->string('browser_name')->nullable();",
             "\$table->string('browser_version')->nullable();",
             "\$table->string('platform')->nullable();",
             "\$table->string('device_type')->nullable();",
-            "\$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');",
+            "\$table->index('created_at');",
         ];
     }
 
@@ -581,40 +711,53 @@ return new class extends Migration
         $pivotTables = [];
 
         if ($this->config['features']['groups']) {
+            $userModel = $this->config['namespace'] . '\\' . $this->config['models']['user'];
+            $groupModel = $this->config['namespace'] . '\\' . $this->config['models']['group'];
+            $userTable = $this->config['tables']['users'];
+            $groupTable = $this->config['tables']['groups'];
+            
             $pivotTables[] = [
                 'name' => $this->config['tables']['user_groups'] ?? 'user_groups',
                 'columns' => [
-                    "\$table->foreignId('user_id')->constrained()->onDelete('cascade');",
-                    "\$table->foreignId('group_id')->constrained()->onDelete('cascade');",
-                    "\$table->primary(['user_id', 'group_id']);",
+                    "\$table->foreignIdFor(\\{$userModel}::class)->constrained('{$userTable}')->cascadeOnDelete();",
+                    "\$table->foreignIdFor(\\{$groupModel}::class)->constrained('{$groupTable}')->cascadeOnDelete();",
+                    "\$table->primary(['" . Str::snake(class_basename($userModel)) . "_id', '" . Str::snake(class_basename($groupModel)) . "_id']);",
                 ]
             ];
         }
 
         if ($this->config['features']['roles']) {
+            $userModel = $this->config['namespace'] . '\\' . $this->config['models']['user'];
+            $roleModel = $this->config['namespace'] . '\\' . $this->config['models']['role'];
+            $userTable = $this->config['tables']['users'];
+            $roleTable = $this->config['tables']['roles'];
+            
             $pivotTables[] = [
                 'name' => $this->config['tables']['user_roles'] ?? 'user_roles',
                 'columns' => [
-                    "\$table->foreignId('user_id')->constrained()->onDelete('cascade');",
-                    "\$table->foreignId('role_id')->constrained()->onDelete('cascade');",
-                    "\$table->primary(['user_id', 'role_id']);",
+                    "\$table->foreignIdFor(\\{$userModel}::class)->constrained('{$userTable}')->cascadeOnDelete();",
+                    "\$table->foreignIdFor(\\{$roleModel}::class)->constrained('{$roleTable}')->cascadeOnDelete();",
+                    "\$table->primary(['" . Str::snake(class_basename($userModel)) . "_id', '" . Str::snake(class_basename($roleModel)) . "_id']);",
                 ]
             ];
 
             if ($this->config['features']['groups']) {
+                $groupModel = $this->config['namespace'] . '\\' . $this->config['models']['group'];
+                $groupTable = $this->config['tables']['groups'];
+                
                 $pivotTables[] = [
                     'name' => $this->config['tables']['group_roles'] ?? 'group_roles',
                     'columns' => [
-                        "\$table->foreignId('group_id')->constrained()->onDelete('cascade');",
-                        "\$table->foreignId('role_id')->constrained()->onDelete('cascade');",
-                        "\$table->primary(['group_id', 'role_id']);",
+                        "\$table->foreignIdFor(\\{$groupModel}::class)->constrained('{$groupTable}')->cascadeOnDelete();",
+                        "\$table->foreignIdFor(\\{$roleModel}::class)->constrained('{$roleTable}')->cascadeOnDelete();",
+                        "\$table->primary(['" . Str::snake(class_basename($groupModel)) . "_id', '" . Str::snake(class_basename($roleModel)) . "_id']);",
                     ]
                 ];
             }
         }
 
-        foreach ($pivotTables as $index => $pivotTable) {
-            $timestamp = now()->addSeconds($index + 10)->format('Y_m_d_His'); // ずらして重複を防ぐ
+        foreach ($pivotTables as $pivotTable) {
+            $timestamp = $this->getNextMigrationTimestamp();
             $filename = "{$timestamp}_create_{$pivotTable['name']}_table.php";
             $migrationPath = database_path("migrations/{$filename}");
 

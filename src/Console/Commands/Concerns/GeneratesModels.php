@@ -132,21 +132,8 @@ $traitNames$tableProperty$constantsProperty$fillableProperty$hiddenProperty$cast
      */
     protected function generateSimpleLoginLogModel(string $name, string $namespace, string $baseClass, ?string $table): string
     {
-        // デフォルトのテーブル名と異なる場合のみtableプロパティを生成
-        $defaultTableName = $this->getDefaultTableName('login_log');
-        $tableProperty = $table && $table !== $defaultTableName ? "\n    protected \$table = '$table';" : '';
-
-        if ($tableProperty) {
-            return "<?php
-
-namespace $namespace;
-
-class $name extends \\$baseClass
-{$tableProperty
-}
-";
-        } else {
-            return "<?php
+        // $tableプロパティは生成しない（BaseLoginLogで適切に処理される）
+        return "<?php
 
 namespace $namespace;
 
@@ -154,7 +141,6 @@ class $name extends \\$baseClass
 {
 }
 ";
-        }
     }
 
     /**
@@ -374,7 +360,7 @@ class $name extends \\$baseClass
     protected function getLoginLogFillableFields(): array
     {
         return $this->config['features']['login_logging']
-            ? ['user_id', 'guard_name', 'ip_address', 'user_agent']
+            ? ['user_id', 'ip_address', 'user_agent']
             : [];
     }
 

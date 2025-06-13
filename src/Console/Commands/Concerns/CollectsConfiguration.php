@@ -38,16 +38,17 @@ trait CollectsConfiguration
         // Userモデル名を先に取得
         $userModel = $this->ask(__('green-auth::install.prompts.user_model'), 'User');
 
-        // Userモデル名からGroup/Roleのデフォルト値を生成
+        // Userモデル名からGroup/Role/LoginLogのデフォルト値を生成
         $defaultGroup = $this->generateDefaultModelName($userModel, 'Group');
         $defaultRole = $this->generateDefaultModelName($userModel, 'Role');
+        $defaultLoginLog = $this->generateDefaultModelName($userModel, 'LoginLog');
 
         // 各モデル名を収集し、'n'入力で機能を無効化
         $this->config['models'] = [
             'user' => $userModel,
             'group' => $this->askForModel('green-auth::install.prompts.group_model', $defaultGroup),
             'role' => $this->askForModel('green-auth::install.prompts.role_model', $defaultRole),
-            'login_log' => $this->askForModel('green-auth::install.prompts.login_log_model', 'LoginLog'),
+            'login_log' => $this->askForModel('green-auth::install.prompts.login_log_model', $defaultLoginLog),
         ];
 
         // 'n'が入力された場合、対応する機能を無効化
@@ -165,54 +166,65 @@ trait CollectsConfiguration
         $this->info(__('green-auth::install.steps.database'));
         $this->newLine();
 
+        // モデル名からデフォルトのテーブル名を生成
+        $defaultUserTable = $this->generateTableName($this->config['models']['user']);
+        $defaultGroupTable = $this->config['models']['group'] ? $this->generateTableName($this->config['models']['group']) : null;
+        $defaultRoleTable = $this->config['models']['role'] ? $this->generateTableName($this->config['models']['role']) : null;
+        $defaultLoginLogTable = $this->config['models']['login_log'] ? $this->generateTableName($this->config['models']['login_log']) : null;
+
+        // ピボットテーブル名のデフォルトを生成
+        $userSingular = $this->generateSingularTableName($this->config['models']['user']);
+        $groupSingular = $defaultGroupTable ? $this->generateSingularTableName($this->config['models']['group']) : 'group';
+        $roleSingular = $defaultRoleTable ? $this->generateSingularTableName($this->config['models']['role']) : 'role';
+
         // テーブル名をカスタマイズするか聞く
         $customizeTables = $this->confirm(__('green-auth::install.prompts.customize_table_names'), false);
 
         if ($customizeTables) {
             $this->config['tables'] = [
-                'users' => $this->ask(__('green-auth::install.prompts.table_users'), 'users'),
+                'users' => $this->ask(__('green-auth::install.prompts.table_users'), $defaultUserTable),
             ];
 
             // 機能が有効な場合のみテーブル名を収集
             if ($this->config['features']['groups']) {
-                $this->config['tables']['groups'] = $this->ask(__('green-auth::install.prompts.table_groups'), 'groups');
-                $this->config['tables']['user_groups'] = $this->ask(__('green-auth::install.prompts.table_user_groups'), 'user_groups');
+                $this->config['tables']['groups'] = $this->ask(__('green-auth::install.prompts.table_groups'), $defaultGroupTable);
+                $this->config['tables']['user_groups'] = $this->ask(__('green-auth::install.prompts.table_user_groups'), "{$userSingular}_{$groupSingular}s");
             }
 
             if ($this->config['features']['roles']) {
-                $this->config['tables']['roles'] = $this->ask(__('green-auth::install.prompts.table_roles'), 'roles');
-                $this->config['tables']['user_roles'] = $this->ask(__('green-auth::install.prompts.table_user_roles'), 'user_roles');
+                $this->config['tables']['roles'] = $this->ask(__('green-auth::install.prompts.table_roles'), $defaultRoleTable);
+                $this->config['tables']['user_roles'] = $this->ask(__('green-auth::install.prompts.table_user_roles'), "{$userSingular}_{$roleSingular}s");
             }
 
             if ($this->config['features']['groups'] && $this->config['features']['roles']) {
-                $this->config['tables']['group_roles'] = $this->ask(__('green-auth::install.prompts.table_group_roles'), 'group_roles');
+                $this->config['tables']['group_roles'] = $this->ask(__('green-auth::install.prompts.table_group_roles'), "{$groupSingular}_{$roleSingular}s");
             }
 
             if ($this->config['features']['login_logging']) {
-                $this->config['tables']['login_logs'] = $this->ask(__('green-auth::install.prompts.table_login_logs'), 'login_logs');
+                $this->config['tables']['login_logs'] = $this->ask(__('green-auth::install.prompts.table_login_logs'), $defaultLoginLogTable);
             }
         } else {
             // デフォルトのテーブル名を使用
             $this->config['tables'] = [
-                'users' => 'users',
+                'users' => $defaultUserTable,
             ];
 
             if ($this->config['features']['groups']) {
-                $this->config['tables']['groups'] = 'groups';
-                $this->config['tables']['user_groups'] = 'user_groups';
+                $this->config['tables']['groups'] = $defaultGroupTable;
+                $this->config['tables']['user_groups'] = "{$userSingular}_{$groupSingular}s";
             }
 
             if ($this->config['features']['roles']) {
-                $this->config['tables']['roles'] = 'roles';
-                $this->config['tables']['user_roles'] = 'user_roles';
+                $this->config['tables']['roles'] = $defaultRoleTable;
+                $this->config['tables']['user_roles'] = "{$userSingular}_{$roleSingular}s";
             }
 
             if ($this->config['features']['groups'] && $this->config['features']['roles']) {
-                $this->config['tables']['group_roles'] = 'group_roles';
+                $this->config['tables']['group_roles'] = "{$groupSingular}_{$roleSingular}s";
             }
 
             if ($this->config['features']['login_logging']) {
-                $this->config['tables']['login_logs'] = 'login_logs';
+                $this->config['tables']['login_logs'] = $defaultLoginLogTable;
             }
         }
 
@@ -298,5 +310,21 @@ trait CollectsConfiguration
 
         // Userという単語がない場合は標準のモデル名を返す
         return $baseModel;
+    }
+
+    /**
+     * モデル名からテーブル名を生成（複数形）
+     */
+    protected function generateTableName(string $modelName): string
+    {
+        return \Illuminate\Support\Str::plural(\Illuminate\Support\Str::snake($modelName));
+    }
+
+    /**
+     * モデル名から単数形のテーブル名を生成
+     */
+    protected function generateSingularTableName(string $modelName): string
+    {
+        return \Illuminate\Support\Str::snake($modelName);
     }
 }

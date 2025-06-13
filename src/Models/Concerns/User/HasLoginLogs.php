@@ -20,25 +20,25 @@ trait HasLoginLogs
      */
     public function loginLogs(): HasMany
     {
-        return $this->hasMany(static::getLoginLogClass(), 'user_id');
+        return $this->hasMany(static::getLoginLogClass(), $this->getForeignKey());
     }
 
     /**
      * 最新のログインログを取得
      */
-    public function latestLoginLog()
+    public function latestLoginLog(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(static::getLoginLogClass(), 'user_id')->latest('login_at');
+        return $this->hasOne(static::getLoginLogClass(), $this->getForeignKey())->latest();
     }
 
     /**
      * 特定期間のログインログを取得
      */
-    public function loginLogsInPeriod($startDate, $endDate)
+    public function loginLogsInPeriod($startDate, $endDate): HasMany
     {
         return $this->loginLogs()
-            ->whereBetween('login_at', [$startDate, $endDate])
-            ->orderBy('login_at', 'desc');
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->orderBy('created_at', 'desc');
     }
 
     /**
@@ -47,31 +47,24 @@ trait HasLoginLogs
     public function getLastLoginAt()
     {
         $latestLog = $this->latestLoginLog()->first();
-        return $latestLog ? $latestLog->login_at : null;
+        return $latestLog ? $latestLog->created_at : null;
     }
 
-    /**
-     * 特定ガードでのログインログを取得
-     */
-    public function loginLogsForGuard(string $guardName)
-    {
-        return $this->loginLogs()->where('guard_name', $guardName);
-    }
 
     /**
      * 最近のログインログを取得（デフォルト24時間）
      */
-    public function recentLoginLogs(int $hours = 24)
+    public function recentLoginLogs(int $hours = 24): HasMany
     {
         return $this->loginLogs()
-            ->where('login_at', '>=', now()->subHours($hours))
-            ->orderBy('login_at', 'desc');
+            ->where('created_at', '>=', now()->subHours($hours))
+            ->orderBy('created_at', 'desc');
     }
 
     /**
      * 特定IPアドレスからのログインログを取得
      */
-    public function loginLogsFromIp(string $ipAddress)
+    public function loginLogsFromIp(string $ipAddress): HasMany
     {
         return $this->loginLogs()->where('ip_address', $ipAddress);
     }
@@ -90,7 +83,7 @@ trait HasLoginLogs
     public function getTodayLoginCount(): int
     {
         return $this->loginLogs()
-            ->whereDate('login_at', today())
+            ->whereDate('created_at', today())
             ->count();
     }
 }

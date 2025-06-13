@@ -84,6 +84,7 @@ return [
         'generating_files' => 'ファイルを生成しています...',
         'publishing_config' => '設定を公開しています...',
         'config_published' => '設定が公開されました',
+        'lang_published' => '言語ファイルが公開されました',
         'generating_models' => 'モデルを生成しています...',
         'model_created' => ':model モデルが作成されました',
         'generating_migrations' => 'マイグレーションを生成しています...',

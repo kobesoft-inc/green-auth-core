@@ -78,6 +78,18 @@ return [
             'user_menu' => [
                 'allow_password_change' => true, // ユーザーがパスワードを変更できる
             ],
+
+            /**
+             * 表示ラベル設定（このガード固有）
+             */
+            'labels' => [
+                'user' => 'green-auth::labels.user',
+                'user_plural' => 'green-auth::labels.user_plural',
+                'group' => 'green-auth::labels.group',
+                'group_plural' => 'green-auth::labels.group_plural',
+                'role' => 'green-auth::labels.role',
+                'role_plural' => 'green-auth::labels.role_plural',
+            ],
         ],
     ],
 ];

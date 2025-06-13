@@ -135,7 +135,7 @@ trait HasUserColumns
             ->dateTime('Y/m/d H:i')
             ->sortable()
             ->getStateUsing(function ($record) {
-                return $record->loginLogs()->latest('login_at')->first()?->login_at;
+                return $record->loginLogs()->latest('created_at')->first()?->created_at;
             });
     }
 
