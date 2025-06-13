@@ -259,6 +259,9 @@ return [
     {
         $columns = [];
 
+        // passwordをnullableに変更（フェデレーション認証対応）
+        $columns[] = "\$table->string('password')->nullable()->change();";
+
         if ($this->config['features']['username']) {
             if ($this->config['use_soft_deletes']) {
                 $columns[] = "\$table->string('username')->nullable();";
