@@ -33,7 +33,6 @@ class LogUserLogin
         // ログイン履歴を作成
         $loginLogClass::createLog(
             $event->user,
-            $event->guard,
             request()
         );
     }

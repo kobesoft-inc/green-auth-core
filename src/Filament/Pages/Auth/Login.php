@@ -5,6 +5,7 @@ namespace Green\Auth\Filament\Pages\Auth;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -13,6 +14,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Notifications\Notification;
 use Filament\Pages\Auth\Login as BaseLogin;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
@@ -54,13 +56,11 @@ class Login extends BaseLogin
         }
 
         $data = $this->form->getState();
-        $credentials = $this->getCredentialsFromFormData($data);
-
-        if (!$this->attemptAuthentication($credentials, $data['remember'] ?? false)) {
+        if (!Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
             $this->throwFailureValidationException();
         }
 
-        $user = Auth::user();
+        $user = Filament::auth()->user();
 
         // アカウント停止チェック
         if (method_exists($user, 'isSuspended') && $user->isSuspended()) {
@@ -278,66 +278,24 @@ class Login extends BaseLogin
     }
 
     /**
-     * 認証を試行
-     */
-    protected function attemptAuthentication(array $credentials, bool $remember = false): bool
-    {
-        if ($this->canLoginWithEmail() && $this->canLoginWithUsername()) {
-            return $this->attemptWithUsernameOrEmail($credentials, $remember);
-        } elseif ($this->canLoginWithUsername()) {
-            return $this->attemptWithUsername($credentials, $remember);
-        }
-
-        return Auth::attempt($credentials, $remember);
-    }
-
-    /**
-     * ユーザー名またはメールアドレスでの認証を試行
-     */
-    protected function attemptWithUsernameOrEmail(array $credentials, bool $remember = false): bool
-    {
-        $login = $credentials['login'];
-        $password = $credentials['password'];
-
-        $field = filter_var($login, FILTER_VALIDATE_EMAIL)
-            ? 'email'
-            : $this->getUsernameColumn();
-
-        return Auth::attempt([$field => $login, 'password' => $password], $remember);
-    }
-
-    /**
-     * ユーザー名での認証を試行
-     */
-    protected function attemptWithUsername(array $credentials, bool $remember = false): bool
-    {
-        $usernameColumn = $this->getUsernameColumn();
-
-        return Auth::attempt([
-            $usernameColumn => $credentials['login'],
-            'password' => $credentials['password']
-        ], $remember);
-    }
-
-    /**
-     * フォームデータから認証情報を取得
+     * フォーム入力から認証情報を取得する
+     *
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
      */
     protected function getCredentialsFromFormData(array $data): array
     {
-        return $this->canLoginWithEmail() && !$this->canLoginWithUsername()
-            ? ['email' => $data['login'], 'password' => $data['password']]
-            : ['login' => $data['login'], 'password' => $data['password']];
-    }
-
-    /**
-     * ログインログモデルクラスを取得
-     */
-    protected function getLoginLogModel(): ?string
-    {
-        $guard = $this->getGuard();
-        $class = config("green-auth.guards.{$guard}.models.login_log", config('green-auth.models.login_log'));
-
-        return $class && class_exists($class) ? $class : null;
+        return [
+            'email' => function (Builder $query) use ($data) {
+                if ($this->canLoginWithEmail()) {
+                    $query->orWhere('email', $data['login']);
+                }
+                if ($this->canLoginWithUsername()) {
+                    $query->orWhere($this->getUsernameColumn(), $data['login']);
+                }
+            },
+            'password' => $data['password'],
+        ];
     }
 
     /**
@@ -354,12 +312,8 @@ class Login extends BaseLogin
      */
     protected function getUsernameColumn(): string
     {
-        $userModel = $this->getUserModel();
-
-        if (defined($userModel . '::USERNAME_COLUMN')) {
-            return constant($userModel . '::USERNAME_COLUMN');
+        if (defined($this->getUserModel() . '::getUsernameColumn')) {
+            return static::getUsernameColumn();
         }
-
-        return 'username';
     }
 }

@@ -101,7 +101,7 @@ trait HasModelConfig
     protected static function getRelatedModelClass(string $modelType): string
     {
         $modelTypeLower = strtolower($modelType);
-        $modelTypeUcfirst = ucfirst($modelTypeLower);
+        $modelTypeUcfirst = Str::studly($modelTypeLower);
 
         // 設定から取得（guard対応、クラス定数フォールバック）
         $configClass = static::config("models.{$modelTypeLower}");

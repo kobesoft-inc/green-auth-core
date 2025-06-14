@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request as RequestFacade;
+use Illuminate\Support\Str;
 
 abstract class BaseLoginLog extends Model
 {
@@ -14,22 +15,11 @@ abstract class BaseLoginLog extends Model
     const UPDATED_AT = null;
 
     /**
-     * モデルに関連付けられたテーブル名を取得
-     *
-     * @return string テーブル名
-     */
-    public function getTable(): string
-    {
-        return $this->table ?? 'login_logs';
-    }
-
-    /**
      * 一括代入可能な属性
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_id',
         'ip_address',
         'user_agent',
         'browser_name',
@@ -55,24 +45,22 @@ abstract class BaseLoginLog extends Model
     public function user(): BelongsTo
     {
         $userClass = static::getUserClass();
-        return $this->belongsTo($userClass, 'user_id');
+        return $this->belongsTo($userClass, static::getForeignKeyName($userClass));
     }
 
     /**
      * ログインログを作成
      *
-     * @param mixed $user ユーザーモデルまたはID
-     * @param string $guardName ガード名
+     * @param Model $user ユーザーモデルまたはID
      * @param Request|null $request リクエストインスタンス
      * @return static 作成されたログインログインスタンス
      */
-    public static function createLog($user, string $guardName, ?Request $request = null): static
+    public static function createLog(Model $user, ?Request $request = null): static
     {
         $request = $request ?? RequestFacade::instance();
         $userAgent = static::parseUserAgent($request->userAgent() ?? '');
 
-        return static::create([
-            'user_id' => is_object($user) ? $user->id : $user,
+        $log = (new static())->fill([
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
             'browser_name' => $userAgent['browser_name'],
@@ -80,6 +68,10 @@ abstract class BaseLoginLog extends Model
             'platform' => $userAgent['platform'],
             'device_type' => $userAgent['device_type'],
         ]);
+        $log->user()->associate($user);
+        $log->save();
+
+        return $log;
     }
 
     /**
@@ -181,21 +173,9 @@ abstract class BaseLoginLog extends Model
      * @param mixed $userId ユーザーID
      * @return \Illuminate\Database\Eloquent\Builder 絞り込まれたクエリ
      */
-    public function scopeForUser($query, $userId)
+    public function scopeForUser($query, $userId): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('user_id', $userId);
-    }
-
-    /**
-     * 特定ガードのログインに絞り込むスコープ
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query クエリビルダー
-     * @param string $guardName ガード名
-     * @return \Illuminate\Database\Eloquent\Builder 絞り込まれたクエリ
-     */
-    public function scopeForGuard($query, string $guardName)
-    {
-        return $query->where('guard_name', $guardName);
     }
 
     /**
@@ -206,9 +186,9 @@ abstract class BaseLoginLog extends Model
      * @param mixed $endDate 終了日
      * @return \Illuminate\Database\Eloquent\Builder 絞り込まれたクエリ
      */
-    public function scopeBetweenDates($query, $startDate, $endDate)
+    public function scopeBetweenDates($query, $startDate, $endDate): \Illuminate\Database\Eloquent\Builder
     {
-        return $query->whereBetween('login_at', [$startDate, $endDate]);
+        return $query->whereBetween('created_at', [$startDate, $endDate]);
     }
 
     /**
@@ -218,7 +198,7 @@ abstract class BaseLoginLog extends Model
      * @param string $ipAddress IPアドレス
      * @return \Illuminate\Database\Eloquent\Builder 絞り込まれたクエリ
      */
-    public function scopeFromIp($query, string $ipAddress)
+    public function scopeFromIp($query, string $ipAddress): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('ip_address', $ipAddress);
     }
@@ -230,8 +210,8 @@ abstract class BaseLoginLog extends Model
      * @param int $hours 時間数（デフォルト24時間）
      * @return \Illuminate\Database\Eloquent\Builder 絞り込まれたクエリ
      */
-    public function scopeRecent($query, int $hours = 24)
+    public function scopeRecent($query, int $hours = 24): \Illuminate\Database\Eloquent\Builder
     {
-        return $query->where('login_at', '>=', now()->subHours($hours));
+        return $query->where('created_at', '>=', now()->subHours($hours));
     }
 }
