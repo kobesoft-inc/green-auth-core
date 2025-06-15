@@ -18,11 +18,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Green\Auth\Password\PasswordComplexity;
 use Green\Auth\Rules\PasswordRule;
+use Green\Auth\Filament\Pages\Auth\Concerns\InteractsWithGreenAuth;
 
 class ChangePassword extends Page implements HasForms
 {
     use InteractsWithForms;
     use InteractsWithFormActions;
+    use InteractsWithGreenAuth;
 
     protected static string $view = 'green-auth::filament.pages.auth.change-password';
 
@@ -153,36 +155,4 @@ class ChangePassword extends Page implements HasForms
         return true;
     }
 
-    /**
-     * ログインページのURLを取得
-     */
-    protected function getLoginUrl(): string
-    {
-        return filament()->getLoginUrl();
-    }
-
-    /**
-     * パスワード複雑性設定を取得
-     *
-     * 現在のガード設定に基づいてPasswordComplexityインスタンスを生成
-     *
-     * @return PasswordComplexity パスワード複雑性設定インスタンス
-     */
-    protected function getPasswordComplexity(): PasswordComplexity
-    {
-        $guard = $this->getCurrentGuard();
-        return PasswordComplexity::fromAppConfig($guard);
-    }
-
-    /**
-     * 現在のガード名を取得
-     *
-     * Filamentパネルで使用中の認証ガード名を返す
-     *
-     * @return string ガード名
-     */
-    protected function getCurrentGuard(): string
-    {
-        return filament()->getAuthGuard();
-    }
 }

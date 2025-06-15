@@ -17,9 +17,12 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Green\Auth\Filament\Pages\Auth\Concerns\InteractsWithGreenAuth;
 
 class Login extends BaseLogin
 {
+    use InteractsWithGreenAuth;
+
     /**
      * @var string
      */
@@ -56,11 +59,11 @@ class Login extends BaseLogin
         }
 
         $data = $this->form->getState();
-        if (!Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
+        if (!filament()->auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
             $this->throwFailureValidationException();
         }
 
-        $user = Filament::auth()->user();
+        $user = filament()->auth()->user();
 
         // アカウント停止チェック
         if (method_exists($user, 'isSuspended') && $user->isSuspended()) {
@@ -114,7 +117,7 @@ class Login extends BaseLogin
         session([$sessionKey => $user->id]);
         Auth::logout();
 
-        return redirect()->to(route('filament.' . filament()->getId() . '.password-expired'));
+        return redirect()->to($this->getPasswordExpiredUrl());
     }
 
     /**
@@ -128,13 +131,6 @@ class Login extends BaseLogin
             ->danger();
     }
 
-    /**
-     * 現在のパネルを取得
-     */
-    protected function getPanel()
-    {
-        return filament()->getCurrentPanel();
-    }
 
     public function getTitle(): string|Htmlable
     {
@@ -208,48 +204,6 @@ class Login extends BaseLogin
     }
 
     /**
-     * 現在のガード名を取得
-     */
-    protected function getGuard(): string
-    {
-        return filament()->getAuthGuard();
-    }
-
-    /**
-     * 認証設定を取得
-     */
-    protected function config(string $key, $default = null)
-    {
-        $guard = $this->getGuard();
-        return config("green-auth.guards.{$guard}.auth.{$key}", config("green-auth.auth.{$key}", $default));
-    }
-
-    /**
-     * パスワード期限切れセッションキーを取得
-     */
-    protected function getPasswordExpiredSessionKey(): string
-    {
-        $guard = $this->getGuard();
-        return "password_expired_user_id_{$guard}";
-    }
-
-    /**
-     * メールアドレスでのログインが可能かチェック
-     */
-    protected function canLoginWithEmail(): bool
-    {
-        return $this->config('login_with_email', true);
-    }
-
-    /**
-     * ユーザー名でのログインが可能かチェック
-     */
-    protected function canLoginWithUsername(): bool
-    {
-        return $this->config('login_with_username', false);
-    }
-
-    /**
      * ログインフィールドのラベルを取得
      */
     protected function getLoginFieldLabel(): string
@@ -290,30 +244,11 @@ class Login extends BaseLogin
                 if ($this->canLoginWithEmail()) {
                     $query->orWhere('email', $data['login']);
                 }
-                if ($this->canLoginWithUsername()) {
-                    $query->orWhere($this->getUsernameColumn(), $data['login']);
+                if ($this->canLoginWithUsername() && ($usernameColumn = $this->getUsernameColumn())) {
+                    $query->orWhere($usernameColumn, $data['login']);
                 }
             },
             'password' => $data['password'],
         ];
-    }
-
-    /**
-     * ユーザーモデルクラスを取得
-     */
-    protected function getUserModel(): string
-    {
-        $guard = $this->getGuard();
-        return config("green-auth.guards.{$guard}.models.user", config('green-auth.models.user', 'App\\Models\\User'));
-    }
-
-    /**
-     * ユーザー名カラム名を取得（モデルのUSERNAME_COLUMNコンスタンから）
-     */
-    protected function getUsernameColumn(): string
-    {
-        if (defined($this->getUserModel() . '::getUsernameColumn')) {
-            return static::getUsernameColumn();
-        }
     }
 }

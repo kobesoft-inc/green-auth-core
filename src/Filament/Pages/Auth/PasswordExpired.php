@@ -17,11 +17,13 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Green\Auth\Filament\Pages\Auth\Concerns\InteractsWithGreenAuth;
 
 class PasswordExpired extends SimplePage implements HasForms
 {
     use InteractsWithForms;
     use InteractsWithFormActions;
+    use InteractsWithGreenAuth;
 
     protected static string $view = 'green-auth::filament.pages.auth.password-expired';
 
@@ -147,7 +149,7 @@ class PasswordExpired extends SimplePage implements HasForms
             return null;
         }
 
-        // パスワード更新（複雑性検証はフォームバリデーションで実行済み）
+        // パスワード更新
         $this->updateUserPassword($user, $data['password']);
 
         // 成功処理
@@ -172,8 +174,8 @@ class PasswordExpired extends SimplePage implements HasForms
             return null;
         }
 
-        $userModel = $this->getUserClass();
-        $user = $userModel::find($userId);
+        $userClass = $this->getUserClass();
+        $user = $userClass::find($userId);
 
         if (!$user) {
             $this->sendErrorNotification(
@@ -218,13 +220,7 @@ class PasswordExpired extends SimplePage implements HasForms
      */
     protected function updateUserPassword(Model $user, string $newPassword): void
     {
-        $user->password = Hash::make($newPassword);
-
-        // パスワード変更日時を更新（HasPasswordExpirationトレイトの場合）
-        if (method_exists($user, 'setPasswordChangedAt')) {
-            $user->setPasswordChangedAt(now());
-        }
-
+        $user->password = $newPassword;
         $user->save();
     }
 
@@ -279,18 +275,6 @@ class PasswordExpired extends SimplePage implements HasForms
         $this->redirect($this->getLoginUrl());
     }
 
-    /**
-     * パスワード複雑性設定を取得
-     *
-     * 現在のガード設定に基づいてPasswordComplexityインスタンスを生成
-     *
-     * @return PasswordComplexity パスワード複雑性設定インスタンス
-     */
-    protected function getPasswordComplexity(): PasswordComplexity
-    {
-        $guard = $this->getCurrentGuard();
-        return PasswordComplexity::fromAppConfig($guard);
-    }
 
     /**
      * ページタイトルを取得
@@ -358,50 +342,4 @@ class PasswordExpired extends SimplePage implements HasForms
         return true;
     }
 
-    /**
-     * 現在のガード名を取得
-     *
-     * Filamentパネルで使用中の認証ガード名を返す
-     *
-     * @return string ガード名
-     */
-    protected function getCurrentGuard(): string
-    {
-        return filament()->getAuthGuard();
-    }
-
-    /**
-     * パスワード期限切れセッションキーを取得
-     *
-     * ガード固有のセッションキーを生成
-     *
-     * @return string セッションキー
-     */
-    protected function getPasswordExpiredSessionKey(): string
-    {
-        $guard = $this->getCurrentGuard();
-        return "password_expired_user_id_{$guard}";
-    }
-
-    /**
-     * ログインページのURLを取得
-     *
-     * @return string ログインページURL
-     */
-    protected function getLoginUrl(): string
-    {
-        return filament()->getLoginUrl();
-    }
-
-    /**
-     * ユーザーモデルクラスを取得
-     *
-     * プラグインからガード設定に基づくユーザーモデルクラス名を取得
-     *
-     * @return string ユーザーモデルクラス名
-     */
-    protected function getUserClass(): string
-    {
-        return filament()->getPlugin('green-auth')->getUserClass();
-    }
 }

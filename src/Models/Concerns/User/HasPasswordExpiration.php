@@ -90,16 +90,6 @@ trait HasPasswordExpiration
     }
 
     /**
-     * パスワード変更日時を設定
-     *
-     * @return void
-     */
-    public function setPasswordChangedAt(): void
-    {
-        $this->extendPasswordExpiration();
-    }
-
-    /**
      * パスワード有効期限をリセット（過去の日付に設定）
      *
      * @return void
