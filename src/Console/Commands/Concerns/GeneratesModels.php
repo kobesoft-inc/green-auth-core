@@ -545,6 +545,7 @@ class $name extends " . class_basename($baseClass) . "
         $traits = [
             'Kalnoy\\Nestedset\\NodeTrait',
             'Green\\Auth\\Models\\Concerns\\Group\\HasUsers',
+            'Green\\Auth\\Models\\Concerns\\Group\\HasHierarchy',
         ];
 
         if ($this->config['features']['roles']) {
