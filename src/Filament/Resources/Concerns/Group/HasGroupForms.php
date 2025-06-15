@@ -54,32 +54,14 @@ trait HasGroupForms
             ->relationship(
                 'parent',
                 'name',
-                fn(Builder $query, ?Model $record) => $query
-                    ->when(
-                        $record,
-                        fn(Builder $query) => $query
-                            ->where('id', '!=', $record->id)
-                            ->whereNotIn('id', $record->descendants->pluck('id'))
-                    )
+                fn(Builder $query, ?Model $record) => $query->availableAsParentFor($record)
             )
             ->placeholder('')
-            ->rules([
-                function (?Model $record = null) {
-                    return ParentGroupRule::for(static::getModel(), $record);
-                }
-            ])
+            ->rules([fn(?Model $record = null) => ParentGroupRule::for(static::getModel(), $record)])
             ->searchable()
             ->preload()
             ->placeholder('')
-            ->getOptionLabelFromRecordUsing(function ($record) {
-                if (method_exists($record, 'ancestors')) {
-                    $ancestors = $record->ancestors->pluck('name')->join(' > ');
-                    if ($ancestors) {
-                        return $ancestors . ' > ' . $record->name;
-                    }
-                }
-                return $record->name;
-            });
+            ->getOptionLabelFromRecordUsing(fn($record) => $record->getOptionLabel());
     }
 
     /**

@@ -33,7 +33,8 @@ class PasswordExpired extends SimplePage implements HasForms
      * ページのマウント処理
      *
      * パスワード期限切れセッションの有効性をチェックし、
-     * 無効な場合はログインページにリダイレクトする
+     * 無効な場合はログインページにリダイレクトする。
+     * 有効な場合はフォームを初期化する。
      *
      * @return void
      */
@@ -55,7 +56,9 @@ class PasswordExpired extends SimplePage implements HasForms
     /**
      * フォームの定義
      *
-     * パスワード変更用のフォームスキーマを構築する
+     * パスワード変更用のフォームスキーマを構築する。
+     * 現在のパスワード、新しいパスワード、パスワード確認の
+     * 3つの入力フィールドを含むフォームを返す。
      *
      * @param Form $form Filamentフォームインスタンス
      * @return Form 設定済みフォームインスタンス
@@ -74,6 +77,9 @@ class PasswordExpired extends SimplePage implements HasForms
     /**
      * 現在のパスワード入力フィールドコンポーネントを取得
      *
+     * ユーザー認証のために現在のパスワードを入力する
+     * 必須フィールドを生成する。パスワードはマスク表示される。
+     *
      * @return Component 現在のパスワード入力用のTextInputコンポーネント
      */
     protected function getCurrentPasswordFormComponent(): Component
@@ -89,7 +95,8 @@ class PasswordExpired extends SimplePage implements HasForms
      * 新しいパスワード入力フィールドコンポーネントを取得
      *
      * パスワード複雑性要件をヘルパーテキストとして表示し、
-     * バリデーションルールとして複雑性チェックを組み込む
+     * バリデーションルールとして複雑性チェックを組み込む。
+     * パスワード確認フィールドとの一致検証も設定する。
      *
      * @return Component 新しいパスワード入力用のTextInputコンポーネント
      */
@@ -113,6 +120,9 @@ class PasswordExpired extends SimplePage implements HasForms
     /**
      * パスワード確認入力フィールドコンポーネントを取得
      *
+     * 新しいパスワードの入力ミスを防ぐための確認用フィールドを生成する。
+     * 新しいパスワードフィールドと一致する必要がある。
+     *
      * @return Component パスワード確認入力用のTextInputコンポーネント
      */
     protected function getPasswordConfirmationFormComponent(): Component
@@ -128,8 +138,9 @@ class PasswordExpired extends SimplePage implements HasForms
      * パスワード変更の実行
      *
      * セッション検証、現在パスワード検証を行い、
-     * 全て成功した場合にパスワードを更新する
-     * （パスワード複雑性検証はフォームレベルで実行済み）
+     * 全て成功した場合にパスワードを更新する。
+     * パスワード複雑性検証はフォームレベルで実行済み。
+     * 成功時はセッションをクリアしてログイン画面へリダイレクトする。
      *
      * @return mixed リダイレクトレスポンスまたはnull（エラー時）
      */
@@ -161,7 +172,8 @@ class PasswordExpired extends SimplePage implements HasForms
      * セッション検証とユーザー取得
      *
      * パスワード期限切れセッションからユーザーIDを取得し、
-     * 対応するユーザーモデルを返す
+     * 対応するユーザーモデルを返す。セッションが無効またはユーザーが
+     * 存在しない場合はnullを返し、適切なエラー通知を表示する。
      *
      * @return Model|null ユーザーモデルまたはnull（無効時）
      */
@@ -190,9 +202,10 @@ class PasswordExpired extends SimplePage implements HasForms
     /**
      * 現在のパスワード検証
      *
-     * 入力された現在のパスワードがユーザーの実際のパスワードと一致するかチェック
+     * 入力された現在のパスワードがユーザーの実際のパスワードと一致するかチェックする。
+     * 不一致の場合はエラー通知を表示してfalseを返す。
      *
-     * @param string $currentPassword 入力された現在のパスワード
+     * @param string $currentPassword 入力された現在のパスワード（平文）
      * @param Model $user ユーザーモデルインスタンス
      * @return bool 検証結果（true: 一致, false: 不一致）
      */
@@ -211,8 +224,9 @@ class PasswordExpired extends SimplePage implements HasForms
     /**
      * ユーザーのパスワードを更新
      *
-     * 新しいパスワードをハッシュ化してユーザーモデルに保存し、
-     * パスワード変更日時も更新する
+     * 新しいパスワードをユーザーモデルに設定して保存する。
+     * パスワードのハッシュ化はモデルのミューテーターで自動的に処理される。
+     * パスワード変更日時の更新もモデル側で自動的に行われる。
      *
      * @param Model $user ユーザーモデルインスタンス
      * @param string $newPassword 新しいパスワード（平文）
@@ -227,7 +241,9 @@ class PasswordExpired extends SimplePage implements HasForms
     /**
      * パスワード変更成功処理
      *
-     * セッションクリア、成功通知表示、ログインページへのリダイレクトを実行
+     * パスワード変更が成功した際の後処理を実行する。
+     * セッションクリア、成功通知の表示、ログインページへのリダイレクトを
+     * 順番に実行する。
      *
      * @return void
      */
@@ -250,10 +266,12 @@ class PasswordExpired extends SimplePage implements HasForms
     /**
      * エラー通知の送信
      *
-     * 統一されたフォーマットでエラー通知を表示
+     * 統一されたフォーマットでエラー通知を表示する。
+     * タイトルは固定で、本文は引数で指定されたメッセージまたは
+     * 詳細メッセージを表示する。
      *
      * @param string $message エラーメッセージ
-     * @param string|null $body 詳細メッセージ（省略可）
+     * @param string|null $body 詳細メッセージ（省略可、省略時は$messageを使用）
      * @return void
      */
     protected function sendErrorNotification(string $message, ?string $body = null): void
@@ -268,6 +286,9 @@ class PasswordExpired extends SimplePage implements HasForms
     /**
      * ログインページへのリダイレクト
      *
+     * 現在のパネルに設定されているログインURLへリダイレクトする。
+     * getLoginUrl()メソッドはInteractsWithGreenAuthトレイトから提供される。
+     *
      * @return void
      */
     protected function redirectToLogin(): void
@@ -279,6 +300,9 @@ class PasswordExpired extends SimplePage implements HasForms
     /**
      * ページタイトルを取得
      *
+     * ブラウザのタブやページヘッダーに表示される
+     * タイトルテキストを返す。
+     *
      * @return string|Htmlable ページタイトル
      */
     public function getTitle(): string|Htmlable
@@ -288,6 +312,9 @@ class PasswordExpired extends SimplePage implements HasForms
 
     /**
      * ページヘッディングを取得
+     *
+     * ページコンテンツの上部に表示される
+     * メインの見出しテキストを返す。
      *
      * @return string|Htmlable ページヘッディング
      */
@@ -299,6 +326,9 @@ class PasswordExpired extends SimplePage implements HasForms
     /**
      * ページサブヘッディングを取得
      *
+     * メイン見出しの下に表示される補足説明文を返す。
+     * nullを返すとサブヘッディングは表示されない。
+     *
      * @return string|Htmlable|null ページサブヘッディング
      */
     public function getSubheading(): string|Htmlable|null
@@ -309,7 +339,8 @@ class PasswordExpired extends SimplePage implements HasForms
     /**
      * フォームアクションを取得
      *
-     * パスワード変更ボタンを含むアクション配列を返す
+     * フォームの下部に表示されるアクションボタンを定義する。
+     * この画面では「パスワード変更」ボタンのみを表示する。
      *
      * @return array<Action> アクション配列
      */
@@ -323,6 +354,9 @@ class PasswordExpired extends SimplePage implements HasForms
     /**
      * パスワード変更フォームアクションを取得
      *
+     * フォーム送信用の「パスワード変更」ボタンを生成する。
+     * クリック時にchangePasswordメソッドが実行される。
+     *
      * @return Action パスワード変更アクション
      */
     protected function getChangePasswordFormAction(): Action
@@ -335,7 +369,10 @@ class PasswordExpired extends SimplePage implements HasForms
     /**
      * フォームアクションを全幅で表示するかどうか
      *
-     * @return bool 全幅表示フラグ
+     * trueを返すとフォームのアクションボタンが
+     * フォームの全幅で表示される。
+     *
+     * @return bool 全幅表示フラグ（true: 全幅表示）
      */
     protected function hasFullWidthFormActions(): bool
     {

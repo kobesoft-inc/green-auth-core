@@ -69,15 +69,7 @@ trait HasUserForms
             ->multiple($allowMultiple)
             ->preload()
             ->searchable()
-            ->getOptionLabelFromRecordUsing(function ($record) {
-                if (method_exists($record, 'ancestors')) {
-                    $ancestors = $record->ancestors->pluck('name')->join(' > ');
-                    if ($ancestors) {
-                        return $ancestors . ' > ' . $record->name;
-                    }
-                }
-                return $record->name;
-            });
+            ->getOptionLabelFromRecordUsing(fn($record) => $record->getOptionLabel());
     }
 
     /**

@@ -88,7 +88,7 @@ trait HasModelConfig
      */
     protected static function getLoginLogClass(): string
     {
-        return static::getRelatedModelClass('loginlog');
+        return static::getRelatedModelClass('login_log');
     }
 
     /**
