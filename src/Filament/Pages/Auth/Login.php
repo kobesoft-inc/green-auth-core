@@ -32,11 +32,23 @@ class Login extends BaseLogin
      * 
      * ログイン画面に表示するフォームを定義する。
      * ログインID、パスワード、記憶オプションのフィールドを含む。
+     * canLoginWithUsernameとcanLoginWithEmailが両方ともfalseの場合は空のフォームを返す。
      * 
      * @return array<int | string, string | Form> フォームの配列
      */
     protected function getForms(): array
     {
+        // 両方のログイン方法がfalseの場合は空のフォームを返す
+        if (!$this->canLoginWithEmail() && !$this->canLoginWithUsername()) {
+            return [
+                'form' => $this->form(
+                    $this->makeForm()
+                        ->schema([])
+                        ->statePath('data'),
+                ),
+            ];
+        }
+
         return [
             'form' => $this->form(
                 $this->makeForm()
@@ -272,12 +284,17 @@ class Login extends BaseLogin
      * フォームアクション（ボタン）の配列を取得
      * 
      * フォームの下部に表示されるアクションボタンを定義する。
-     * この画面では「ログイン」ボタンのみを表示する。
+     * canLoginWithUsernameとcanLoginWithEmailが両方ともfalseの場合は空の配列を返す。
      * 
      * @return array<Action | ActionGroup> アクションまたはアクショングループの配列
      */
     protected function getFormActions(): array
     {
+        // 両方のログイン方法がfalseの場合は空の配列を返す
+        if (!$this->canLoginWithEmail() && !$this->canLoginWithUsername()) {
+            return [];
+        }
+
         return [
             $this->getAuthenticateFormAction(),
         ];
