@@ -32,23 +32,11 @@ class Login extends BaseLogin
      * 
      * ログイン画面に表示するフォームを定義する。
      * ログインID、パスワード、記憶オプションのフィールドを含む。
-     * canLoginWithUsernameとcanLoginWithEmailが両方ともfalseの場合は空のフォームを返す。
      * 
      * @return array<int | string, string | Form> フォームの配列
      */
     protected function getForms(): array
     {
-        // 両方のログイン方法がfalseの場合は空のフォームを返す
-        if (!$this->canLoginWithEmail() && !$this->canLoginWithUsername()) {
-            return [
-                'form' => $this->form(
-                    $this->makeForm()
-                        ->schema([])
-                        ->statePath('data'),
-                ),
-            ];
-        }
-
         return [
             'form' => $this->form(
                 $this->makeForm()
@@ -284,17 +272,12 @@ class Login extends BaseLogin
      * フォームアクション（ボタン）の配列を取得
      * 
      * フォームの下部に表示されるアクションボタンを定義する。
-     * canLoginWithUsernameとcanLoginWithEmailが両方ともfalseの場合は空の配列を返す。
+     * この画面では「ログイン」ボタンのみを表示する。
      * 
      * @return array<Action | ActionGroup> アクションまたはアクショングループの配列
      */
     protected function getFormActions(): array
     {
-        // 両方のログイン方法がfalseの場合は空の配列を返す
-        if (!$this->canLoginWithEmail() && !$this->canLoginWithUsername()) {
-            return [];
-        }
-
         return [
             $this->getAuthenticateFormAction(),
         ];
@@ -378,5 +361,29 @@ class Login extends BaseLogin
             },
             'password' => $data['password'],
         ];
+    }
+
+    /**
+     * ログインフォームを表示するかどうかを判定
+     * 
+     * canLoginWithEmailとcanLoginWithUsernameが両方ともfalseの場合はfalseを返す
+     * 
+     * @return bool ログインフォームを表示するかどうか
+     */
+    public function shouldShowLoginForm(): bool
+    {
+        return $this->canLoginWithEmail() || $this->canLoginWithUsername();
+    }
+
+    /**
+     * ビューに渡すデータを取得
+     * 
+     * @return array<string, mixed> ビューデータ
+     */
+    protected function getViewData(): array
+    {
+        return array_merge(parent::getViewData(), [
+            'shouldShowLoginForm' => $this->shouldShowLoginForm(),
+        ]);
     }
 }
