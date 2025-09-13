@@ -2,6 +2,8 @@
 
 namespace Green\Auth\Models;
 
+use Green\Auth\Models\Concerns\HasModelConfig;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\Request;
@@ -10,7 +12,7 @@ use Illuminate\Support\Str;
 
 abstract class BaseLoginLog extends Model
 {
-    use Concerns\HasModelConfig;
+    use HasModelConfig;
 
     const UPDATED_AT = null;
 
@@ -169,11 +171,11 @@ abstract class BaseLoginLog extends Model
     /**
      * 特定ユーザーのログインに絞り込むスコープ
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query クエリビルダー
+     * @param Builder $query クエリビルダー
      * @param mixed $userId ユーザーID
-     * @return \Illuminate\Database\Eloquent\Builder 絞り込まれたクエリ
+     * @return Builder 絞り込まれたクエリ
      */
-    public function scopeForUser($query, $userId): \Illuminate\Database\Eloquent\Builder
+    public function scopeForUser($query, $userId): Builder
     {
         return $query->where('user_id', $userId);
     }
@@ -181,12 +183,12 @@ abstract class BaseLoginLog extends Model
     /**
      * 日付範囲内のログインに絞り込むスコープ
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query クエリビルダー
+     * @param Builder $query クエリビルダー
      * @param mixed $startDate 開始日
      * @param mixed $endDate 終了日
-     * @return \Illuminate\Database\Eloquent\Builder 絞り込まれたクエリ
+     * @return Builder 絞り込まれたクエリ
      */
-    public function scopeBetweenDates($query, $startDate, $endDate): \Illuminate\Database\Eloquent\Builder
+    public function scopeBetweenDates($query, $startDate, $endDate): Builder
     {
         return $query->whereBetween('created_at', [$startDate, $endDate]);
     }
@@ -194,11 +196,11 @@ abstract class BaseLoginLog extends Model
     /**
      * 特定IPアドレスからのログインに絞り込むスコープ
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query クエリビルダー
+     * @param Builder $query クエリビルダー
      * @param string $ipAddress IPアドレス
-     * @return \Illuminate\Database\Eloquent\Builder 絞り込まれたクエリ
+     * @return Builder 絞り込まれたクエリ
      */
-    public function scopeFromIp($query, string $ipAddress): \Illuminate\Database\Eloquent\Builder
+    public function scopeFromIp($query, string $ipAddress): Builder
     {
         return $query->where('ip_address', $ipAddress);
     }
@@ -206,11 +208,11 @@ abstract class BaseLoginLog extends Model
     /**
      * 最近のログインに絞り込むスコープ
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query クエリビルダー
+     * @param Builder $query クエリビルダー
      * @param int $hours 時間数（デフォルト24時間）
-     * @return \Illuminate\Database\Eloquent\Builder 絞り込まれたクエリ
+     * @return Builder 絞り込まれたクエリ
      */
-    public function scopeRecent($query, int $hours = 24): \Illuminate\Database\Eloquent\Builder
+    public function scopeRecent($query, int $hours = 24): Builder
     {
         return $query->where('created_at', '>=', now()->subHours($hours));
     }

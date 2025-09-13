@@ -12,7 +12,7 @@ abstract class BaseGroupResource extends Resource
 {
     use HasModelLabels, HasGroupActions, HasGroupColumns, HasGroupForms;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
 
     protected static ?int $navigationSort = 20;
 }

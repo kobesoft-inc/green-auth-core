@@ -2,6 +2,10 @@
 
 namespace Green\Auth\Filament\Resources\Concerns\Role;
 
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use Exception;
 use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
@@ -15,11 +19,11 @@ trait HasRoleColumns
     /**
      * カスタマイズ可能な名前カラムを作成
      *
-     * @return Tables\Columns\TextColumn 名前カラム
+     * @return TextColumn 名前カラム
      */
-    public static function getNameColumn(): Tables\Columns\TextColumn
+    public static function getNameColumn(): TextColumn
     {
-        return Tables\Columns\TextColumn::make('name')
+        return TextColumn::make('name')
             ->label(static::getLocalizedFieldLabel('role_name'))
             ->searchable()
             ->sortable()
@@ -29,15 +33,15 @@ trait HasRoleColumns
     /**
      * カスタマイズ可能なユーザーカラムを作成
      *
-     * @return Tables\Columns\ImageColumn|null ユーザーカラム（トレイトがない場合はnull）
+     * @return ImageColumn|null ユーザーカラム（トレイトがない場合はnull）
      */
-    public static function getUsersColumn(): ?Tables\Columns\ImageColumn
+    public static function getUsersColumn(): ?ImageColumn
     {
         if (!static::hasUsersTrait()) {
             return null;
         }
 
-        return Tables\Columns\ImageColumn::make('users')
+        return ImageColumn::make('users')
             ->label(static::getTranslatedModelLabel('user', true))
             ->circular()
             ->stacked()
@@ -66,15 +70,15 @@ trait HasRoleColumns
     /**
      * カスタマイズ可能なグループカラムを作成
      *
-     * @return Tables\Columns\TextColumn|null グループカラム（トレイトがない場合はnull）
+     * @return TextColumn|null グループカラム（トレイトがない場合はnull）
      */
-    public static function getGroupsColumn(): ?Tables\Columns\TextColumn
+    public static function getGroupsColumn(): ?TextColumn
     {
         if (!static::hasGroupsTrait()) {
             return null;
         }
 
-        return Tables\Columns\TextColumn::make('groups.name')
+        return TextColumn::make('groups.name')
             ->label(static::getTranslatedModelLabel('group', true))
             ->badge();
     }
@@ -82,11 +86,11 @@ trait HasRoleColumns
     /**
      * カスタマイズ可能な作成日時カラムを作成
      *
-     * @return Tables\Columns\TextColumn 作成日時カラム
+     * @return TextColumn 作成日時カラム
      */
-    public static function getCreatedAtColumn(): Tables\Columns\TextColumn
+    public static function getCreatedAtColumn(): TextColumn
     {
-        return Tables\Columns\TextColumn::make('created_at')
+        return TextColumn::make('created_at')
             ->label(__('green-auth::roles.created_at'))
             ->dateTime('Y/m/d H:i')
             ->sortable()
@@ -152,8 +156,8 @@ trait HasRoleColumns
     public static function getBulkActions(): array
     {
         return [
-            \Filament\Tables\Actions\BulkActionGroup::make([
-                \Filament\Tables\Actions\DeleteBulkAction::make(),
+            BulkActionGroup::make([
+                DeleteBulkAction::make(),
             ]),
         ];
     }
@@ -181,8 +185,8 @@ trait HasRoleColumns
         return $table
             ->columns($columns)
             ->filters(static::getTableFilters())
-            ->actions(static::getRecordActions())
-            ->bulkActions(static::getBulkActions())
+            ->recordActions(static::getRecordActions())
+            ->toolbarActions(static::getBulkActions())
             ->defaultSort('name');
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Green\Auth\Filament\Resources\Concerns\Role;
 
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
 use Filament\Tables;
 
 trait HasRoleActions
@@ -27,21 +29,21 @@ trait HasRoleActions
     /**
      * 編集アクションを作成
      */
-    public static function makeEditAction(): Tables\Actions\EditAction
+    public static function makeEditAction(): EditAction
     {
-        return Tables\Actions\EditAction::make()
+        return EditAction::make()
             ->button()
             ->slideOver()
             ->modalWidth('2xl')
-            ->form(static::getFormSchema());
+            ->schema(static::getFormSchema());
     }
 
     /**
      * 削除アクションを作成
      */
-    public static function makeDeleteAction(): Tables\Actions\DeleteAction
+    public static function makeDeleteAction(): DeleteAction
     {
-        return Tables\Actions\DeleteAction::make()
+        return DeleteAction::make()
             ->button();
     }
 }

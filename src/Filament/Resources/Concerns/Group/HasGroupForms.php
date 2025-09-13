@@ -2,6 +2,10 @@
 
 namespace Green\Auth\Filament\Resources\Concerns\Group;
 
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
+use Filament\Schemas\Schema;
 use Filament\Forms;
 use Green\Auth\Rules\ParentGroupRule;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,11 +18,11 @@ trait HasGroupForms
     /**
      * 名前入力コンポーネントをカスタマイズできるように
      *
-     * @return Forms\Components\TextInput 名前入力コンポーネント
+     * @return TextInput 名前入力コンポーネント
      */
-    public static function getNameFormComponent(): Forms\Components\TextInput
+    public static function getNameFormComponent(): TextInput
     {
-        return Forms\Components\TextInput::make('name')
+        return TextInput::make('name')
             ->label(static::getLocalizedFieldLabel('group_name'))
             ->required()
             ->maxLength(255)
@@ -28,11 +32,11 @@ trait HasGroupForms
     /**
      * 説明入力コンポーネントをカスタマイズできるように
      *
-     * @return Forms\Components\Textarea 説明入力コンポーネント
+     * @return Textarea 説明入力コンポーネント
      */
-    public static function getDescriptionFormComponent(): Forms\Components\Textarea
+    public static function getDescriptionFormComponent(): Textarea
     {
-        return Forms\Components\Textarea::make('description')
+        return Textarea::make('description')
             ->label(__('green-auth::groups.description'))
             ->maxLength(65535)
             ->columnSpanFull();
@@ -41,15 +45,15 @@ trait HasGroupForms
     /**
      * 親グループ選択コンポーネントをカスタマイズできるように
      *
-     * @return Forms\Components\Select|null 親グループ選択コンポーネント
+     * @return Select|null 親グループ選択コンポーネント
      */
-    public static function getParentFormComponent(): ?Forms\Components\Select
+    public static function getParentFormComponent(): ?Select
     {
         if (!static::hasParentGroupTrait()) {
             return null;
         }
 
-        return Forms\Components\Select::make('parent_id')
+        return Select::make('parent_id')
             ->label(static::getLocalizedFieldLabel('parent_group'))
             ->relationship(
                 'parent',
@@ -67,15 +71,15 @@ trait HasGroupForms
     /**
      * ロール選択コンポーネントをカスタマイズできるように
      *
-     * @return Forms\Components\Select|null ロール選択コンポーネント（トレイトがない場合はnull）
+     * @return Select|null ロール選択コンポーネント（トレイトがない場合はnull）
      */
-    public static function getRolesFormComponent(): ?Forms\Components\Select
+    public static function getRolesFormComponent(): ?Select
     {
         if (!static::hasRolesTrait()) {
             return null;
         }
 
-        return Forms\Components\Select::make('roles')
+        return Select::make('roles')
             ->label(static::getTranslatedModelLabel('role', true))
             ->relationship('roles', 'name')
             ->placeholder('')
@@ -113,11 +117,11 @@ trait HasGroupForms
     /**
      * Filamentフォームを取得
      *
-     * @param Forms\Form $form フォームインスタンス
-     * @return Forms\Form 設定済みフォーム
+     * @param Schema $schema フォームインスタンス
+     * @return Schema 設定済みフォーム
      */
-    public static function form(Forms\Form $form): Forms\Form
+    public static function form(Schema $schema): Schema
     {
-        return $form->schema(static::getFormSchema())->columns(1);
+        return $schema->components(static::getFormSchema())->columns(1);
     }
 }

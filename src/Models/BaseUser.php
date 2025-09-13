@@ -2,17 +2,25 @@
 
 namespace Green\Auth\Models;
 
+use Illuminate\Foundation\Auth\User;
+use Green\Auth\Models\Concerns\User\HasPasswordExpiration;
+use Green\Auth\Models\Concerns\User\HasSuspension;
+use Green\Auth\Models\Concerns\User\BelongsToGroups;
+use Green\Auth\Models\Concerns\User\HasRoles;
+use Green\Auth\Models\Concerns\User\HasPermissions;
+use Green\Auth\Models\Concerns\User\HasLoginLogs;
+use Green\Auth\Models\Concerns\User\HasPanelAccess;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 
-abstract class BaseUser extends \Illuminate\Foundation\Auth\User implements FilamentUser, HasAvatar
+abstract class BaseUser extends User implements FilamentUser, HasAvatar
 {
-    use Concerns\User\HasPasswordExpiration;
+    use HasPasswordExpiration;
     use Concerns\User\HasAvatar;
-    use Concerns\User\HasSuspension;
-    use Concerns\User\BelongsToGroups;
-    use Concerns\User\HasRoles;
-    use Concerns\User\HasPermissions;
-    use Concerns\User\HasLoginLogs;
-    use Concerns\User\HasPanelAccess;
+    use HasSuspension;
+    use BelongsToGroups;
+    use HasRoles;
+    use HasPermissions;
+    use HasLoginLogs;
+    use HasPanelAccess;
 }

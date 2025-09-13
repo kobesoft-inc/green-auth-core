@@ -2,6 +2,7 @@
 
 namespace Green\Auth\Models\Concerns;
 
+use RuntimeException;
 use Illuminate\Support\Str;
 
 /**
@@ -51,7 +52,7 @@ trait HasModelConfig
      * ユーザーモデルクラスを取得
      *
      * @return string ユーザーモデルのクラス名
-     * @throws \RuntimeException クラスが見つからない場合
+     * @throws RuntimeException クラスが見つからない場合
      */
     protected static function getUserClass(): string
     {
@@ -62,7 +63,7 @@ trait HasModelConfig
      * グループモデルクラスを取得
      *
      * @return string グループモデルのクラス名
-     * @throws \RuntimeException クラスが見つからない場合
+     * @throws RuntimeException クラスが見つからない場合
      */
     protected static function getGroupClass(): string
     {
@@ -73,7 +74,7 @@ trait HasModelConfig
      * ロールモデルクラスを取得
      *
      * @return string ロールモデルのクラス名
-     * @throws \RuntimeException クラスが見つからない場合
+     * @throws RuntimeException クラスが見つからない場合
      */
     protected static function getRoleClass(): string
     {
@@ -84,7 +85,7 @@ trait HasModelConfig
      * ログインログモデルクラスを取得
      *
      * @return string ログインログモデルのクラス名
-     * @throws \RuntimeException クラスが見つからない場合
+     * @throws RuntimeException クラスが見つからない場合
      */
     protected static function getLoginLogClass(): string
     {
@@ -96,7 +97,7 @@ trait HasModelConfig
      *
      * @param string $modelType モデルタイプ（'user', 'group', 'role'）
      * @return string モデルクラス名
-     * @throws \RuntimeException クラスが見つからない場合
+     * @throws RuntimeException クラスが見つからない場合
      */
     protected static function getRelatedModelClass(string $modelType): string
     {
@@ -118,7 +119,7 @@ trait HasModelConfig
             return $guessedClass;
         }
 
-        throw new \RuntimeException("Cannot find {$modelTypeUcfirst} class. Tried config and guessed [{$guessedClass}].");
+        throw new RuntimeException("Cannot find {$modelTypeUcfirst} class. Tried config and guessed [{$guessedClass}].");
     }
 
     /**
@@ -177,7 +178,7 @@ trait HasModelConfig
      * 現在のガードを取得
      *
      * @return string ガード名
-     * @throws \RuntimeException ガードが特定できない場合
+     * @throws RuntimeException ガードが特定できない場合
      */
     public static function getGuardName(): string
     {
@@ -195,14 +196,14 @@ trait HasModelConfig
         }
 
         // ガードが見つからない場合はエラー
-        throw new \RuntimeException("Unable to determine guard for model: " . static::class);
+        throw new RuntimeException("Unable to determine guard for model: " . static::class);
     }
 
     /**
      * 現在のモデルタイプを取得 ('User', 'Group', 'Role')
      *
      * @return string モデルタイプ（'User', 'Group', 'Role'）
-     * @throws \RuntimeException モデルタイプが特定できない場合
+     * @throws RuntimeException モデルタイプが特定できない場合
      */
     protected static function getModelType(): string
     {
@@ -221,6 +222,6 @@ trait HasModelConfig
             return $matches[2];
         }
 
-        throw new \RuntimeException("Cannot determine model type from class name: {$className}");
+        throw new RuntimeException("Cannot determine model type from class name: {$className}");
     }
 }

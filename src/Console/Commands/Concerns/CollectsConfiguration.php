@@ -2,6 +2,8 @@
 
 namespace Green\Auth\Console\Commands\Concerns;
 
+use Illuminate\Support\Str;
+
 trait CollectsConfiguration
 {
     /**
@@ -317,7 +319,7 @@ trait CollectsConfiguration
      */
     protected function generateTableName(string $modelName): string
     {
-        return \Illuminate\Support\Str::plural(\Illuminate\Support\Str::snake($modelName));
+        return Str::plural(Str::snake($modelName));
     }
 
     /**
@@ -325,6 +327,6 @@ trait CollectsConfiguration
      */
     protected function generateSingularTableName(string $modelName): string
     {
-        return \Illuminate\Support\Str::snake($modelName);
+        return Str::snake($modelName);
     }
 }

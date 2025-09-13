@@ -2,8 +2,8 @@
 
 namespace Green\Auth\Filament\Actions;
 
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
-use Filament\Tables\Actions\Action;
 
 class UnsuspendUserAction
 {

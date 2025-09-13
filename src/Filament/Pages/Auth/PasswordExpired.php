@@ -2,12 +2,12 @@
 
 namespace Green\Auth\Filament\Pages\Auth;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Component;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
@@ -25,7 +25,7 @@ class PasswordExpired extends SimplePage implements HasForms
     use InteractsWithFormActions;
     use InteractsWithGreenAuth;
 
-    protected static string $view = 'green-auth::filament.pages.auth.password-expired';
+    protected string $view = 'green-auth::filament.pages.auth.password-expired';
 
     public ?array $data = [];
 
@@ -60,13 +60,13 @@ class PasswordExpired extends SimplePage implements HasForms
      * 現在のパスワード、新しいパスワード、パスワード確認の
      * 3つの入力フィールドを含むフォームを返す。
      *
-     * @param Form $form Filamentフォームインスタンス
-     * @return Form 設定済みフォームインスタンス
+     * @param Schema $schema Filamentフォームインスタンス
+     * @return Schema 設定済みフォームインスタンス
      */
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 $this->getCurrentPasswordFormComponent(),
                 $this->getPasswordFormComponent(),
                 $this->getPasswordConfirmationFormComponent(),

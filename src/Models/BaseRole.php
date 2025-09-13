@@ -2,13 +2,16 @@
 
 namespace Green\Auth\Models;
 
+use Green\Auth\Models\Concerns\Role\HasPermissions;
+use Green\Auth\Models\Concerns\Role\HasUsers;
+use Green\Auth\Models\Concerns\Role\HasGroups;
 use Illuminate\Database\Eloquent\Model;
 
 abstract class BaseRole extends Model
 {
-    use Concerns\Role\HasPermissions;
-    use Concerns\Role\HasUsers;
-    use Concerns\Role\HasGroups;
+    use HasPermissions;
+    use HasUsers;
+    use HasGroups;
 
     /**
      * The attributes that are mass assignable.

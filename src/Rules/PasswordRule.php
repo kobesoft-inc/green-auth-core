@@ -2,6 +2,7 @@
 
 namespace Green\Auth\Rules;
 
+use InvalidArgumentException;
 use Closure;
 use Green\Auth\Password\PasswordComplexity;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -74,12 +75,12 @@ class PasswordRule implements ValidationRule
      *
      * @param string $userModelClass ユーザーモデルクラス名
      * @return static パスワードルールインスタンス
-     * @throws \InvalidArgumentException ユーザーモデルが見つからない場合
+     * @throws InvalidArgumentException ユーザーモデルが見つからない場合
      */
     public static function fromUserModel(string $userModelClass): static
     {
         if (!class_exists($userModelClass)) {
-            throw new \InvalidArgumentException("User model class '{$userModelClass}' does not exist.");
+            throw new InvalidArgumentException("User model class '{$userModelClass}' does not exist.");
         }
 
         // ユーザーモデルからガード名を取得
@@ -95,7 +96,7 @@ class PasswordRule implements ValidationRule
      */
     public static function fromCurrentPanel(): static
     {
-        $guard = filament()->getCurrentPanel()->getAuthGuard();
+        $guard = filament()->getCurrentOrDefaultPanel()->getAuthGuard();
         return static::fromGuard($guard);
     }
 
@@ -115,7 +116,7 @@ class PasswordRule implements ValidationRule
      *
      * @param string $userModelClass ユーザーモデルクラス名
      * @return string ガード名
-     * @throws \InvalidArgumentException 対応するガードが見つからない場合
+     * @throws InvalidArgumentException 対応するガードが見つからない場合
      */
     protected static function getGuardFromUserModel(string $userModelClass): string
     {
@@ -132,6 +133,6 @@ class PasswordRule implements ValidationRule
             }
         }
 
-        throw new \InvalidArgumentException("No guard found for user model '{$userModelClass}'.");
+        throw new InvalidArgumentException("No guard found for user model '{$userModelClass}'.");
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Green\Auth\Listeners;
 
+use Throwable;
+use Log;
 use Green\Auth\Models\BaseLoginLog;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -52,13 +54,13 @@ class LogUserLogin
      * ジョブの失敗をハンドル
      *
      * @param Login $event ログインイベント
-     * @param \Throwable $exception 例外
+     * @param Throwable $exception 例外
      * @return void
      */
-    public function failed(Login $event, \Throwable $exception): void
+    public function failed(Login $event, Throwable $exception): void
     {
         // ログイン履歴記録の失敗をログに記録
-        \Log::error('Failed to log user login', [
+        Log::error('Failed to log user login', [
             'user_id' => $event->user?->id ?? 'unknown',
             'guard' => $event->guard,
             'error' => $exception->getMessage(),

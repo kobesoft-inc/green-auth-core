@@ -2,6 +2,7 @@
 
 namespace Green\Auth\Filament\Pages\Auth\Concerns;
 
+use Filament\Panel;
 use Filament\Facades\Filament;
 use Green\Auth\Password\PasswordComplexity;
 
@@ -24,9 +25,9 @@ trait InteractsWithGreenAuth
      *
      * @return \Filament\Panel 現在のFilamentパネル
      */
-    protected function getPanel(): \Filament\Panel
+    protected function getPanel(): Panel
     {
-        return filament()->getCurrentPanel();
+        return filament()->getCurrentOrDefaultPanel();
     }
 
     // ===== ユーザーモデル関連 =====

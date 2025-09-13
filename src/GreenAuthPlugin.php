@@ -2,6 +2,7 @@
 
 namespace Green\Auth;
 
+use InvalidArgumentException;
 use Filament\Contracts\Plugin;
 use Filament\Navigation\MenuItem;
 use Filament\Panel;
@@ -88,21 +89,21 @@ class GreenAuthPlugin implements Plugin
      */
     public function getUserClass(): string
     {
-        $guard = filament()->getCurrentPanel()->getAuthGuard();
+        $guard = filament()->getCurrentOrDefaultPanel()->getAuthGuard();
         $provider = config("auth.guards.{$guard}.provider");
 
         if (!$provider) {
-            throw new \InvalidArgumentException("Guard '{$guard}' does not exist or has no provider configured.");
+            throw new InvalidArgumentException("Guard '{$guard}' does not exist or has no provider configured.");
         }
 
         $model = config("auth.providers.{$provider}.model");
 
         if (!$model) {
-            throw new \InvalidArgumentException("Provider '{$provider}' does not have a model configured.");
+            throw new InvalidArgumentException("Provider '{$provider}' does not have a model configured.");
         }
 
         if (!class_exists($model)) {
-            throw new \InvalidArgumentException("User model class '{$model}' does not exist.");
+            throw new InvalidArgumentException("User model class '{$model}' does not exist.");
         }
 
         return $model;

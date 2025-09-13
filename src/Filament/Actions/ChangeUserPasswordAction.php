@@ -2,7 +2,7 @@
 
 namespace Green\Auth\Filament\Actions;
 
-use Filament\Tables\Actions\Action;
+use Filament\Actions\Action;
 use Green\Auth\Filament\Actions\Concerns\ManagesUserPasswords;
 use Illuminate\Database\Eloquent\Model;
 

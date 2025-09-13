@@ -2,6 +2,8 @@
 
 namespace Green\Auth;
 
+use Livewire\Livewire;
+use Green\Auth\Filament\Pages\Auth\PasswordExpired;
 use Green\Auth\Console\Commands\InstallCommand;
 use Green\Auth\Facades\PermissionManager;
 use Green\Auth\Listeners\LogUserLogin;
@@ -64,7 +66,7 @@ class GreenAuthServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__ . '/../lang', 'green-auth');
 
         // Livewireコンポーネントの手動登録
-        \Livewire\Livewire::component('green-auth.password-expired', \Green\Auth\Filament\Pages\Auth\PasswordExpired::class);
+        Livewire::component('green-auth.password-expired', PasswordExpired::class);
 
 
         // パブリッシュ可能なリソース

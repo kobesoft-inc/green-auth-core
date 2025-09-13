@@ -2,6 +2,7 @@
 
 namespace Green\Auth\Models\Concerns\User;
 
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Green\Auth\Models\Concerns\HasModelConfig;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -26,7 +27,7 @@ trait HasLoginLogs
     /**
      * 最新のログインログを取得
      */
-    public function latestLoginLog(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function latestLoginLog(): HasOne
     {
         return $this->hasOne(static::getLoginLogClass(), $this->getForeignKey())->latest();
     }

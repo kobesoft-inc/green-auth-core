@@ -2,6 +2,8 @@
 
 namespace Green\Auth\Permission;
 
+use InvalidArgumentException;
+use RuntimeException;
 use Illuminate\Support\Collection;
 
 /**
@@ -46,13 +48,13 @@ class PermissionManager
         } else if (is_string($permission)) {
             // 単一のパーミッションクラス名
             if (!is_subclass_of($permission, BasePermission::class)) {
-                throw new \InvalidArgumentException("Class {$permission} must extend BasePermission");
+                throw new InvalidArgumentException("Class {$permission} must extend BasePermission");
             }
 
             $permissionId = $permission::getId();
             $this->permissions[$guard][$permissionId] = $permission;
         } else {
-            throw new \RuntimeException("permission must be string or array.");
+            throw new RuntimeException("permission must be string or array.");
         }
 
         return $this;
@@ -67,7 +69,7 @@ class PermissionManager
         $guard = $guard ?? $this->defaultGuard;
 
         if ($guard === null) {
-            throw new \RuntimeException('Guard name is required');
+            throw new RuntimeException('Guard name is required');
         }
 
         // ワイルドカード '*' のパーミッションを取得

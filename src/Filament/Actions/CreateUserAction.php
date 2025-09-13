@@ -2,6 +2,7 @@
 
 namespace Green\Auth\Filament\Actions;
 
+use Illuminate\Database\Eloquent\Model;
 use Filament\Actions\CreateAction;
 use Green\Auth\Filament\Actions\Concerns\ManagesUserPasswords;
 
@@ -25,7 +26,7 @@ class CreateUserAction extends CreateAction
     /**
      * ユーザー作成処理
      */
-    protected function createUser(array $data): \Illuminate\Database\Eloquent\Model
+    protected function createUser(array $data): Model
     {
         // モデルクラスを取得
         $modelClass = $this->getModel();

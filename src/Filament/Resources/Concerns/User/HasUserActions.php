@@ -2,6 +2,10 @@
 
 namespace Green\Auth\Filament\Resources\Concerns\User;
 
+use Filament\Actions\ActionGroup;
+use Filament\Actions\EditAction;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Tables;
 use Green\Auth\Filament\Actions\ChangeUserPasswordAction;
 use Green\Auth\Filament\Actions\SuspendUserAction;
@@ -42,7 +46,7 @@ trait HasUserActions
 
         // 操作アクションがある場合はActionGroupに追加
         if (!empty($operationActions)) {
-            $actions[] = Tables\Actions\ActionGroup::make($operationActions)
+            $actions[] = ActionGroup::make($operationActions)
                 ->label(__('green-auth::users.actions.operations'))
                 ->icon('heroicon-m-ellipsis-vertical')
                 ->size('sm')
@@ -56,13 +60,13 @@ trait HasUserActions
     /**
      * 編集アクションを作成
      */
-    public static function makeEditAction(): Tables\Actions\EditAction
+    public static function makeEditAction(): EditAction
     {
-        return Tables\Actions\EditAction::make()
+        return EditAction::make()
             ->button()
             ->slideOver()
             ->modalWidth('lg')
-            ->form(static::getFormSchema());
+            ->schema(static::getFormSchema());
     }
 
     /**
@@ -76,7 +80,7 @@ trait HasUserActions
     /**
      * 停止アクションを作成
      */
-    public static function makeSuspendAction(): ?Tables\Actions\Action
+    public static function makeSuspendAction(): ?Action
     {
         if (!static::hasSuspensionTrait()) {
             return null;
@@ -87,7 +91,7 @@ trait HasUserActions
     /**
      * 停止解除アクションを作成
      */
-    public static function makeUnsuspendAction(): ?Tables\Actions\Action
+    public static function makeUnsuspendAction(): ?Action
     {
         if (!static::hasSuspensionTrait()) {
             return null;
@@ -98,8 +102,8 @@ trait HasUserActions
     /**
      * 削除アクションを作成
      */
-    public static function makeDeleteAction(): Tables\Actions\DeleteAction
+    public static function makeDeleteAction(): DeleteAction
     {
-        return Tables\Actions\DeleteAction::make();
+        return DeleteAction::make();
     }
 }

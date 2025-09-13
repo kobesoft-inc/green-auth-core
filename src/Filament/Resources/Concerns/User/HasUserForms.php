@@ -2,6 +2,11 @@
 
 namespace Green\Auth\Filament\Resources\Concerns\User;
 
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Closure;
+use Filament\Schemas\Schema;
 use Filament\Forms;
 use Green\Auth\Filament\Actions\Concerns\ManagesUserPasswords;
 
@@ -12,11 +17,11 @@ trait HasUserForms
     /**
      * 名前入力コンポーネントを作成
      *
-     * @return Forms\Components\TextInput 名前入力用TextInputコンポーネント
+     * @return TextInput 名前入力用TextInputコンポーネント
      */
-    public static function getNameFormComponent(): Forms\Components\TextInput
+    public static function getNameFormComponent(): TextInput
     {
-        return Forms\Components\TextInput::make('name')
+        return TextInput::make('name')
             ->label(__('green-auth::users.name'))
             ->required()
             ->maxLength(255);
@@ -25,9 +30,9 @@ trait HasUserForms
     /**
      * アバター入力コンポーネントを作成
      *
-     * @return Forms\Components\FileUpload|null アバター入力用FileUploadコンポーネント（トレイトがない場合はnull）
+     * @return FileUpload|null アバター入力用FileUploadコンポーネント（トレイトがない場合はnull）
      */
-    public static function getAvatarFormComponent(): ?Forms\Components\FileUpload
+    public static function getAvatarFormComponent(): ?FileUpload
     {
         if (!static::hasAvatarTrait()) {
             return null;
@@ -37,7 +42,7 @@ trait HasUserForms
         $disk = $modelClass::getAvatarDisk();
         $directory = $modelClass::getAvatarDirectory();
 
-        return Forms\Components\FileUpload::make('avatar')
+        return FileUpload::make('avatar')
             ->hiddenLabel()
             ->image()
             ->disk($disk)
@@ -51,9 +56,9 @@ trait HasUserForms
     /**
      * グループ選択コンポーネントを作成
      *
-     * @return Forms\Components\Select|null グループ選択用Selectコンポーネント（トレイトがない場合はnull）
+     * @return Select|null グループ選択用Selectコンポーネント（トレイトがない場合はnull）
      */
-    public static function getGroupsFormComponent(): ?Forms\Components\Select
+    public static function getGroupsFormComponent(): ?Select
     {
         if (!static::hasGroupsTrait()) {
             return null;
@@ -62,7 +67,7 @@ trait HasUserForms
         $modelInstance = new (static::getModel())();
         $allowMultiple = $modelInstance->canBelongToMultipleGroups();
 
-        return Forms\Components\Select::make('groups')
+        return Select::make('groups')
             ->label(static::getLocalizedFieldLabel('groups', true))
             ->relationship('groups', 'name')
             ->placeholder('')
@@ -75,9 +80,9 @@ trait HasUserForms
     /**
      * ロール選択コンポーネントを作成
      *
-     * @return Forms\Components\Select|null ロール選択用Selectコンポーネント（トレイトがない場合はnull）
+     * @return Select|null ロール選択用Selectコンポーネント（トレイトがない場合はnull）
      */
-    public static function getRolesFormComponent(): ?Forms\Components\Select
+    public static function getRolesFormComponent(): ?Select
     {
         if (!static::hasRolesTrait()) {
             return null;
@@ -86,7 +91,7 @@ trait HasUserForms
         $modelInstance = new (static::getModel())();
         $allowMultiple = method_exists($modelInstance, 'canHaveMultipleRoles') ? $modelInstance->canHaveMultipleRoles() : true;
 
-        return Forms\Components\Select::make('roles')
+        return Select::make('roles')
             ->label(static::getLocalizedFieldLabel('roles', true))
             ->relationship('roles', 'name')
             ->placeholder('')
@@ -141,13 +146,13 @@ trait HasUserForms
     /**
      * メールアドレス入力コンポーネントを作成
      *
-     * @return Forms\Components\TextInput メールアドレス入力用TextInputコンポーネント
+     * @return TextInput メールアドレス入力用TextInputコンポーネント
      */
-    protected static function getEmailFormComponent(): Forms\Components\TextInput
+    protected static function getEmailFormComponent(): TextInput
     {
         $modelClass = static::getModel();
 
-        return Forms\Components\TextInput::make('email')
+        return TextInput::make('email')
             ->label(__('green-auth::users.email'))
             ->email()
             ->maxLength(255)
@@ -159,7 +164,7 @@ trait HasUserForms
             )
             ->rules([
                 function () {
-                    return function (string $attribute, $value, \Closure $fail) {
+                    return function (string $attribute, $value, Closure $fail) {
                         $data = request()->all();
                         if (empty($value) && empty($data['username'])) {
                             $fail(__('green-auth::users.validation.email_or_username_required'));
@@ -173,9 +178,9 @@ trait HasUserForms
     /**
      * ユーザー名入力コンポーネントを作成
      *
-     * @return Forms\Components\TextInput|null ユーザー名入力用TextInputコンポーネント（トレイトがない場合はnull）
+     * @return TextInput|null ユーザー名入力用TextInputコンポーネント（トレイトがない場合はnull）
      */
-    public static function getUsernameFormComponent(): ?Forms\Components\TextInput
+    public static function getUsernameFormComponent(): ?TextInput
     {
         if (!static::hasUsernameTrait()) {
             return null;
@@ -185,7 +190,7 @@ trait HasUserForms
         $modelInstance = new $modelClass();
         $usernameColumn = $modelInstance->getUsernameColumn();
 
-        return Forms\Components\TextInput::make($usernameColumn)
+        return TextInput::make($usernameColumn)
             ->label(__('green-auth::users.username'))
             ->maxLength(255)
             ->unique(
@@ -196,7 +201,7 @@ trait HasUserForms
             )
             ->rules([
                 function () {
-                    return function (string $attribute, $value, \Closure $fail) {
+                    return function (string $attribute, $value, Closure $fail) {
                         $data = request()->all();
                         if (empty($value) && empty($data['email'])) {
                             $fail(__('green-auth::users.validation.email_or_username_required'));
@@ -228,11 +233,11 @@ trait HasUserForms
     /**
      * Filamentフォームを取得
      *
-     * @param Forms\Form $form フォームインスタンス
-     * @return Forms\Form 設定済みフォームインスタンス
+     * @param Schema $schema フォームインスタンス
+     * @return Schema 設定済みフォームインスタンス
      */
-    public static function form(Forms\Form $form): Forms\Form
+    public static function form(Schema $schema): Schema
     {
-        return $form->schema(static::getFormSchema())->columns(1);
+        return $schema->components(static::getFormSchema())->columns(1);
     }
 }

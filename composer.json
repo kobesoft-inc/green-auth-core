@@ -12,7 +12,7 @@
     }
   },
   "require": {
-    "filament/filament": "^3.3",
+    "filament/filament": "^4",
     "kalnoy/nestedset": "^6.0"
   },
   "require-dev": {

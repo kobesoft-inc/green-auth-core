@@ -2,6 +2,12 @@
 
 namespace Green\Auth\Filament\Resources\Concerns\Group;
 
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Notifications\Notification;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Storage;
@@ -13,11 +19,11 @@ trait HasGroupColumns
     /**
      * カスタマイズ可能な名前カラムを作成
      *
-     * @return Tables\Columns\TextColumn 名前カラム
+     * @return TextColumn 名前カラム
      */
-    public static function getNameColumn(): Tables\Columns\TextColumn
+    public static function getNameColumn(): TextColumn
     {
-        return Tables\Columns\TextColumn::make('name')
+        return TextColumn::make('name')
             ->label(static::getLocalizedFieldLabel('group_name'))
             ->searchable()
             ->sortable()
@@ -44,15 +50,15 @@ trait HasGroupColumns
     /**
      * カスタマイズ可能な親グループカラムを作成
      *
-     * @return Tables\Columns\TextColumn|null 親グループカラム（トレイトがない場合はnull）
+     * @return TextColumn|null 親グループカラム（トレイトがない場合はnull）
      */
-    public static function getParentColumn(): ?Tables\Columns\TextColumn
+    public static function getParentColumn(): ?TextColumn
     {
         if (!static::hasParentGroupTrait()) {
             return null;
         }
 
-        return Tables\Columns\TextColumn::make('parent.name')
+        return TextColumn::make('parent.name')
             ->label(static::getLocalizedFieldLabel('parent_group'))
             ->searchable()
             ->sortable();
@@ -62,15 +68,15 @@ trait HasGroupColumns
     /**
      * カスタマイズ可能なユーザーカラムを作成
      *
-     * @return Tables\Columns\ImageColumn|null ユーザーカラム（トレイトがない場合はnull）
+     * @return ImageColumn|null ユーザーカラム（トレイトがない場合はnull）
      */
-    public static function getUsersColumn(): ?Tables\Columns\ImageColumn
+    public static function getUsersColumn(): ?ImageColumn
     {
         if (!static::hasUsersTrait()) {
             return null;
         }
 
-        return Tables\Columns\ImageColumn::make('users')
+        return ImageColumn::make('users')
             ->label(static::getTranslatedModelLabel('user', true))
             ->circular()
             ->stacked()
@@ -99,15 +105,15 @@ trait HasGroupColumns
     /**
      * カスタマイズ可能なロールカラムを作成
      *
-     * @return Tables\Columns\TextColumn|null ロールカラム（トレイトがない場合はnull）
+     * @return TextColumn|null ロールカラム（トレイトがない場合はnull）
      */
-    public static function getRolesColumn(): ?Tables\Columns\TextColumn
+    public static function getRolesColumn(): ?TextColumn
     {
         if (!static::hasRolesTrait()) {
             return null;
         }
 
-        return Tables\Columns\TextColumn::make('roles.name')
+        return TextColumn::make('roles.name')
             ->label(static::getTranslatedModelLabel('role', true))
             ->badge();
     }
@@ -115,11 +121,11 @@ trait HasGroupColumns
     /**
      * カスタマイズ可能な作成日時カラムを作成
      *
-     * @return Tables\Columns\TextColumn 作成日時カラム
+     * @return TextColumn 作成日時カラム
      */
-    public static function getCreatedAtColumn(): Tables\Columns\TextColumn
+    public static function getCreatedAtColumn(): TextColumn
     {
-        return Tables\Columns\TextColumn::make('created_at')
+        return TextColumn::make('created_at')
             ->label(__('green-auth::groups.created_at'))
             ->dateTime('Y/m/d H:i')
             ->sortable()
@@ -129,15 +135,15 @@ trait HasGroupColumns
     /**
      * ユーザーフィルターを作成
      *
-     * @return Tables\Filters\SelectFilter|null ユーザーフィルター（トレイトがない場合はnull）
+     * @return SelectFilter|null ユーザーフィルター（トレイトがない場合はnull）
      */
-    public static function getUsersFilter(): ?Tables\Filters\SelectFilter
+    public static function getUsersFilter(): ?SelectFilter
     {
         if (!static::hasUsersTrait()) {
             return null;
         }
 
-        return Tables\Filters\SelectFilter::make('users')
+        return SelectFilter::make('users')
             ->label(__('green-auth::groups.users'))
             ->relationship('users', 'name')
             ->multiple()
@@ -147,15 +153,15 @@ trait HasGroupColumns
     /**
      * ロールフィルターを作成
      *
-     * @return Tables\Filters\SelectFilter|null ロールフィルター（トレイトがない場合はnull）
+     * @return SelectFilter|null ロールフィルター（トレイトがない場合はnull）
      */
-    public static function getRolesFilter(): ?Tables\Filters\SelectFilter
+    public static function getRolesFilter(): ?SelectFilter
     {
         if (!static::hasRolesTrait()) {
             return null;
         }
 
-        return Tables\Filters\SelectFilter::make('roles')
+        return SelectFilter::make('roles')
             ->label(__('green-auth::groups.roles'))
             ->relationship('roles', 'name')
             ->multiple()
@@ -183,8 +189,8 @@ trait HasGroupColumns
     public static function getBulkActions(): array
     {
         return [
-            Tables\Actions\BulkActionGroup::make([
-                Tables\Actions\DeleteBulkAction::make()
+            BulkActionGroup::make([
+                DeleteBulkAction::make()
                     ->deselectRecordsAfterCompletion()
                     ->action(function ($records) {
                         // 削除可能なレコードのみを削除
@@ -197,7 +203,7 @@ trait HasGroupColumns
 
                         // 削除対象がない場合は通知
                         if ($deletableRecords->isEmpty()) {
-                            \Filament\Notifications\Notification::make()
+                            Notification::make()
                                 ->title(__('green-auth::groups.cannot_delete_groups_with_children'))
                                 ->warning()
                                 ->send();
@@ -209,7 +215,7 @@ trait HasGroupColumns
 
                         // 一部のみ削除された場合の通知
                         if ($deletableRecords->count() < count($records)) {
-                            \Filament\Notifications\Notification::make()
+                            Notification::make()
                                 ->title(__('green-auth::groups.partial_delete_completed'))
                                 ->body(__('green-auth::groups.some_groups_not_deleted_due_to_children'))
                                 ->warning()
@@ -243,8 +249,8 @@ trait HasGroupColumns
         return $table
             ->columns($columns)
             ->filters(static::getTableFilters())
-            ->actions(static::getRecordActions())
-            ->bulkActions(static::getBulkActions())
+            ->recordActions(static::getRecordActions())
+            ->toolbarActions(static::getBulkActions())
             ->defaultSort(function ($query) {
                 // NestedSet用のソート（_lftカラムを使用）
                 if (method_exists($query->getModel(), 'getLftName')) {

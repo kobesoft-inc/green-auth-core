@@ -2,16 +2,20 @@
 
 namespace Green\Auth\Models;
 
+use Green\Auth\Models\Concerns\Group\HasUsers;
+use Green\Auth\Models\Concerns\Group\HasRoles;
+use Green\Auth\Models\Concerns\Group\HasPermissions;
+use Green\Auth\Models\Concerns\Group\HasHierarchy;
 use Illuminate\Database\Eloquent\Model;
 use Kalnoy\Nestedset\NodeTrait;
 
 abstract class BaseGroup extends Model
 {
     use NodeTrait;
-    use Concerns\Group\HasUsers;
-    use Concerns\Group\HasRoles;
-    use Concerns\Group\HasPermissions;
-    use Concerns\Group\HasHierarchy;
+    use HasUsers;
+    use HasRoles;
+    use HasPermissions;
+    use HasHierarchy;
 
     /**
      * The attributes that are mass assignable.

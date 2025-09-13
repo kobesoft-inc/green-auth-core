@@ -2,6 +2,7 @@
 
 namespace Green\Auth\Mail;
 
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Mailable;
@@ -101,7 +102,7 @@ class UserPasswordNotification extends Mailable
     /**
      * メッセージの添付ファイルを取得
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment> 添付ファイル配列
+     * @return array<int, Attachment> 添付ファイル配列
      */
     public function attachments(): array
     {

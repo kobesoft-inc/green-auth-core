@@ -81,7 +81,7 @@ trait HasAvatar
     /**
      * 新しいアバターを保存
      *
-     * @param \Illuminate\Http\UploadedFile $file
+     * @param UploadedFile $file
      * @param array $options
      * @return string|false
      */

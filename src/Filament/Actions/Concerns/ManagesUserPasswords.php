@@ -2,6 +2,10 @@
 
 namespace Green\Auth\Filament\Actions\Concerns;
 
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Mail;
 use Filament\Forms;
 use Green\Auth\Mail\UserPasswordNotification;
 use Green\Auth\Password\PasswordComplexity;
@@ -21,12 +25,12 @@ trait ManagesUserPasswords
     public static function getPasswordFormComponents(string $modelClass): array
     {
         return [
-            Forms\Components\Checkbox::make('auto_generate_password')
+            Checkbox::make('auto_generate_password')
                 ->label(__('green-auth::passwords.auto_generate_password'))
                 ->default(true)
                 ->reactive(),
 
-            Forms\Components\TextInput::make('password')
+            TextInput::make('password')
                 ->label(__('green-auth::passwords.password'))
                 ->password()
                 ->maxLength(255)
@@ -41,11 +45,11 @@ trait ManagesUserPasswords
                 })
                 ->rules([new PasswordRule(PasswordComplexity::fromAppConfig($modelClass::getGuardName()))]),
 
-            Forms\Components\Checkbox::make('send_email_notification')
+            Checkbox::make('send_email_notification')
                 ->label(__('green-auth::passwords.send_email_notification'))
                 ->default(true),
 
-            Forms\Components\Checkbox::make('require_password_change')
+            Checkbox::make('require_password_change')
                 ->label(__('green-auth::passwords.require_password_change'))
                 ->default(true),
         ];
@@ -189,13 +193,13 @@ trait ManagesUserPasswords
                 __('green-auth::mail.password_reset.subject'),
                 __('green-auth::mail.password_reset.message')
             );
-            \Filament\Notifications\Notification::make()
+            Notification::make()
                 ->success()
                 ->title(__('green-auth::notifications.password_reset_complete'))
                 ->body(__('green-auth::notifications.password_sent_by_email'))
                 ->send();
         } else {
-            \Filament\Notifications\Notification::make()
+            Notification::make()
                 ->success()
                 ->title(__('green-auth::notifications.password_reset_complete'))
                 ->body(__('green-auth::notifications.new_password_display', ['password' => $password]))
@@ -215,7 +219,7 @@ trait ManagesUserPasswords
      */
     protected function sendEmail(Model $user, string $password, string $subject, string $message): void
     {
-        \Illuminate\Support\Facades\Mail::to($user->email)
+        Mail::to($user->email)
             ->send(new UserPasswordNotification($user, $password, $subject, $message));
     }
 }

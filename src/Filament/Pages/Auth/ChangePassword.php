@@ -2,12 +2,12 @@
 
 namespace Green\Auth\Filament\Pages\Auth;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Component;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
@@ -23,7 +23,7 @@ class ChangePassword extends Page implements HasForms
     use InteractsWithFormActions;
     use InteractsWithGreenAuth;
 
-    protected static string $view = 'green-auth::filament.pages.auth.change-password';
+    protected string $view = 'green-auth::filament.pages.auth.change-password';
 
     protected static bool $shouldRegisterNavigation = false;
 
@@ -31,17 +31,17 @@ class ChangePassword extends Page implements HasForms
 
     /**
      * フォームの定義を構築
-     * 
+     *
      * パスワード変更画面のフォームを定義し、現在のパスワード、
      * 新しいパスワード、パスワード確認の入力フィールドを配置する
-     * 
-     * @param Form $form Filamentフォームインスタンス
-     * @return Form 設定済みのフォームインスタンス
+     *
+     * @param Schema $schema Filamentフォームインスタンス
+     * @return Schema 設定済みのフォームインスタンス
      */
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 $this->getCurrentPasswordFormComponent(),
                 $this->getPasswordFormComponent(),
                 $this->getPasswordConfirmationFormComponent(),
@@ -51,10 +51,10 @@ class ChangePassword extends Page implements HasForms
 
     /**
      * 現在のパスワード入力フィールドコンポーネントを取得
-     * 
+     *
      * ユーザーの現在のパスワードを入力するためのフィールドを生成する。
      * 本人確認のために必須項目として設定される。
-     * 
+     *
      * @return Component 現在のパスワード入力用TextInputコンポーネント
      */
     protected function getCurrentPasswordFormComponent(): Component
@@ -68,10 +68,10 @@ class ChangePassword extends Page implements HasForms
 
     /**
      * 新しいパスワード入力フィールドコンポーネントを取得
-     * 
+     *
      * 新しいパスワードの入力フィールドを生成し、パスワード複雑性要件を
      * ヘルパーテキストとして表示する。パスワードルールの検証も設定する。
-     * 
+     *
      * @return Component 新しいパスワード入力用TextInputコンポーネント
      */
     protected function getPasswordFormComponent(): Component
@@ -92,10 +92,10 @@ class ChangePassword extends Page implements HasForms
 
     /**
      * パスワード確認入力フィールドコンポーネントを取得
-     * 
+     *
      * 新しいパスワードの確認用入力フィールドを生成する。
      * 新しいパスワードと一致する必要がある。
-     * 
+     *
      * @return Component パスワード確認用TextInputコンポーネント
      */
     protected function getPasswordConfirmationFormComponent(): Component

@@ -2,6 +2,10 @@
 
 namespace Green\Auth\Filament\Resources\Concerns\Role;
 
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Schemas\Schema;
 use Filament\Forms;
 use Green\Auth\Facades\PermissionManager;
 use Illuminate\Support\Collection;
@@ -17,9 +21,9 @@ trait HasRoleForms
     /**
      * ロール名入力フィールドを作成
      */
-    public static function getNameFormComponent(): Forms\Components\TextInput
+    public static function getNameFormComponent(): TextInput
     {
-        return Forms\Components\TextInput::make('name')
+        return TextInput::make('name')
             ->label(static::getLocalizedFieldLabel('role_name'))
             ->required()
             ->unique(ignoreRecord: true);
@@ -28,9 +32,9 @@ trait HasRoleForms
     /**
      * 説明入力フィールドを作成
      */
-    public static function getDescriptionFormComponent(): Forms\Components\Textarea
+    public static function getDescriptionFormComponent(): Textarea
     {
-        return Forms\Components\Textarea::make('description')
+        return Textarea::make('description')
             ->label(__('green-auth::roles.description'))
             ->columnSpanFull();
     }
@@ -64,9 +68,9 @@ trait HasRoleForms
     /**
      * 権限グループのセクションを作成
      */
-    protected static function getPermissionCheckboxListFormComponent(string $groupName, Collection $permissions): Forms\Components\CheckboxList
+    protected static function getPermissionCheckboxListFormComponent(string $groupName, Collection $permissions): CheckboxList
     {
-        return Forms\Components\CheckboxList::make("permissions")
+        return CheckboxList::make("permissions")
             ->label($groupName)
             ->options($permissions->mapWithKeys(fn($permission) => [$permission::getId() => $permission::getName()]))
             ->columns(['default' => 1, 'sm' => 2, 'lg' => 3])
@@ -88,8 +92,8 @@ trait HasRoleForms
     /**
      * Filamentフォームを構築
      */
-    public static function form(Forms\Form $form): Forms\Form
+    public static function form(Schema $schema): Schema
     {
-        return $form->schema(static::getFormSchema())->columns(1);
+        return $schema->components(static::getFormSchema())->columns(1);
     }
 }
