@@ -23,11 +23,6 @@ class Login extends \Filament\Auth\Pages\Login
     use InteractsWithGreenAuth;
 
     /**
-     * @var string
-     */
-    protected string $view = 'green-auth::filament.pages.auth.login';
-
-    /**
      * フォームの配列を取得
      *
      * ログイン画面に表示するフォームを定義する。
@@ -35,19 +30,14 @@ class Login extends \Filament\Auth\Pages\Login
      *
      * @return array<int|string, string|Schema> フォームの配列
      */
-    protected function getForms(): array
+    public function form(Schema $schema): Schema
     {
-        return [
-            'form' => $this->form(
-                $this->makeForm()
-                    ->schema([
-                        $this->getLoginFormComponent(),
-                        $this->getPasswordFormComponent(),
-                        $this->getRememberFormComponent(),
-                    ])
-                    ->statePath('data'),
-            ),
-        ];
+        return $schema
+            ->components([
+                $this->getLoginFormComponent(),
+                $this->getPasswordFormComponent(),
+                $this->getRememberFormComponent(),
+            ]);
     }
 
     /**
@@ -206,11 +196,9 @@ class Login extends \Filament\Auth\Pages\Login
     protected function getLoginFormComponent(): Component
     {
         $label = $this->getLoginFieldLabel();
-        $placeholder = $this->getLoginFieldPlaceholder();
 
         $input = TextInput::make('login')
             ->label($label)
-            ->placeholder($placeholder)
             ->required()
             ->autocomplete()
             ->autofocus()
@@ -315,26 +303,6 @@ class Login extends \Filament\Auth\Pages\Login
             return __('green-auth::auth.login.fields.username');
         } else {
             return __('green-auth::auth.login.fields.email');
-        }
-    }
-
-    /**
-     * ログインフィールドのプレースホルダーを取得
-     *
-     * システム設定に基づいて、入力例を示すプレースホルダーテキストを返す。
-     * メールとユーザー名両方、ユーザー名のみ、メールのみの
-     * 3パターンに対応する。
-     *
-     * @return string ログインフィールドのプレースホルダーテキスト
-     */
-    protected function getLoginFieldPlaceholder(): string
-    {
-        if ($this->canLoginWithEmail() && $this->canLoginWithUsername()) {
-            return __('green-auth::auth.login.fields.placeholders.username_or_email');
-        } elseif ($this->canLoginWithUsername()) {
-            return __('green-auth::auth.login.fields.placeholders.username');
-        } else {
-            return __('green-auth::auth.login.fields.placeholders.email');
         }
     }
 

@@ -15,6 +15,9 @@ trait GeneratesModels
         $this->info('Generating models...');
 
         foreach ($this->config['models'] as $type => $name) {
+            if ($name === null) {
+                continue;
+            }
             $this->generateModel($type, $name);
             $this->line("   {$name} model created");
         }

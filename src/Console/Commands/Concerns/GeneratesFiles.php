@@ -815,6 +815,10 @@ return new class extends Migration
         $resourceNamespace = $this->config['resource_namespace'] ?? 'App\\Filament\\Resources';
 
         foreach ($this->config['models'] as $type => $modelName) {
+            if ($modelName === null) {
+                continue;
+            }
+
             if (in_array($type, ['user', 'group', 'role'])) {
                 $this->generateFilamentResource($type, $modelName, $resourceNamespace);
             }
