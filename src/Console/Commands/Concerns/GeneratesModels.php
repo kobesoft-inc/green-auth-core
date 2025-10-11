@@ -181,6 +181,10 @@ class $name extends " . class_basename($baseClass) . "
             return $baseClasses[$type] ?? 'Illuminate\\Database\\Eloquent\\Model';
         }
 
+        if ($type === 'user') {
+            return 'Illuminate\\Foundation\\Auth\\User';
+        }
+
         return 'Illuminate\\Database\\Eloquent\\Model';
     }
 

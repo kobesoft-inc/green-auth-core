@@ -64,6 +64,9 @@ trait HasUserTraitChecks
      */
     protected static function hasUsernameTrait(): bool
     {
-        return method_exists(static::getModel(), 'getUsername');
+        $modelClass = static::getModel();
+
+        return method_exists($modelClass, 'getUsername')
+            || method_exists($modelClass, 'getUsernameColumn');
     }
 }
