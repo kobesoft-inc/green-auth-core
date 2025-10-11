@@ -2,19 +2,21 @@
 
 namespace Green\Auth\Filament\Pages\Auth;
 
-use Filament\Auth\Http\Responses\Contracts\LoginResponse;
-use Filament\Schemas\Components\Component;
-use Filament\Schemas\Schema;
-use Illuminate\Http\RedirectResponse;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Auth\Http\Responses\Contracts\LoginResponse;
+use Filament\Auth\MultiFactor\Contracts\HasBeforeChallengeHook;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Schema;
+use Illuminate\Auth\SessionGuard;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Green\Auth\Filament\Pages\Auth\Concerns\InteractsWithGreenAuth;
 
@@ -49,41 +51,87 @@ class Login extends \Filament\Auth\Pages\Login
      * @return mixed ログインレスポンス、リダイレクトレスポンス、またはnull
      * @throws ValidationException 認証失敗時
      */
-    public function login(): mixed
+    public function authenticate(): ?LoginResponse
     {
         try {
             $this->rateLimit(5);
         } catch (TooManyRequestsException $exception) {
             $this->getRateLimitedNotification($exception)?->send();
+
             return null;
         }
 
         $data = $this->form->getState();
-        if (!filament()->auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
+
+        /** @var SessionGuard $authGuard */
+        $authGuard = Filament::auth();
+
+        $authProvider = $authGuard->getProvider(); /** @phpstan-ignore-line */
+        $credentials = $this->getCredentialsFromFormData($data);
+        $user = $authProvider->retrieveByCredentials($credentials);
+
+        if ((! $user) || (! $authProvider->validateCredentials($user, $credentials))) {
+            $this->userUndertakingMultiFactorAuthentication = null;
+
+            $this->fireFailedEvent($authGuard, $user, $credentials);
             $this->throwFailureValidationException();
         }
 
-        $user = filament()->auth()->user();
+        if (
+            filled($this->userUndertakingMultiFactorAuthentication) &&
+            (decrypt($this->userUndertakingMultiFactorAuthentication) === $user->getAuthIdentifier())
+        ) {
+            $this->multiFactorChallengeForm->validate();
+        } else {
+            foreach (Filament::getMultiFactorAuthenticationProviders() as $multiFactorAuthenticationProvider) {
+                if (! $multiFactorAuthenticationProvider->isEnabled($user)) {
+                    continue;
+                }
 
-        // アカウント停止チェック
+                $this->userUndertakingMultiFactorAuthentication = encrypt($user->getAuthIdentifier());
+
+                if ($multiFactorAuthenticationProvider instanceof HasBeforeChallengeHook) {
+                    $multiFactorAuthenticationProvider->beforeChallenge($user);
+                }
+
+                break;
+            }
+
+            if (filled($this->userUndertakingMultiFactorAuthentication)) {
+                $this->multiFactorChallengeForm->fill();
+
+                return null;
+            }
+        }
+
         if (method_exists($user, 'isSuspended') && $user->isSuspended()) {
-            Auth::logout();
+            $authGuard->logout();
             $this->throwAccountSuspendedException();
         }
 
-        // パスワード有効期限チェック
         if (method_exists($user, 'isPasswordExpired') && $user->isPasswordExpired()) {
-            return $this->handlePasswordExpired($user);
+            $this->handlePasswordExpired($user);
         }
 
-        // Filamentパネルアクセス権限チェック
-        if (($user instanceof FilamentUser) && (!$user->canAccessPanel($this->getPanel()))) {
-            Auth::logout();
+        if (! $authGuard->attemptWhen($credentials, function (Authenticatable $user): bool {
+            if (! ($user instanceof FilamentUser)) {
+                return true;
+            }
+
+            return $user->canAccessPanel(Filament::getCurrentOrDefaultPanel());
+        }, $data['remember'] ?? false)) {
+            $this->fireFailedEvent($authGuard, $user, $credentials);
             $this->throwFailureValidationException();
         }
 
         session()->regenerate();
+
         return app(LoginResponse::class);
+    }
+
+    public function login(): ?LoginResponse
+    {
+        return $this->authenticate();
     }
 
     /**
@@ -130,13 +178,14 @@ class Login extends \Filament\Auth\Pages\Login
      * ログアウト後にパスワード変更画面へリダイレクトする。
      *
      * @param mixed $user ユーザーモデルインスタンス
-     * @return RedirectResponse パスワード変更画面へのリダイレクト
+     * @return mixed パスワード変更画面へのリダイレクト
      */
-    protected function handlePasswordExpired($user)
+    protected function handlePasswordExpired($user): mixed
     {
         $sessionKey = $this->getPasswordExpiredSessionKey();
         session([$sessionKey => $user->id]);
-        Auth::logout();
+
+        Filament::auth()->logout();
 
         return redirect()->to($this->getPasswordExpiredUrl());
     }
