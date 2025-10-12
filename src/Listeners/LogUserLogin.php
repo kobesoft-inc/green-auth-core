@@ -24,19 +24,41 @@ class LogUserLogin
      */
     public function handle(Login $event): void
     {
-        // ログインログクラスを取得
-        $loginLogClass = $this->getLoginLogClass($event->guard);
+        try {
+            // ログインログクラスを取得
+            $loginLogClass = $this->getLoginLogClass($event->guard);
 
-        if (!$loginLogClass) {
-            // ログインログが設定されていない場合はスキップ
-            return;
+            if (!$loginLogClass) {
+                // ログインログが設定されていない場合はスキップ
+                return;
+            }
+
+            // クラスが存在するか確認
+            if (!class_exists($loginLogClass)) {
+                Log::warning("Login log class not found: {$loginLogClass} for guard: {$event->guard}");
+                return;
+            }
+
+            // createLogメソッドが存在するか確認
+            if (!method_exists($loginLogClass, 'createLog')) {
+                Log::warning("createLog method not found in {$loginLogClass}");
+                return;
+            }
+
+            // ログイン履歴を作成
+            $loginLogClass::createLog(
+                $event->user,
+                request()
+            );
+        } catch (Throwable $exception) {
+            // エラーをログに記録するが、処理は続行
+            Log::error('Failed to log user login', [
+                'user_id' => $event->user?->id ?? 'unknown',
+                'guard' => $event->guard,
+                'error' => $exception->getMessage(),
+                'trace' => $exception->getTraceAsString(),
+            ]);
         }
-
-        // ログイン履歴を作成
-        $loginLogClass::createLog(
-            $event->user,
-            request()
-        );
     }
 
     /**
