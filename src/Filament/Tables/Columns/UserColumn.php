@@ -4,6 +4,7 @@ namespace Green\Auth\Filament\Tables\Columns;
 
 use Closure;
 use Filament\Facades\Filament;
+use Filament\Models\Contracts\HasName;
 use Filament\Tables\Columns\Column;
 
 /**
@@ -53,13 +54,13 @@ class UserColumn extends Column
 
         // stateがユーザーモデルの場合（リレーション経由）
         if ($state && is_object($state)) {
-            $imageUrl = Filament::getUserAvatarUrl($state);
             $name = $state->name ?? null;
+            $imageUrl = $this->safeGetAvatarUrl($state);
         }
         // stateが文字列の場合（直接属性を指定）、recordから取得
         elseif ($record) {
-            $imageUrl = Filament::getUserAvatarUrl($record);
             $name = $state;
+            $imageUrl = $this->safeGetAvatarUrl($record);
         }
 
         return array_merge(parent::getViewData(), [
@@ -70,5 +71,25 @@ class UserColumn extends Column
             'isBlank' => blank($state),
             'placeholder' => $this->getPlaceholder(),
         ]);
+    }
+
+    /**
+     * 安全にアバターURLを取得
+     *
+     * HasNameを実装しているか、nameがnullでない場合のみFilament::getUserAvatarUrl()を呼ぶ
+     */
+    protected function safeGetAvatarUrl(object $user): ?string
+    {
+        // HasNameを実装している場合は安全に呼べる
+        if ($user instanceof HasName) {
+            return Filament::getUserAvatarUrl($user);
+        }
+
+        // nameがnullでない場合のみ呼ぶ
+        if (! empty($user->name)) {
+            return Filament::getUserAvatarUrl($user);
+        }
+
+        return null;
     }
 }
