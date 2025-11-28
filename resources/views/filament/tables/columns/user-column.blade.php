@@ -37,7 +37,7 @@
         @endif
 
         @if($name)
-            <span class="text-sm text-gray-950 dark:text-white font-medium truncate">
+            <span class="text-sm text-gray-950 dark:text-white truncate">
                 {{ $name }}
             </span>
         @endif

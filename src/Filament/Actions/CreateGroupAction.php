@@ -3,7 +3,6 @@
 namespace Green\Auth\Filament\Actions;
 
 use Filament\Actions\CreateAction;
-use Green\Auth\Filament\Actions\Concerns\ManagesUserPasswords;
 
 class CreateGroupAction extends CreateAction
 {
@@ -15,5 +14,4 @@ class CreateGroupAction extends CreateAction
             ->modalWidth('md')
             ->createAnother(false);
     }
-
 }

@@ -2,14 +2,14 @@
 
 namespace Green\Auth\Filament\Resources\Concerns\User;
 
-use Filament\Tables\Columns\Column;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TernaryFilter;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables;
+use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Green\Auth\Filament\Tables\Columns\UserColumn;
 use Illuminate\Database\Eloquent\Builder;
@@ -57,7 +57,7 @@ trait HasUserColumns
      */
     public static function getUsernameColumn(): ?TextColumn
     {
-        if (!static::hasUsernameTrait()) {
+        if (! static::hasUsernameTrait()) {
             return null;
         }
 
@@ -77,7 +77,7 @@ trait HasUserColumns
      */
     public static function getGroupsColumn(): ?TextColumn
     {
-        if (!static::hasGroupsTrait()) {
+        if (! static::hasGroupsTrait()) {
             return null;
         }
 
@@ -94,7 +94,7 @@ trait HasUserColumns
      */
     public static function getRolesColumn(): ?TextColumn
     {
-        if (!static::hasRolesTrait()) {
+        if (! static::hasRolesTrait()) {
             return null;
         }
 
@@ -111,7 +111,7 @@ trait HasUserColumns
      */
     public static function getSuspendedColumn(): ?IconColumn
     {
-        if (!static::hasSuspensionTrait()) {
+        if (! static::hasSuspensionTrait()) {
             return null;
         }
 
@@ -122,7 +122,7 @@ trait HasUserColumns
             ->falseIcon('heroicon-o-check-circle')
             ->trueColor('danger')
             ->falseColor('success')
-            ->getStateUsing(fn($record) => $record->isSuspended());
+            ->getStateUsing(fn ($record) => $record->isSuspended());
     }
 
     /**
@@ -132,7 +132,7 @@ trait HasUserColumns
      */
     public static function getLastLoginColumn(): ?TextColumn
     {
-        if (!static::hasLoginLogTrait()) {
+        if (! static::hasLoginLogTrait()) {
             return null;
         }
 
@@ -177,7 +177,7 @@ trait HasUserColumns
      */
     public static function getGroupsFilter(): ?SelectFilter
     {
-        if (!static::hasGroupsTrait()) {
+        if (! static::hasGroupsTrait()) {
             return null;
         }
 
@@ -195,7 +195,7 @@ trait HasUserColumns
      */
     public static function getRolesFilter(): ?SelectFilter
     {
-        if (!static::hasRolesTrait()) {
+        if (! static::hasRolesTrait()) {
             return null;
         }
 
@@ -213,15 +213,15 @@ trait HasUserColumns
      */
     public static function getSuspendedFilter(): ?TernaryFilter
     {
-        if (!static::hasSuspensionTrait()) {
+        if (! static::hasSuspensionTrait()) {
             return null;
         }
 
         return TernaryFilter::make('suspended')
             ->label(__('green-auth::users.filters.suspended'))
             ->queries(
-                true: fn(Builder $query) => $query->whereNotNull('suspended_at'),
-                false: fn(Builder $query) => $query->whereNull('suspended_at'),
+                true: fn (Builder $query) => $query->whereNotNull('suspended_at'),
+                false: fn (Builder $query) => $query->whereNull('suspended_at'),
             );
     }
 
@@ -235,15 +235,15 @@ trait HasUserColumns
         return TernaryFilter::make('email_verified')
             ->label(__('green-auth::users.filters.email_verified'))
             ->queries(
-                true: fn(Builder $query) => $query->whereNotNull('email_verified_at'),
-                false: fn(Builder $query) => $query->whereNull('email_verified_at'),
+                true: fn (Builder $query) => $query->whereNotNull('email_verified_at'),
+                false: fn (Builder $query) => $query->whereNull('email_verified_at'),
             );
     }
 
     /**
      * テーブル設定
      *
-     * @param Table $table テーブルインスタンス
+     * @param  Table  $table  テーブルインスタンス
      * @return Table 設定済みテーブル
      */
     public static function table(Table $table): Table

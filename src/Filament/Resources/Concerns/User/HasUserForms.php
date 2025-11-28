@@ -2,17 +2,16 @@
 
 namespace Green\Auth\Filament\Resources\Concerns\User;
 
-use Filament\Forms\Components\TextInput;
+use Closure;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
-use Closure;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
-use Filament\Forms;
 use Green\Auth\Filament\Actions\Concerns\ManagesUserPasswords;
 
 trait HasUserForms
 {
-    use ManagesUserPasswords, HasUserTraitChecks;
+    use HasUserTraitChecks, ManagesUserPasswords;
 
     /**
      * 名前入力コンポーネントを作成
@@ -34,7 +33,7 @@ trait HasUserForms
      */
     public static function getAvatarFormComponent(): ?FileUpload
     {
-        if (!static::hasAvatarTrait()) {
+        if (! static::hasAvatarTrait()) {
             return null;
         }
 
@@ -60,7 +59,7 @@ trait HasUserForms
      */
     public static function getGroupsFormComponent(): ?Select
     {
-        if (!static::hasGroupsTrait()) {
+        if (! static::hasGroupsTrait()) {
             return null;
         }
 
@@ -74,7 +73,7 @@ trait HasUserForms
             ->multiple($allowMultiple)
             ->preload()
             ->searchable()
-            ->getOptionLabelFromRecordUsing(fn($record) => $record->getOptionLabel());
+            ->getOptionLabelFromRecordUsing(fn ($record) => $record->getOptionLabel());
     }
 
     /**
@@ -84,7 +83,7 @@ trait HasUserForms
      */
     public static function getRolesFormComponent(): ?Select
     {
-        if (!static::hasRolesTrait()) {
+        if (! static::hasRolesTrait()) {
             return null;
         }
 
@@ -160,7 +159,7 @@ trait HasUserForms
                 table: (new $modelClass)->getTable(),
                 column: 'email',
                 ignoreRecord: true,
-                modifyRuleUsing: fn($rule) => static::applySoftDeleteScope($rule)
+                modifyRuleUsing: fn ($rule) => static::applySoftDeleteScope($rule)
             )
             ->rules([
                 function () {
@@ -170,10 +169,9 @@ trait HasUserForms
                             $fail(__('green-auth::users.validation.email_or_username_required'));
                         }
                     };
-                }
+                },
             ]);
     }
-
 
     /**
      * ユーザー名入力コンポーネントを作成
@@ -182,12 +180,12 @@ trait HasUserForms
      */
     public static function getUsernameFormComponent(): ?TextInput
     {
-        if (!static::hasUsernameTrait()) {
+        if (! static::hasUsernameTrait()) {
             return null;
         }
 
         $modelClass = static::getModel();
-        $modelInstance = new $modelClass();
+        $modelInstance = new $modelClass;
         $usernameColumn = $modelInstance->getUsernameColumn();
 
         return TextInput::make($usernameColumn)
@@ -197,7 +195,7 @@ trait HasUserForms
                 table: $modelInstance->getTable(),
                 column: $usernameColumn,
                 ignoreRecord: true,
-                modifyRuleUsing: fn($rule) => static::applySoftDeleteScope($rule)
+                modifyRuleUsing: fn ($rule) => static::applySoftDeleteScope($rule)
             )
             ->rules([
                 function () {
@@ -207,15 +205,14 @@ trait HasUserForms
                             $fail(__('green-auth::users.validation.email_or_username_required'));
                         }
                     };
-                }
+                },
             ]);
     }
-
 
     /**
      * ソフトデリートスコープを適用
      *
-     * @param mixed $rule バリデーションルール
+     * @param  mixed  $rule  バリデーションルール
      * @return mixed 修正されたバリデーションルール
      */
     protected static function applySoftDeleteScope($rule)
@@ -233,7 +230,7 @@ trait HasUserForms
     /**
      * Filamentフォームを取得
      *
-     * @param Schema $schema フォームインスタンス
+     * @param  Schema  $schema  フォームインスタンス
      * @return Schema 設定済みフォームインスタンス
      */
     public static function form(Schema $schema): Schema

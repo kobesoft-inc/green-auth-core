@@ -33,13 +33,11 @@ trait HasPasswordExpiration
 
     /**
      * パスワード有効期限トレイトの初期化
-     *
-     * @return void
      */
     public static function bootHasPasswordExpiration(): void
     {
         static::saving(function ($model) {
-            if ($model->isDirty('password') && !$model->isDirty($model->getPasswordExpiresAtColumn())) {
+            if ($model->isDirty('password') && ! $model->isDirty($model->getPasswordExpiresAtColumn())) {
                 $model->extendPasswordExpiration();
             }
         });
@@ -47,25 +45,22 @@ trait HasPasswordExpiration
 
     /**
      * パスワード有効期限のタイムスタンプを取得
-     *
-     * @return \Carbon\Carbon|null
      */
     public function getPasswordExpiresAt(): ?Carbon
     {
         $column = $this->getPasswordExpiresAtColumn();
+
         return $this->{$column} ? Carbon::parse($this->{$column}) : null;
     }
 
     /**
      * パスワードが期限切れかチェック
-     *
-     * @return bool
      */
     public function isPasswordExpired(): bool
     {
         $expiresAt = $this->getPasswordExpiresAt();
 
-        if (!$expiresAt) {
+        if (! $expiresAt) {
             return false;
         }
 
@@ -74,8 +69,6 @@ trait HasPasswordExpiration
 
     /**
      * パスワード有効期限を延長
-     *
-     * @return void
      */
     public function extendPasswordExpiration(): void
     {
@@ -91,13 +84,10 @@ trait HasPasswordExpiration
 
     /**
      * パスワード有効期限をリセット（過去の日付に設定）
-     *
-     * @return void
      */
     public function resetPasswordExpiration(): void
     {
         $column = $this->getPasswordExpiresAtColumn();
         $this->{$column} = Carbon::now()->subDay();
     }
-
 }

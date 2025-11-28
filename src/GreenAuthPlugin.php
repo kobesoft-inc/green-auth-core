@@ -2,14 +2,13 @@
 
 namespace Green\Auth;
 
-use InvalidArgumentException;
 use Filament\Contracts\Plugin;
 use Filament\Navigation\MenuItem;
 use Filament\Panel;
 use Green\Auth\Filament\Pages\Auth\ChangePassword;
 use Green\Auth\Filament\Pages\Auth\PasswordExpired;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use InvalidArgumentException;
 
 /**
  * Green Auth用Filamentプラグイン
@@ -35,8 +34,7 @@ class GreenAuthPlugin implements Plugin
      * パスワード変更とパスワード期限切れページのルートを登録し、
      * 認証フロー用のページを利用可能にする
      *
-     * @param Panel $panel Filamentパネルインスタンス
-     * @return void
+     * @param  Panel  $panel  Filamentパネルインスタンス
      */
     public function register(Panel $panel): void
     {
@@ -60,8 +58,7 @@ class GreenAuthPlugin implements Plugin
      * 設定の検証や初期化処理を実行
      * 現在は何も実行しないが、将来的な拡張のために用意
      *
-     * @param Panel $panel Filamentパネルインスタンス
-     * @return void
+     * @param  Panel  $panel  Filamentパネルインスタンス
      */
     public function boot(Panel $panel): void
     {
@@ -92,17 +89,17 @@ class GreenAuthPlugin implements Plugin
         $guard = filament()->getCurrentOrDefaultPanel()->getAuthGuard();
         $provider = config("auth.guards.{$guard}.provider");
 
-        if (!$provider) {
+        if (! $provider) {
             throw new InvalidArgumentException("Guard '{$guard}' does not exist or has no provider configured.");
         }
 
         $model = config("auth.providers.{$provider}.model");
 
-        if (!$model) {
+        if (! $model) {
             throw new InvalidArgumentException("Provider '{$provider}' does not have a model configured.");
         }
 
-        if (!class_exists($model)) {
+        if (! class_exists($model)) {
             throw new InvalidArgumentException("User model class '{$model}' does not exist.");
         }
 
@@ -114,7 +111,7 @@ class GreenAuthPlugin implements Plugin
      *
      * 設定に基づいてユーザーメニューに表示する項目を決定する
      *
-     * @param Panel $panel Filamentパネルインスタンス
+     * @param  Panel  $panel  Filamentパネルインスタンス
      * @return array<MenuItem> メニュー項目の配列
      */
     protected function getUserMenuItems(Panel $panel): array
@@ -124,8 +121,8 @@ class GreenAuthPlugin implements Plugin
         // パスワード変更メニューの追加判定
         if ($this->shouldShowPasswordChangeMenuItem($panel)) {
             $menuItems[] = MenuItem::make()
-                ->label(fn(): string => __('green-auth::auth.change_password.title'))
-                ->url(fn(): string => ChangePassword::getUrl())
+                ->label(fn (): string => __('green-auth::auth.change_password.title'))
+                ->url(fn (): string => ChangePassword::getUrl())
                 ->icon('heroicon-o-key');
         }
 
@@ -135,7 +132,7 @@ class GreenAuthPlugin implements Plugin
     /**
      * パスワード変更メニュー項目を表示するかどうかを判定
      *
-     * @param Panel $panel Filamentパネルインスタンス
+     * @param  Panel  $panel  Filamentパネルインスタンス
      * @return bool 表示フラグ
      */
     protected function shouldShowPasswordChangeMenuItem(Panel $panel): bool

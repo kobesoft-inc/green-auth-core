@@ -19,7 +19,8 @@ trait HasHierarchy
     {
         if ($this->ancestors->isNotEmpty()) {
             $ancestors = $this->ancestors->pluck('name')->join(' > ');
-            return $ancestors . ' > ' . $this->name;
+
+            return $ancestors.' > '.$this->name;
         }
 
         return $this->name;
@@ -33,15 +34,15 @@ trait HasHierarchy
      * - レコード自身
      * - レコードの全ての子孫
      *
-     * @param Builder $query クエリビルダー
-     * @param Model|null $record 除外対象のレコード
+     * @param  Builder  $query  クエリビルダー
+     * @param  Model|null  $record  除外対象のレコード
      * @return Builder 親として選択可能なグループのクエリ
      */
     public function scopeAvailableAsParentFor(Builder $query, ?Model $record = null): Builder
     {
         return $query->when(
             $record,
-            fn(Builder $q) => $q
+            fn (Builder $q) => $q
                 ->where('id', '!=', $record->id)
                 ->whereNotIn('id', $record->descendants->pluck('id'))
         );

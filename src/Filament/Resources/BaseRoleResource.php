@@ -12,7 +12,7 @@ abstract class BaseRoleResource extends Resource
 {
     use HasModelLabels, HasRoleActions, HasRoleColumns, HasRoleForms;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-key';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-key';
 
     protected static ?int $navigationSort = 30;
 }

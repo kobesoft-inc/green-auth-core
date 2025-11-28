@@ -2,20 +2,20 @@
 
 namespace Green\Auth\Models;
 
-use Green\Auth\Models\Concerns\Group\HasUsers;
-use Green\Auth\Models\Concerns\Group\HasRoles;
-use Green\Auth\Models\Concerns\Group\HasPermissions;
 use Green\Auth\Models\Concerns\Group\HasHierarchy;
+use Green\Auth\Models\Concerns\Group\HasPermissions;
+use Green\Auth\Models\Concerns\Group\HasRoles;
+use Green\Auth\Models\Concerns\Group\HasUsers;
 use Illuminate\Database\Eloquent\Model;
 use Kalnoy\Nestedset\NodeTrait;
 
 abstract class BaseGroup extends Model
 {
-    use NodeTrait;
-    use HasUsers;
-    use HasRoles;
-    use HasPermissions;
     use HasHierarchy;
+    use HasPermissions;
+    use HasRoles;
+    use HasUsers;
+    use NodeTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -37,5 +37,4 @@ abstract class BaseGroup extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-
 }

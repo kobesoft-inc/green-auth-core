@@ -2,12 +2,11 @@
 
 namespace Green\Auth\Filament\Resources\Concerns\Role;
 
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ImageColumn;
+use Exception;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Exception;
-use Filament\Tables;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Storage;
@@ -37,7 +36,7 @@ trait HasRoleColumns
      */
     public static function getUsersColumn(): ?ImageColumn
     {
-        if (!static::hasUsersTrait()) {
+        if (! static::hasUsersTrait()) {
             return null;
         }
 
@@ -59,9 +58,11 @@ trait HasRoleColumns
                             if (filter_var($avatarValue, FILTER_VALIDATE_URL)) {
                                 return $avatarValue;
                             }
+
                             return Storage::disk(config('filament.default_filesystem_disk'))->url($avatarValue);
                         }
                     }
+
                     return null;
                 })->filter()->toArray();
             });
@@ -74,7 +75,7 @@ trait HasRoleColumns
      */
     public static function getGroupsColumn(): ?TextColumn
     {
-        if (!static::hasGroupsTrait()) {
+        if (! static::hasGroupsTrait()) {
             return null;
         }
 
@@ -104,7 +105,7 @@ trait HasRoleColumns
      */
     public static function getUsersFilter(): ?SelectFilter
     {
-        if (!static::hasUsersTrait()) {
+        if (! static::hasUsersTrait()) {
             return null;
         }
 
@@ -119,11 +120,12 @@ trait HasRoleColumns
      * グループフィルターを作成
      *
      * @return SelectFilter|null グループフィルター（トレイトがない場合はnull）
+     *
      * @throws Exception
      */
     public static function getGroupsFilter(): ?SelectFilter
     {
-        if (!static::hasGroupsTrait()) {
+        if (! static::hasGroupsTrait()) {
             return null;
         }
 
@@ -138,6 +140,7 @@ trait HasRoleColumns
      * フィルター配列を取得
      *
      * @return array フィルター配列
+     *
      * @throws Exception
      */
     public static function getTableFilters(): array

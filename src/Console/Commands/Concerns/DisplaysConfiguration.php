@@ -67,7 +67,7 @@ trait DisplaysConfiguration
      */
     protected function displayPasswordSettings(): void
     {
-        if (!isset($this->config['password'])) {
+        if (! isset($this->config['password'])) {
             return;
         }
 
@@ -98,8 +98,8 @@ trait DisplaysConfiguration
     {
         $this->newLine();
         $this->info(__('green-auth::install.next_steps.title'));
-        $this->line('1. ' . __('green-auth::install.next_steps.update_auth_config'));
-        $this->line('2. ' . __('green-auth::install.next_steps.run_migrations'));
-        $this->line('3. ' . __('green-auth::install.next_steps.register_resources'));
+        $this->line('1. '.__('green-auth::install.next_steps.update_auth_config'));
+        $this->line('2. '.__('green-auth::install.next_steps.run_migrations'));
+        $this->line('3. '.__('green-auth::install.next_steps.register_resources'));
     }
 }

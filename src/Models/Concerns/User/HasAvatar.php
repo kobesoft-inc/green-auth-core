@@ -42,48 +42,40 @@ trait HasAvatar
 
     /**
      * アバターパスを取得
-     *
-     * @return string|null
      */
     public function getAvatarPath(): ?string
     {
         $column = $this->getAvatarColumn();
+
         return $this->{$column};
     }
 
     /**
      * アバターの完全なURLを取得
-     *
-     * @return string|null
      */
     public function getAvatarUrl(): ?string
     {
         $path = $this->getAvatarPath();
 
-        if (!$path) {
+        if (! $path) {
             return null;
         }
 
         $disk = static::getAvatarDisk();
+
         return Storage::disk($disk)->url($path);
     }
 
     /**
      * アバターを持っているかチェック
-     *
-     * @return bool
      */
     public function hasAvatar(): bool
     {
-        return !empty($this->getAvatarPath());
+        return ! empty($this->getAvatarPath());
     }
 
     /**
      * 新しいアバターを保存
-     *
-     * @param UploadedFile $file
-     * @param array $options
-     * @return string|false
      */
     public function storeAvatar(UploadedFile $file, array $options = []): string|false
     {
@@ -94,9 +86,9 @@ trait HasAvatar
 
         $filename = $options['filename'] ?? null;
 
-        if (!$filename) {
+        if (! $filename) {
             $extension = $file->getClientOriginalExtension();
-            $filename = $this->id . '_' . uniqid() . '.' . $extension;
+            $filename = $this->id.'_'.uniqid().'.'.$extension;
         }
 
         $path = $file->storeAs($directory, $filename, $disk);
@@ -113,14 +105,12 @@ trait HasAvatar
 
     /**
      * 現在のアバターを削除
-     *
-     * @return bool
      */
     public function deleteAvatar(): bool
     {
         $path = $this->getAvatarPath();
 
-        if (!$path) {
+        if (! $path) {
             return false;
         }
 
@@ -141,5 +131,4 @@ trait HasAvatar
     {
         return $this->getAvatarUrl();
     }
-
 }

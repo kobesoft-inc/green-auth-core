@@ -12,7 +12,7 @@ trait HasPanelAccess
      * デフォルトでは全てのユーザーがアクセス可能
      * 必要に応じてモデルでオーバーライドしてください
      *
-     * @param Panel $panel Filamentパネル
+     * @param  Panel  $panel  Filamentパネル
      * @return bool アクセス可能かどうか
      */
     public function canAccessPanel(Panel $panel): bool

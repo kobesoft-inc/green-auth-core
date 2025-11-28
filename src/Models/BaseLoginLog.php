@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request as RequestFacade;
-use Illuminate\Support\Str;
 
 abstract class BaseLoginLog extends Model
 {
@@ -47,14 +46,15 @@ abstract class BaseLoginLog extends Model
     public function user(): BelongsTo
     {
         $userClass = static::getUserClass();
+
         return $this->belongsTo($userClass, static::getForeignKeyName($userClass));
     }
 
     /**
      * ログインログを作成
      *
-     * @param Model $user ユーザーモデルまたはID
-     * @param Request|null $request リクエストインスタンス
+     * @param  Model  $user  ユーザーモデルまたはID
+     * @param  Request|null  $request  リクエストインスタンス
      * @return static 作成されたログインログインスタンス
      */
     public static function createLog(Model $user, ?Request $request = null): static
@@ -62,7 +62,7 @@ abstract class BaseLoginLog extends Model
         $request = $request ?? RequestFacade::instance();
         $userAgent = static::parseUserAgent($request->userAgent() ?? '');
 
-        $log = (new static())->fill([
+        $log = (new static)->fill([
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
             'browser_name' => $userAgent['browser_name'],
@@ -79,7 +79,7 @@ abstract class BaseLoginLog extends Model
     /**
      * ユーザーエージェントを解析
      *
-     * @param string $userAgent ユーザーエージェント文字列
+     * @param  string  $userAgent  ユーザーエージェント文字列
      * @return array ブラウザ情報配列
      */
     protected static function parseUserAgent(string $userAgent): array
@@ -171,8 +171,8 @@ abstract class BaseLoginLog extends Model
     /**
      * 特定ユーザーのログインに絞り込むスコープ
      *
-     * @param Builder $query クエリビルダー
-     * @param mixed $userId ユーザーID
+     * @param  Builder  $query  クエリビルダー
+     * @param  mixed  $userId  ユーザーID
      * @return Builder 絞り込まれたクエリ
      */
     public function scopeForUser($query, $userId): Builder
@@ -183,9 +183,9 @@ abstract class BaseLoginLog extends Model
     /**
      * 日付範囲内のログインに絞り込むスコープ
      *
-     * @param Builder $query クエリビルダー
-     * @param mixed $startDate 開始日
-     * @param mixed $endDate 終了日
+     * @param  Builder  $query  クエリビルダー
+     * @param  mixed  $startDate  開始日
+     * @param  mixed  $endDate  終了日
      * @return Builder 絞り込まれたクエリ
      */
     public function scopeBetweenDates($query, $startDate, $endDate): Builder
@@ -196,8 +196,8 @@ abstract class BaseLoginLog extends Model
     /**
      * 特定IPアドレスからのログインに絞り込むスコープ
      *
-     * @param Builder $query クエリビルダー
-     * @param string $ipAddress IPアドレス
+     * @param  Builder  $query  クエリビルダー
+     * @param  string  $ipAddress  IPアドレス
      * @return Builder 絞り込まれたクエリ
      */
     public function scopeFromIp($query, string $ipAddress): Builder
@@ -208,8 +208,8 @@ abstract class BaseLoginLog extends Model
     /**
      * 最近のログインに絞り込むスコープ
      *
-     * @param Builder $query クエリビルダー
-     * @param int $hours 時間数（デフォルト24時間）
+     * @param  Builder  $query  クエリビルダー
+     * @param  int  $hours  時間数（デフォルト24時間）
      * @return Builder 絞り込まれたクエリ
      */
     public function scopeRecent($query, int $hours = 24): Builder

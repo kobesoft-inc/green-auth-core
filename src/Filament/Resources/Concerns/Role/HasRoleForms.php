@@ -2,14 +2,12 @@
 
 namespace Green\Auth\Filament\Resources\Concerns\Role;
 
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
-use Filament\Forms;
 use Green\Auth\Facades\PermissionManager;
 use Illuminate\Support\Collection;
-use Illuminate\Support\HtmlString;
 
 /**
  * ロールリソース用のフォーム定義を提供するトレイト
@@ -45,7 +43,7 @@ trait HasRoleForms
      */
     public static function getPermissionsFormComponents(): array
     {
-        if (!static::hasPermissionsTrait()) {
+        if (! static::hasPermissionsTrait()) {
             return [];
         }
 
@@ -60,8 +58,8 @@ trait HasRoleForms
 
         // 権限をグループごとに分類し、各グループのセクションを作成
         return $permissions
-            ->groupBy(fn($permission) => $permission::getGroup() ?? __('green-auth::roles.other'))
-            ->map(fn($permissions, $group) => static::getPermissionCheckboxListFormComponent($group, $permissions))
+            ->groupBy(fn ($permission) => $permission::getGroup() ?? __('green-auth::roles.other'))
+            ->map(fn ($permissions, $group) => static::getPermissionCheckboxListFormComponent($group, $permissions))
             ->toArray();
     }
 
@@ -70,9 +68,9 @@ trait HasRoleForms
      */
     protected static function getPermissionCheckboxListFormComponent(string $groupName, Collection $permissions): CheckboxList
     {
-        return CheckboxList::make("permissions")
+        return CheckboxList::make('permissions')
             ->label($groupName)
-            ->options($permissions->mapWithKeys(fn($permission) => [$permission::getId() => $permission::getName()]))
+            ->options($permissions->mapWithKeys(fn ($permission) => [$permission::getId() => $permission::getName()]))
             ->columns(['default' => 1, 'sm' => 2, 'lg' => 3])
             ->gridDirection('row');
     }
@@ -85,7 +83,7 @@ trait HasRoleForms
         return array_filter([
             static::getNameFormComponent(),
             static::getDescriptionFormComponent(),
-            ...static::getPermissionsFormComponents()
+            ...static::getPermissionsFormComponents(),
         ]);
     }
 

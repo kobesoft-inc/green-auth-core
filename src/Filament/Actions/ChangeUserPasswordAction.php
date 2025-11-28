@@ -17,11 +17,10 @@ class ChangeUserPasswordAction extends Action
         $this->name('changePassword')
             ->label(__('green-auth::passwords.change_password'))
             ->icon('heroicon-o-key')
-            ->form(fn($record) => static::getPasswordFormComponents($record::class))
+            ->form(fn ($record) => static::getPasswordFormComponents($record::class))
             ->modalWidth('md')
             ->action(function (Model $record, array $data) {
                 $this->resetPassword($record, $data);
             });
     }
-
 }

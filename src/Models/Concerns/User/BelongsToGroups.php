@@ -32,13 +32,11 @@ trait BelongsToGroups
     /**
      * 複数グループに所属できるかどうかを確認
      * 設定から取得
-     *
-     * @return bool
      */
     public function canBelongToMultipleGroups(): bool
     {
         $guard = static::getGuardName();
+
         return config("green-auth.guards.{$guard}.user_permissions.multiple_groups", true);
     }
-
 }

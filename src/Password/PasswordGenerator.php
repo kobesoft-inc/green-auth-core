@@ -10,6 +10,7 @@ use InvalidArgumentException;
 class PasswordGenerator
 {
     protected PasswordComplexity $complexity;
+
     protected int $maxAttempts = 100;
 
     public function __construct(PasswordComplexity $complexity)
@@ -24,6 +25,7 @@ class PasswordGenerator
     {
         $config = config("green-auth.guards.{$guard}.password", []);
         $complexity = PasswordComplexity::fromArray($config);
+
         return new self($complexity);
     }
 
@@ -183,6 +185,7 @@ class PasswordGenerator
     public function setMaxAttempts(int $attempts): self
     {
         $this->maxAttempts = $attempts;
+
         return $this;
     }
 
@@ -200,6 +203,7 @@ class PasswordGenerator
     public function setComplexity(PasswordComplexity $complexity): self
     {
         $this->complexity = $complexity;
+
         return $this;
     }
 }

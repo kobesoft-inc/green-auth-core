@@ -13,12 +13,12 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
+use Green\Auth\Filament\Pages\Auth\Concerns\InteractsWithGreenAuth;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\ValidationException;
-use Green\Auth\Filament\Pages\Auth\Concerns\InteractsWithGreenAuth;
 
 class Login extends \Filament\Auth\Pages\Login
 {
@@ -49,6 +49,7 @@ class Login extends \Filament\Auth\Pages\Login
      * パネルアクセス権限チェックなどの一連のログインプロセスを実行する。
      *
      * @return mixed ログインレスポンス、リダイレクトレスポンス、またはnull
+     *
      * @throws ValidationException 認証失敗時
      */
     public function authenticate(): ?LoginResponse
@@ -141,6 +142,7 @@ class Login extends \Filament\Auth\Pages\Login
      * 適切なエラーメッセージを含むバリデーション例外をスローする。
      *
      * @return never このメソッドは常に例外をスローし、2を返さない
+     *
      * @throws ValidationException 認証失敗のバリデーション例外
      */
     protected function throwFailureValidationException(): never
@@ -157,6 +159,7 @@ class Login extends \Filament\Auth\Pages\Login
      * エラー通知を表示してから認証失敗例外をスローする。
      *
      * @return never このメソッドは常に例外をスローし、値を返さない
+     *
      * @throws ValidationException 認証失敗のバリデーション例外
      */
     protected function throwAccountSuspendedException(): never
@@ -177,7 +180,7 @@ class Login extends \Filament\Auth\Pages\Login
      * パスワードが期限切れの場合、セッションにユーザーIDを保存し、
      * ログアウト後にパスワード変更画面へリダイレクトする。
      *
-     * @param mixed $user ユーザーモデルインスタンス
+     * @param  mixed  $user  ユーザーモデルインスタンス
      * @return mixed パスワード変更画面へのリダイレクト
      */
     protected function handlePasswordExpired($user): mixed
@@ -196,7 +199,7 @@ class Login extends \Filament\Auth\Pages\Login
      * レート制限に達した場合に表示する通知を生成する。
      * 通知には待機時間の情報が含まれる。
      *
-     * @param TooManyRequestsException $exception レート制限例外
+     * @param  TooManyRequestsException  $exception  レート制限例外
      * @return Notification|null レート制限通知オブジェクト
      */
     protected function getRateLimitedNotification(TooManyRequestsException $exception): ?Notification
@@ -206,7 +209,6 @@ class Login extends \Filament\Auth\Pages\Login
             ->body(__('green-auth::auth.login.rate_limit_message', ['seconds' => $exception->secondsUntilAvailable]))
             ->danger();
     }
-
 
     /**
      * ページタイトルを取得
@@ -254,7 +256,7 @@ class Login extends \Filament\Auth\Pages\Login
             ->extraInputAttributes(['tabindex' => 1]);
 
         // バリデーションルールを設定
-        if ($this->canLoginWithEmail() && !$this->canLoginWithUsername()) {
+        if ($this->canLoginWithEmail() && ! $this->canLoginWithUsername()) {
             $input->email();
         }
 
@@ -362,7 +364,7 @@ class Login extends \Filament\Auth\Pages\Login
      * Laravelの認証システムに渡す形式に変換する。
      * メールアドレスまたはユーザー名でのログインに対応する。
      *
-     * @param array<string, mixed> $data フォーム入力データ
+     * @param  array<string, mixed>  $data  フォーム入力データ
      * @return array<string, mixed> 認証用の資格情報配列
      */
     protected function getCredentialsFromFormData(array $data): array

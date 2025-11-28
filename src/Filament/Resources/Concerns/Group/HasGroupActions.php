@@ -2,14 +2,14 @@
 
 namespace Green\Auth\Filament\Resources\Concerns\Group;
 
-use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
-use Filament\Tables;
+use Filament\Actions\EditAction;
 use Illuminate\Database\Eloquent\Model;
 
 trait HasGroupActions
 {
     use HasGroupTraitChecks;
+
     /**
      * レコードアクションを作成
      */
@@ -56,6 +56,7 @@ trait HasGroupActions
                 if (static::hasParentGroupTrait() && $record->children()->exists()) {
                     return __('green-auth::groups.cannot_delete_groups_with_children');
                 }
+
                 return null;
             });
     }

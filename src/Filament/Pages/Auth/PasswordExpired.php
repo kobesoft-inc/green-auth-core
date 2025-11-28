@@ -2,8 +2,6 @@
 
 namespace Green\Auth\Filament\Pages\Auth;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Component;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -11,18 +9,19 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
-use Green\Auth\Password\PasswordComplexity;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Schema;
+use Green\Auth\Filament\Pages\Auth\Concerns\InteractsWithGreenAuth;
 use Green\Auth\Rules\PasswordRule;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
-use Green\Auth\Filament\Pages\Auth\Concerns\InteractsWithGreenAuth;
 
 class PasswordExpired extends SimplePage implements HasForms
 {
-    use InteractsWithForms;
     use InteractsWithFormActions;
+    use InteractsWithForms;
     use InteractsWithGreenAuth;
 
     protected string $view = 'green-auth::filament.pages.auth.password-expired';
@@ -35,8 +34,6 @@ class PasswordExpired extends SimplePage implements HasForms
      * パスワード期限切れセッションの有効性をチェックし、
      * 無効な場合はログインページにリダイレクトする。
      * 有効な場合はフォームを初期化する。
-     *
-     * @return void
      */
     public function mount(): void
     {
@@ -44,9 +41,10 @@ class PasswordExpired extends SimplePage implements HasForms
         $sessionKey = $this->getPasswordExpiredSessionKey();
         $userId = session($sessionKey);
 
-        if (!$userId) {
+        if (! $userId) {
             // 直接アクセスした場合はログインページにリダイレクト
             $this->redirectToLogin();
+
             return;
         }
 
@@ -60,7 +58,7 @@ class PasswordExpired extends SimplePage implements HasForms
      * 現在のパスワード、新しいパスワード、パスワード確認の
      * 3つの入力フィールドを含むフォームを返す。
      *
-     * @param Schema $schema Filamentフォームインスタンス
+     * @param  Schema  $schema  Filamentフォームインスタンス
      * @return Schema 設定済みフォームインスタンス
      */
     public function form(Schema $schema): Schema
@@ -150,13 +148,14 @@ class PasswordExpired extends SimplePage implements HasForms
 
         // セッション検証
         $user = $this->validateSessionAndGetUser();
-        if (!$user) {
+        if (! $user) {
             $this->redirectToLogin();
+
             return null;
         }
 
         // 現在のパスワード検証
-        if (!$this->validateCurrentPassword($data['current_password'], $user)) {
+        if (! $this->validateCurrentPassword($data['current_password'], $user)) {
             return null;
         }
 
@@ -165,6 +164,7 @@ class PasswordExpired extends SimplePage implements HasForms
 
         // 成功処理
         $this->handlePasswordChangeSuccess();
+
         return null;
     }
 
@@ -182,17 +182,18 @@ class PasswordExpired extends SimplePage implements HasForms
         $sessionKey = $this->getPasswordExpiredSessionKey();
         $userId = session($sessionKey);
 
-        if (!$userId) {
+        if (! $userId) {
             return null;
         }
 
         $userClass = $this->getUserClass();
         $user = $userClass::find($userId);
 
-        if (!$user) {
+        if (! $user) {
             $this->sendErrorNotification(
                 __('green-auth::auth.change_password.user_not_found')
             );
+
             return null;
         }
 
@@ -205,16 +206,17 @@ class PasswordExpired extends SimplePage implements HasForms
      * 入力された現在のパスワードがユーザーの実際のパスワードと一致するかチェックする。
      * 不一致の場合はエラー通知を表示してfalseを返す。
      *
-     * @param string $currentPassword 入力された現在のパスワード（平文）
-     * @param Model $user ユーザーモデルインスタンス
+     * @param  string  $currentPassword  入力された現在のパスワード（平文）
+     * @param  Model  $user  ユーザーモデルインスタンス
      * @return bool 検証結果（true: 一致, false: 不一致）
      */
     protected function validateCurrentPassword(string $currentPassword, Model $user): bool
     {
-        if (!Hash::check($currentPassword, $user->password)) {
+        if (! Hash::check($currentPassword, $user->password)) {
             $this->sendErrorNotification(
                 __('green-auth::auth.change_password.current_password_incorrect')
             );
+
             return false;
         }
 
@@ -228,9 +230,8 @@ class PasswordExpired extends SimplePage implements HasForms
      * パスワードのハッシュ化はモデルのミューテーターで自動的に処理される。
      * パスワード変更日時の更新もモデル側で自動的に行われる。
      *
-     * @param Model $user ユーザーモデルインスタンス
-     * @param string $newPassword 新しいパスワード（平文）
-     * @return void
+     * @param  Model  $user  ユーザーモデルインスタンス
+     * @param  string  $newPassword  新しいパスワード（平文）
      */
     protected function updateUserPassword(Model $user, string $newPassword): void
     {
@@ -244,8 +245,6 @@ class PasswordExpired extends SimplePage implements HasForms
      * パスワード変更が成功した際の後処理を実行する。
      * セッションクリア、成功通知の表示、ログインページへのリダイレクトを
      * 順番に実行する。
-     *
-     * @return void
      */
     protected function handlePasswordChangeSuccess(): void
     {
@@ -270,9 +269,8 @@ class PasswordExpired extends SimplePage implements HasForms
      * タイトルは固定で、本文は引数で指定されたメッセージまたは
      * 詳細メッセージを表示する。
      *
-     * @param string $message エラーメッセージ
-     * @param string|null $body 詳細メッセージ（省略可、省略時は$messageを使用）
-     * @return void
+     * @param  string  $message  エラーメッセージ
+     * @param  string|null  $body  詳細メッセージ（省略可、省略時は$messageを使用）
      */
     protected function sendErrorNotification(string $message, ?string $body = null): void
     {
@@ -288,14 +286,11 @@ class PasswordExpired extends SimplePage implements HasForms
      *
      * 現在のパネルに設定されているログインURLへリダイレクトする。
      * getLoginUrl()メソッドはInteractsWithGreenAuthトレイトから提供される。
-     *
-     * @return void
      */
     protected function redirectToLogin(): void
     {
         $this->redirect($this->getLoginUrl());
     }
-
 
     /**
      * ページタイトルを取得
@@ -378,5 +373,4 @@ class PasswordExpired extends SimplePage implements HasForms
     {
         return true;
     }
-
 }

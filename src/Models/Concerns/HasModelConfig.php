@@ -2,8 +2,8 @@
 
 namespace Green\Auth\Models\Concerns;
 
-use RuntimeException;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 /**
  * モデル設定とリレーションシップ管理を提供するトレイト
@@ -20,8 +20,8 @@ trait HasModelConfig
     /**
      * 設定値を取得（guard対応、クラス定数フォールバック）
      *
-     * @param string $key 設定キー
-     * @param mixed $default デフォルト値
+     * @param  string  $key  設定キー
+     * @param  mixed  $default  デフォルト値
      * @return mixed 設定値
      */
     protected static function config(string $key, $default = null)
@@ -38,12 +38,12 @@ trait HasModelConfig
     /**
      * クラス定数を取得
      *
-     * @param string $name 定数名
+     * @param  string  $name  定数名
      * @return mixed 定数値、存在しない場合はnull
      */
     protected static function constant(string $name)
     {
-        $constantName = static::class . '::' . $name;
+        $constantName = static::class.'::'.$name;
 
         return defined($constantName) ? constant($constantName) : null;
     }
@@ -52,6 +52,7 @@ trait HasModelConfig
      * ユーザーモデルクラスを取得
      *
      * @return string ユーザーモデルのクラス名
+     *
      * @throws RuntimeException クラスが見つからない場合
      */
     protected static function getUserClass(): string
@@ -63,6 +64,7 @@ trait HasModelConfig
      * グループモデルクラスを取得
      *
      * @return string グループモデルのクラス名
+     *
      * @throws RuntimeException クラスが見つからない場合
      */
     protected static function getGroupClass(): string
@@ -74,6 +76,7 @@ trait HasModelConfig
      * ロールモデルクラスを取得
      *
      * @return string ロールモデルのクラス名
+     *
      * @throws RuntimeException クラスが見つからない場合
      */
     protected static function getRoleClass(): string
@@ -85,6 +88,7 @@ trait HasModelConfig
      * ログインログモデルクラスを取得
      *
      * @return string ログインログモデルのクラス名
+     *
      * @throws RuntimeException クラスが見つからない場合
      */
     protected static function getLoginLogClass(): string
@@ -95,8 +99,9 @@ trait HasModelConfig
     /**
      * 関連するモデルクラスを取得
      *
-     * @param string $modelType モデルタイプ（'user', 'group', 'role'）
+     * @param  string  $modelType  モデルタイプ（'user', 'group', 'role'）
      * @return string モデルクラス名
+     *
      * @throws RuntimeException クラスが見つからない場合
      */
     protected static function getRelatedModelClass(string $modelType): string
@@ -155,7 +160,7 @@ trait HasModelConfig
     /**
      * ピボットテーブル名を取得
      *
-     * @param string $tableKey テーブルキー（'user_groups', 'user_roles', 'group_roles'）
+     * @param  string  $tableKey  テーブルキー（'user_groups', 'user_roles', 'group_roles'）
      * @return string テーブル名
      */
     private static function getPivotTableName(string $tableKey): string
@@ -166,18 +171,19 @@ trait HasModelConfig
     /**
      * 外部キー名を推測
      *
-     * @param string $modelClass モデルクラス名
+     * @param  string  $modelClass  モデルクラス名
      * @return string 外部キー名（例：'user_id'）
      */
     protected static function getForeignKeyName(string $modelClass): string
     {
-        return Str::snake(class_basename($modelClass)) . '_id';
+        return Str::snake(class_basename($modelClass)).'_id';
     }
 
     /**
      * 現在のガードを取得
      *
      * @return string ガード名
+     *
      * @throws RuntimeException ガードが特定できない場合
      */
     public static function getGuardName(): string
@@ -196,13 +202,14 @@ trait HasModelConfig
         }
 
         // ガードが見つからない場合はエラー
-        throw new RuntimeException("Unable to determine guard for model: " . static::class);
+        throw new RuntimeException('Unable to determine guard for model: '.static::class);
     }
 
     /**
      * 現在のモデルタイプを取得 ('User', 'Group', 'Role')
      *
      * @return string モデルタイプ（'User', 'Group', 'Role'）
+     *
      * @throws RuntimeException モデルタイプが特定できない場合
      */
     protected static function getModelType(): string

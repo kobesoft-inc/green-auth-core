@@ -12,6 +12,7 @@ trait CollectsConfiguration
     protected function askForModel(string $prompt, string $default): ?string
     {
         $result = $this->ask(__($prompt), $default);
+
         return strtolower($result) === 'n' ? null : $result;
     }
 

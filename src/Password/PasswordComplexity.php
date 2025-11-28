@@ -8,12 +8,19 @@ namespace Green\Auth\Password;
 class PasswordComplexity
 {
     protected int $minLength = 8;
+
     protected ?int $maxLength = null;
+
     protected bool $requireLowercase = true;
+
     protected bool $requireUppercase = true;
+
     protected bool $requireNumbers = true;
+
     protected bool $requireSymbols = false;
+
     protected array $allowedSymbols = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+', '[', ']', '{', '}', '|', '\\', ':', ';', '"', "'", '<', '>', ',', '.', '?', '/', '~', '`'];
+
     protected array $forbiddenPatterns = [];
 
     /**
@@ -22,6 +29,7 @@ class PasswordComplexity
     public function minLength(int $length): self
     {
         $this->minLength = $length;
+
         return $this;
     }
 
@@ -31,6 +39,7 @@ class PasswordComplexity
     public function maxLength(?int $length): self
     {
         $this->maxLength = $length;
+
         return $this;
     }
 
@@ -40,6 +49,7 @@ class PasswordComplexity
     public function requireLowercase(bool $require = true): self
     {
         $this->requireLowercase = $require;
+
         return $this;
     }
 
@@ -49,6 +59,7 @@ class PasswordComplexity
     public function requireUppercase(bool $require = true): self
     {
         $this->requireUppercase = $require;
+
         return $this;
     }
 
@@ -58,6 +69,7 @@ class PasswordComplexity
     public function requireNumbers(bool $require = true): self
     {
         $this->requireNumbers = $require;
+
         return $this;
     }
 
@@ -67,6 +79,7 @@ class PasswordComplexity
     public function requireSymbols(bool $require = true): self
     {
         $this->requireSymbols = $require;
+
         return $this;
     }
 
@@ -76,6 +89,7 @@ class PasswordComplexity
     public function allowedSymbols(array $symbols): self
     {
         $this->allowedSymbols = $symbols;
+
         return $this;
     }
 
@@ -85,6 +99,7 @@ class PasswordComplexity
     public function forbidPattern(string $pattern): self
     {
         $this->forbiddenPatterns[] = $pattern;
+
         return $this;
     }
 
@@ -94,6 +109,7 @@ class PasswordComplexity
     public function forbidPatterns(array $patterns): self
     {
         $this->forbiddenPatterns = array_merge($this->forbiddenPatterns, $patterns);
+
         return $this;
     }
 
@@ -115,24 +131,24 @@ class PasswordComplexity
         }
 
         // 小文字チェック
-        if ($this->requireLowercase && !preg_match('/[a-z]/', $password)) {
+        if ($this->requireLowercase && ! preg_match('/[a-z]/', $password)) {
             $errors[] = __('green-auth::passwords.password_require_lowercase');
         }
 
         // 大文字チェック
-        if ($this->requireUppercase && !preg_match('/[A-Z]/', $password)) {
+        if ($this->requireUppercase && ! preg_match('/[A-Z]/', $password)) {
             $errors[] = __('green-auth::passwords.password_require_uppercase');
         }
 
         // 数字チェック
-        if ($this->requireNumbers && !preg_match('/[0-9]/', $password)) {
+        if ($this->requireNumbers && ! preg_match('/[0-9]/', $password)) {
             $errors[] = __('green-auth::passwords.password_require_numbers');
         }
 
         // 記号チェック
         if ($this->requireSymbols) {
-            $symbolPattern = '/[' . preg_quote(implode('', $this->allowedSymbols), '/') . ']/';
-            if (!preg_match($symbolPattern, $password)) {
+            $symbolPattern = '/['.preg_quote(implode('', $this->allowedSymbols), '/').']/';
+            if (! preg_match($symbolPattern, $password)) {
                 $symbolList = implode(' ', $this->allowedSymbols);
                 $errors[] = __('green-auth::passwords.password_require_symbols', ['symbols' => $symbolList]);
             }
@@ -192,7 +208,7 @@ class PasswordComplexity
      */
     public static function default(): self
     {
-        return new self();
+        return new self;
     }
 
     /**
@@ -200,7 +216,7 @@ class PasswordComplexity
      */
     public static function simple(): self
     {
-        return (new self())
+        return (new self)
             ->minLength(6)
             ->requireLowercase(false)
             ->requireUppercase(false)
@@ -213,7 +229,7 @@ class PasswordComplexity
      */
     public static function strong(): self
     {
-        return (new self())
+        return (new self)
             ->minLength(12)
             ->requireLowercase(true)
             ->requireUppercase(true)
@@ -250,7 +266,7 @@ class PasswordComplexity
      */
     public static function fromArray(array $config): self
     {
-        $complexity = new self();
+        $complexity = new self;
 
         if (isset($config['min_length'])) {
             $complexity->minLength($config['min_length']);

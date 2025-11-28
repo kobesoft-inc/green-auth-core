@@ -2,11 +2,10 @@
 
 namespace Green\Auth\Filament\Resources\Concerns\User;
 
-use Filament\Actions\ActionGroup;
-use Filament\Actions\EditAction;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
-use Filament\Tables;
+use Filament\Actions\EditAction;
 use Green\Auth\Filament\Actions\ChangeUserPasswordAction;
 use Green\Auth\Filament\Actions\SuspendUserAction;
 use Green\Auth\Filament\Actions\UnsuspendUserAction;
@@ -45,7 +44,7 @@ trait HasUserActions
         }
 
         // 操作アクションがある場合はActionGroupに追加
-        if (!empty($operationActions)) {
+        if (! empty($operationActions)) {
             $actions[] = ActionGroup::make($operationActions)
                 ->label(__('green-auth::users.actions.operations'))
                 ->icon('heroicon-m-ellipsis-vertical')
@@ -82,9 +81,10 @@ trait HasUserActions
      */
     public static function makeSuspendAction(): ?Action
     {
-        if (!static::hasSuspensionTrait()) {
+        if (! static::hasSuspensionTrait()) {
             return null;
         }
+
         return SuspendUserAction::make();
     }
 
@@ -93,9 +93,10 @@ trait HasUserActions
      */
     public static function makeUnsuspendAction(): ?Action
     {
-        if (!static::hasSuspensionTrait()) {
+        if (! static::hasSuspensionTrait()) {
             return null;
         }
+
         return UnsuspendUserAction::make();
     }
 

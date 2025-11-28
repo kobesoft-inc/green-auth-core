@@ -14,13 +14,14 @@ use Illuminate\Database\Eloquent\Model;
 class ParentGroupRule implements ValidationRule
 {
     protected ?Model $currentGroup;
+
     protected string $groupModelClass;
 
     /**
      * コンストラクタ
      *
-     * @param string $groupModelClass グループモデルクラス名
-     * @param Model|null $currentGroup 現在編集中のグループ（新規作成時はnull）
+     * @param  string  $groupModelClass  グループモデルクラス名
+     * @param  Model|null  $currentGroup  現在編集中のグループ（新規作成時はnull）
      */
     public function __construct(string $groupModelClass, ?Model $currentGroup = null)
     {
@@ -31,10 +32,9 @@ class ParentGroupRule implements ValidationRule
     /**
      * 親グループの選択が有効かを検証
      *
-     * @param string $attribute 属性名
-     * @param mixed $value 検証対象の値（親グループID）
-     * @param Closure $fail 失敗時のコールバック
-     * @return void
+     * @param  string  $attribute  属性名
+     * @param  mixed  $value  検証対象の値（親グループID）
+     * @param  Closure  $fail  失敗時のコールバック
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
@@ -45,8 +45,9 @@ class ParentGroupRule implements ValidationRule
 
         // 親グループが存在するかチェック
         $parentGroup = $this->findGroupById($value);
-        if (!$parentGroup) {
+        if (! $parentGroup) {
             $fail(__('green-auth::validation.parent_group.not_found'));
+
             return;
         }
 
@@ -55,12 +56,14 @@ class ParentGroupRule implements ValidationRule
             // 自分自身を親に設定しようとしていないかチェック
             if ($this->currentGroup->getKey() === $parentGroup->getKey()) {
                 $fail(__('green-auth::validation.parent_group.self_reference'));
+
                 return;
             }
 
             // 循環参照をチェック（自分の子孫を親に設定しようとしていないか）
             if ($this->wouldCreateCircularReference($parentGroup)) {
                 $fail(__('green-auth::validation.parent_group.circular_reference'));
+
                 return;
             }
         }
@@ -68,6 +71,7 @@ class ParentGroupRule implements ValidationRule
         // 深度制限をチェック（設定可能な最大深度を超えないか）
         if ($this->exceedsMaxDepth($parentGroup)) {
             $fail(__('green-auth::validation.parent_group.max_depth_exceeded'));
+
             return;
         }
     }
@@ -75,7 +79,7 @@ class ParentGroupRule implements ValidationRule
     /**
      * IDでグループを検索
      *
-     * @param mixed $id グループID
+     * @param  mixed  $id  グループID
      * @return Model|null グループモデル
      */
     protected function findGroupById($id): ?Model
@@ -86,7 +90,7 @@ class ParentGroupRule implements ValidationRule
     /**
      * 循環参照が発生するかチェック
      *
-     * @param Model $potentialParent 親にしようとしているグループ
+     * @param  Model  $potentialParent  親にしようとしているグループ
      * @return bool 循環参照が発生する場合はtrue
      */
     protected function wouldCreateCircularReference(Model $potentialParent): bool
@@ -94,6 +98,7 @@ class ParentGroupRule implements ValidationRule
         // 現在のグループが親グループの祖先になっているかチェック
         if (method_exists($this->currentGroup, 'descendants')) {
             $descendantIds = $this->currentGroup->descendants->pluck('id')->toArray();
+
             return in_array($potentialParent->getKey(), $descendantIds);
         }
 
@@ -104,8 +109,8 @@ class ParentGroupRule implements ValidationRule
     /**
      * 指定されたグループが別のグループの子孫かどうかチェック
      *
-     * @param Model $group チェック対象のグループ
-     * @param Model $ancestor 祖先候補のグループ
+     * @param  Model  $group  チェック対象のグループ
+     * @param  Model  $ancestor  祖先候補のグループ
      * @return bool 子孫関係にある場合はtrue
      */
     protected function isDescendantOf(Model $group, Model $ancestor): bool
@@ -114,12 +119,12 @@ class ParentGroupRule implements ValidationRule
 
         // 最大10階層まで遡って循環参照をチェック（無限ループ防止）
         for ($i = 0; $i < 10; $i++) {
-            if (!isset($current->parent_id) || !$current->parent_id) {
+            if (! isset($current->parent_id) || ! $current->parent_id) {
                 break;
             }
 
             $parent = $this->findGroupById($current->parent_id);
-            if (!$parent) {
+            if (! $parent) {
                 break;
             }
 
@@ -136,7 +141,7 @@ class ParentGroupRule implements ValidationRule
     /**
      * 最大深度を超えるかチェック
      *
-     * @param Model $parentGroup 親グループ
+     * @param  Model  $parentGroup  親グループ
      * @return bool 最大深度を超える場合はtrue
      */
     protected function exceedsMaxDepth(Model $parentGroup): bool
@@ -149,13 +154,14 @@ class ParentGroupRule implements ValidationRule
 
         // ネストセットトレイトがない場合は親を辿って深度を計算
         $depth = $this->calculateDepth($parentGroup);
+
         return $depth >= $maxDepth;
     }
 
     /**
      * グループの深度を計算
      *
-     * @param Model $group グループ
+     * @param  Model  $group  グループ
      * @return int 深度
      */
     protected function calculateDepth(Model $group): int
@@ -165,12 +171,12 @@ class ParentGroupRule implements ValidationRule
 
         // 最大20階層まで遡る（無限ループ防止）
         for ($i = 0; $i < 20; $i++) {
-            if (!isset($current->parent_id) || !$current->parent_id) {
+            if (! isset($current->parent_id) || ! $current->parent_id) {
                 break;
             }
 
             $parent = $this->findGroupById($current->parent_id);
-            if (!$parent) {
+            if (! $parent) {
                 break;
             }
 
@@ -184,9 +190,8 @@ class ParentGroupRule implements ValidationRule
     /**
      * ファクトリメソッド：グループモデルと現在のレコードから作成
      *
-     * @param string $groupModelClass グループモデルクラス名
-     * @param Model|null $currentGroup 現在編集中のグループ
-     * @return static
+     * @param  string  $groupModelClass  グループモデルクラス名
+     * @param  Model|null  $currentGroup  現在編集中のグループ
      */
     public static function for(string $groupModelClass, ?Model $currentGroup = null): static
     {
@@ -196,13 +201,13 @@ class ParentGroupRule implements ValidationRule
     /**
      * ファクトリメソッド：Filamentリソースから作成
      *
-     * @param string $resourceClass Filamentリソースクラス名
-     * @param Model|null $currentRecord 現在編集中のレコード
-     * @return static
+     * @param  string  $resourceClass  Filamentリソースクラス名
+     * @param  Model|null  $currentRecord  現在編集中のレコード
      */
     public static function forResource(string $resourceClass, ?Model $currentRecord = null): static
     {
         $modelClass = $resourceClass::getModel();
+
         return new static($modelClass, $currentRecord);
     }
 }

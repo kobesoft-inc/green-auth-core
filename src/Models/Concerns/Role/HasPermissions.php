@@ -34,7 +34,7 @@ trait HasPermissions
     public function hasAllPermissions(array $permissions): bool
     {
         foreach ($permissions as $permission) {
-            if (!$this->hasPermission($permission)) {
+            if (! $this->hasPermission($permission)) {
                 return false;
             }
         }
@@ -70,7 +70,7 @@ trait HasPermissions
     protected function matchesWildcardPermission(string $rolePermission, string $checkPermission): bool
     {
         // ワイルドカードがない場合は完全一致のみ
-        if (!str_contains($rolePermission, '*')) {
+        if (! str_contains($rolePermission, '*')) {
             return $rolePermission === $checkPermission;
         }
 

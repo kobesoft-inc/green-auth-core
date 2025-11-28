@@ -2,16 +2,16 @@
 
 namespace Green\Auth\Models;
 
+use Green\Auth\Models\Concerns\Role\HasGroups;
 use Green\Auth\Models\Concerns\Role\HasPermissions;
 use Green\Auth\Models\Concerns\Role\HasUsers;
-use Green\Auth\Models\Concerns\Role\HasGroups;
 use Illuminate\Database\Eloquent\Model;
 
 abstract class BaseRole extends Model
 {
+    use HasGroups;
     use HasPermissions;
     use HasUsers;
-    use HasGroups;
 
     /**
      * The attributes that are mass assignable.
@@ -34,5 +34,4 @@ abstract class BaseRole extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-
 }

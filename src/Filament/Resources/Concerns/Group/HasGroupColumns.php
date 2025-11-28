@@ -2,13 +2,12 @@
 
 namespace Green\Auth\Filament\Resources\Concerns\Group;
 
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Notifications\Notification;
-use Filament\Tables;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Storage;
 
@@ -34,15 +33,15 @@ trait HasGroupColumns
                 // NestedSetの深度に基づいてtext-indentを設定
                 if (method_exists($record, 'getDepth')) {
                     $depth = $record->getDepth();
-                    $textIndent = ($depth * 20) . 'px'; // 20pxずつインデント
+                    $textIndent = ($depth * 20).'px'; // 20pxずつインデント
                 } elseif (method_exists($record, 'ancestors')) {
                     // フォールバック: 祖先を使用して深度を計算
                     $ancestorCount = $record->ancestors->count();
-                    $textIndent = ($ancestorCount * 20) . 'px';
+                    $textIndent = ($ancestorCount * 20).'px';
                 }
 
                 return [
-                    'style' => "text-indent: {$textIndent};"
+                    'style' => "text-indent: {$textIndent};",
                 ];
             });
     }
@@ -54,7 +53,7 @@ trait HasGroupColumns
      */
     public static function getParentColumn(): ?TextColumn
     {
-        if (!static::hasParentGroupTrait()) {
+        if (! static::hasParentGroupTrait()) {
             return null;
         }
 
@@ -64,7 +63,6 @@ trait HasGroupColumns
             ->sortable();
     }
 
-
     /**
      * カスタマイズ可能なユーザーカラムを作成
      *
@@ -72,7 +70,7 @@ trait HasGroupColumns
      */
     public static function getUsersColumn(): ?ImageColumn
     {
-        if (!static::hasUsersTrait()) {
+        if (! static::hasUsersTrait()) {
             return null;
         }
 
@@ -94,9 +92,11 @@ trait HasGroupColumns
                             if (filter_var($avatarValue, FILTER_VALIDATE_URL)) {
                                 return $avatarValue;
                             }
+
                             return Storage::disk(config('filament.default_filesystem_disk'))->url($avatarValue);
                         }
                     }
+
                     return null;
                 })->filter()->toArray();
             });
@@ -109,7 +109,7 @@ trait HasGroupColumns
      */
     public static function getRolesColumn(): ?TextColumn
     {
-        if (!static::hasRolesTrait()) {
+        if (! static::hasRolesTrait()) {
             return null;
         }
 
@@ -139,7 +139,7 @@ trait HasGroupColumns
      */
     public static function getUsersFilter(): ?SelectFilter
     {
-        if (!static::hasUsersTrait()) {
+        if (! static::hasUsersTrait()) {
             return null;
         }
 
@@ -157,7 +157,7 @@ trait HasGroupColumns
      */
     public static function getRolesFilter(): ?SelectFilter
     {
-        if (!static::hasRolesTrait()) {
+        if (! static::hasRolesTrait()) {
             return null;
         }
 
@@ -198,6 +198,7 @@ trait HasGroupColumns
                             if (static::hasParentGroupTrait() && $record->children()->exists()) {
                                 return false; // 子グループがある場合は削除しない
                             }
+
                             return true;
                         });
 
@@ -207,11 +208,12 @@ trait HasGroupColumns
                                 ->title(__('green-auth::groups.cannot_delete_groups_with_children'))
                                 ->warning()
                                 ->send();
+
                             return;
                         }
 
                         // 削除可能なレコードを削除
-                        $deletableRecords->each(fn($record) => $record->delete());
+                        $deletableRecords->each(fn ($record) => $record->delete());
 
                         // 一部のみ削除された場合の通知
                         if ($deletableRecords->count() < count($records)) {
@@ -256,6 +258,7 @@ trait HasGroupColumns
                 if (method_exists($query->getModel(), 'getLftName')) {
                     return $query->orderBy($query->getModel()->getLftName());
                 }
+
                 // フォールバック: 通常の名前ソート
                 return $query->orderBy('name');
             });

@@ -80,6 +80,7 @@ abstract class BasePermission
     protected static function getDefaultId(): string
     {
         $className = class_basename(static::class);
+
         return strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $className));
     }
 
@@ -89,6 +90,7 @@ abstract class BasePermission
     protected static function getDefaultName(): string
     {
         $className = class_basename(static::class);
+
         return preg_replace('/([a-z])([A-Z])/', '$1 $2', $className);
     }
 }

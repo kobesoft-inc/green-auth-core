@@ -50,8 +50,9 @@ class InstallCommand extends Command
         $this->collectDatabaseConfiguration();
         $this->collectFilamentConfiguration();
 
-        if (!$this->confirmConfiguration()) {
+        if (! $this->confirmConfiguration()) {
             $this->warn(__('green-auth::install.messages.installation_cancelled'));
+
             return self::FAILURE;
         }
 

@@ -33,7 +33,7 @@ trait HasPermissions
     public function hasAllPermissions(array $permissions): bool
     {
         foreach ($permissions as $permission) {
-            if (!$this->hasPermission($permission)) {
+            if (! $this->hasPermission($permission)) {
                 return false;
             }
         }
@@ -75,6 +75,6 @@ trait HasPermissions
      */
     public function cannot($abilities, $arguments = []): bool
     {
-        return !$this->can($abilities, $arguments);
+        return ! $this->can($abilities, $arguments);
     }
 }

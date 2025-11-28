@@ -12,7 +12,7 @@ abstract class BaseUserResource extends Resource
 {
     use HasModelLabels, HasUserActions, HasUserColumns, HasUserForms;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-user';
 
     protected static ?int $navigationSort = 10;
 }

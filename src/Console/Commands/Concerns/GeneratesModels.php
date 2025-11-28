@@ -35,10 +35,10 @@ trait GeneratesModels
 
         $content = $this->generateModelContent($name, $namespace, $baseClass, $traits, $table, $type);
 
-        $path = app_path(str_replace('App\\', '', $namespace) . "/{$name}.php");
+        $path = app_path(str_replace('App\\', '', $namespace)."/{$name}.php");
         $this->ensureDirectoryExists(dirname($path));
 
-        if (!file_exists($path) || $this->option('force')) {
+        if (! file_exists($path) || $this->option('force')) {
             File::put($path, $content);
         }
     }
@@ -58,8 +58,8 @@ trait GeneratesModels
             return $this->generateLaravelUserModel($name, $namespace, $baseClass, $traits, $table);
         }
 
-        $useStatements = collect($traits)->map(fn($trait) => "use {$trait};")->implode("\n");
-        $traitNames = collect($traits)->map(fn($trait) => "    use " . class_basename($trait) . ";")->implode("\n");
+        $useStatements = collect($traits)->map(fn ($trait) => "use {$trait};")->implode("\n");
+        $traitNames = collect($traits)->map(fn ($trait) => '    use '.class_basename($trait).';')->implode("\n");
 
         // デフォルトのテーブル名と異なる場合のみtableプロパティを生成
         $defaultTableName = $this->getDefaultTableName($type);
@@ -94,17 +94,17 @@ $traitNames$tableProperty$constantsProperty$fillableProperty$hiddenProperty$cast
         if ($this->config['features']['avatar']) {
             $interfaces[] = 'HasAvatar';
         }
-        $implementsClause = 'implements ' . implode(', ', $interfaces);
+        $implementsClause = 'implements '.implode(', ', $interfaces);
 
         // use文を生成
-        $useStatements = collect($traits)->map(fn($trait) => "use {$trait};")->implode("\n");
-        $filamentUseStatements = "use Filament\\Models\\Contracts\\FilamentUser;";
+        $useStatements = collect($traits)->map(fn ($trait) => "use {$trait};")->implode("\n");
+        $filamentUseStatements = 'use Filament\\Models\\Contracts\\FilamentUser;';
         if ($this->config['features']['avatar']) {
             $filamentUseStatements .= "\nuse Filament\\Models\\Contracts\\HasAvatar;";
         }
 
         // トレイト使用を生成
-        $traitNames = collect($traits)->map(fn($trait) => "    use " . class_basename($trait) . ";")->implode("\n");
+        $traitNames = collect($traits)->map(fn ($trait) => '    use '.class_basename($trait).';')->implode("\n");
 
         // デフォルトのテーブル名と異なる場合のみtableプロパティを生成
         $defaultTableName = $this->getDefaultTableName('user');
@@ -145,10 +145,10 @@ namespace $namespace;
 
 use $baseClass;
 
-class $name extends " . class_basename($baseClass) . "
-{" . $tableProperty . "
+class $name extends ".class_basename($baseClass).'
+{'.$tableProperty.'
 }
-";
+';
     }
 
     /**
@@ -178,6 +178,7 @@ class $name extends " . class_basename($baseClass) . "
                 'role' => 'Green\\Auth\\Models\\BaseRole',
                 'login_log' => 'Green\\Auth\\Models\\BaseLoginLog',
             ];
+
             return $baseClasses[$type] ?? 'Illuminate\\Database\\Eloquent\\Model';
         }
 
@@ -237,7 +238,7 @@ class $name extends " . class_basename($baseClass) . "
         }
 
         $fields = collect($fillable)
-            ->map(fn($field) => "        '$field',")
+            ->map(fn ($field) => "        '$field',")
             ->implode("\n");
 
         return "\n\n    /**\n     * The attributes that are mass assignable.\n     */\n    protected \$fillable = [\n$fields\n    ];";
@@ -255,7 +256,7 @@ class $name extends " . class_basename($baseClass) . "
         }
 
         $fields = collect($hidden)
-            ->map(fn($field) => "        '$field',")
+            ->map(fn ($field) => "        '$field',")
             ->implode("\n");
 
         return "\n\n    /**\n     * The attributes that should be hidden for serialization.\n     */\n    protected \$hidden = [\n$fields\n    ];";
@@ -273,7 +274,7 @@ class $name extends " . class_basename($baseClass) . "
         }
 
         $fields = collect($casts)
-            ->map(fn($cast, $field) => "        '$field' => '$cast',")
+            ->map(fn ($cast, $field) => "        '$field' => '$cast',")
             ->implode("\n");
 
         return "\n\n    /**\n     * The attributes that should be cast.\n     */\n    protected \$casts = [\n$fields\n    ];";
@@ -295,7 +296,7 @@ class $name extends " . class_basename($baseClass) . "
             return '';
         }
 
-        return "\n\n" . implode("\n", $constants);
+        return "\n\n".implode("\n", $constants);
     }
 
     /**
@@ -304,10 +305,10 @@ class $name extends " . class_basename($baseClass) . "
     protected function getFillableFields(string $type): array
     {
         $generators = [
-            'user' => fn() => $this->getUserFillableFields(),
-            'group' => fn() => $this->getGroupFillableFields(),
-            'role' => fn() => $this->getRoleFillableFields(),
-            'login_log' => fn() => $this->getLoginLogFillableFields(),
+            'user' => fn () => $this->getUserFillableFields(),
+            'group' => fn () => $this->getGroupFillableFields(),
+            'role' => fn () => $this->getRoleFillableFields(),
+            'login_log' => fn () => $this->getLoginLogFillableFields(),
         ];
 
         return isset($generators[$type]) ? $generators[$type]() : [];
@@ -353,7 +354,7 @@ class $name extends " . class_basename($baseClass) . "
      */
     protected function getRoleFillableFields(): array
     {
-        if (!$this->config['features']['roles']) {
+        if (! $this->config['features']['roles']) {
             return [];
         }
 
@@ -382,9 +383,9 @@ class $name extends " . class_basename($baseClass) . "
     protected function getCastFields(string $type): array
     {
         $generators = [
-            'user' => fn() => $this->getUserCastFields(),
-            'role' => fn() => $this->getRoleCastFields(),
-            'login_log' => fn() => $this->getLoginLogCastFields(),
+            'user' => fn () => $this->getUserCastFields(),
+            'role' => fn () => $this->getRoleCastFields(),
+            'login_log' => fn () => $this->getLoginLogCastFields(),
         ];
 
         return isset($generators[$type]) ? $generators[$type]() : [];
@@ -396,7 +397,7 @@ class $name extends " . class_basename($baseClass) . "
     protected function getHiddenFields(string $type): array
     {
         $generators = [
-            'user' => fn() => $this->getUserHiddenFields(),
+            'user' => fn () => $this->getUserHiddenFields(),
         ];
 
         return isset($generators[$type]) ? $generators[$type]() : [];
@@ -464,15 +465,15 @@ class $name extends " . class_basename($baseClass) . "
         $isUsingBaseModel = $this->shouldUseBaseModel($type);
 
         $generators = [
-            'user' => fn() => $this->getUserTraits($isUsingBaseModel),
-            'group' => fn() => $this->getGroupTraits($isUsingBaseModel),
-            'role' => fn() => $this->getRoleTraits($isUsingBaseModel),
+            'user' => fn () => $this->getUserTraits($isUsingBaseModel),
+            'group' => fn () => $this->getGroupTraits($isUsingBaseModel),
+            'role' => fn () => $this->getRoleTraits($isUsingBaseModel),
         ];
 
         $traits = isset($generators[$type]) ? $generators[$type]() : [];
 
         // HasModelConfigは全てのBaseモデルに含まれているため、Baseモデル使用時は追加しない
-        if (!$isUsingBaseModel) {
+        if (! $isUsingBaseModel) {
             $traits[] = 'Green\\Auth\\Models\\Concerns\\HasModelConfig';
         }
 
@@ -539,7 +540,7 @@ class $name extends " . class_basename($baseClass) . "
      */
     protected function getGroupTraits(bool $isUsingBaseModel = false): array
     {
-        if (!$this->config['features']['groups']) {
+        if (! $this->config['features']['groups']) {
             return [];
         }
 
@@ -571,7 +572,7 @@ class $name extends " . class_basename($baseClass) . "
      */
     protected function getRoleTraits(bool $isUsingBaseModel = false): array
     {
-        if (!$this->config['features']['roles']) {
+        if (! $this->config['features']['roles']) {
             return [];
         }
 

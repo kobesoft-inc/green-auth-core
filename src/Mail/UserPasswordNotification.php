@@ -2,10 +2,10 @@
 
 namespace Green\Auth\Mail;
 
-use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -17,18 +17,17 @@ class UserPasswordNotification extends Mailable
     /**
      * 新しいメッセージインスタンスを作成
      *
-     * @param Model $user ユーザーモデル
-     * @param string $password パスワード
-     * @param mixed $subject 件名
-     * @param string $message_ メッセージ
+     * @param  Model  $user  ユーザーモデル
+     * @param  string  $password  パスワード
+     * @param  mixed  $subject  件名
+     * @param  string  $message_  メッセージ
      */
     public function __construct(
-        public Model  $user,
+        public Model $user,
         public string $password,
-        public        $subject,
+        public $subject,
         public string $message_
-    )
-    {
+    ) {
         //
     }
 
@@ -72,7 +71,7 @@ class UserPasswordNotification extends Mailable
     /**
      * ユーザーからガード名を取得
      *
-     * @param mixed $userClass ユーザークラス
+     * @param  mixed  $userClass  ユーザークラス
      * @return string ガード名
      */
     private function getGuardFromUserClass(string $userClass): string
@@ -83,7 +82,7 @@ class UserPasswordNotification extends Mailable
     /**
      * ガードからログインURLを取得
      *
-     * @param string $guard ガード名
+     * @param  string  $guard  ガード名
      * @return string|null ログインURL
      */
     private function getLoginUrl(string $guard): ?string

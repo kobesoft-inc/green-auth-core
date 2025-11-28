@@ -2,11 +2,10 @@
 
 namespace Green\Auth\Filament\Resources\Concerns\Group;
 
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
-use Filament\Forms;
 use Green\Auth\Rules\ParentGroupRule;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -49,7 +48,7 @@ trait HasGroupForms
      */
     public static function getParentFormComponent(): ?Select
     {
-        if (!static::hasParentGroupTrait()) {
+        if (! static::hasParentGroupTrait()) {
             return null;
         }
 
@@ -58,14 +57,14 @@ trait HasGroupForms
             ->relationship(
                 'parent',
                 'name',
-                fn(Builder $query, ?Model $record) => $query->availableAsParentFor($record)
+                fn (Builder $query, ?Model $record) => $query->availableAsParentFor($record)
             )
             ->placeholder('')
-            ->rules([fn(?Model $record = null) => ParentGroupRule::for(static::getModel(), $record)])
+            ->rules([fn (?Model $record = null) => ParentGroupRule::for(static::getModel(), $record)])
             ->searchable()
             ->preload()
             ->placeholder('')
-            ->getOptionLabelFromRecordUsing(fn($record) => $record->getOptionLabel());
+            ->getOptionLabelFromRecordUsing(fn ($record) => $record->getOptionLabel());
     }
 
     /**
@@ -75,7 +74,7 @@ trait HasGroupForms
      */
     public static function getRolesFormComponent(): ?Select
     {
-        if (!static::hasRolesTrait()) {
+        if (! static::hasRolesTrait()) {
             return null;
         }
 
@@ -117,7 +116,7 @@ trait HasGroupForms
     /**
      * Filamentフォームを取得
      *
-     * @param Schema $schema フォームインスタンス
+     * @param  Schema  $schema  フォームインスタンス
      * @return Schema 設定済みフォーム
      */
     public static function form(Schema $schema): Schema

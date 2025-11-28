@@ -2,9 +2,9 @@
 
 namespace Green\Auth\Permission;
 
+use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use RuntimeException;
-use Illuminate\Support\Collection;
 
 /**
  * パーミッション管理クラス
@@ -17,6 +17,7 @@ class PermissionManager
     /**
      * ガード別のパーミッションクラス名配列
      * '*' ガードは全てのガードに共通のパーミッション
+     *
      * @var array<string, array<string, string>>
      */
     protected array $permissions = [];
@@ -36,7 +37,7 @@ class PermissionManager
         // guardが指定されない場合は、ワイルドカード '*' に登録
         $guard = $guard ?? '*';
 
-        if (!isset($this->permissions[$guard])) {
+        if (! isset($this->permissions[$guard])) {
             $this->permissions[$guard] = [];
         }
 
@@ -45,16 +46,16 @@ class PermissionManager
             foreach ($permission as $p) {
                 $this->register($p, $guard);
             }
-        } else if (is_string($permission)) {
+        } elseif (is_string($permission)) {
             // 単一のパーミッションクラス名
-            if (!is_subclass_of($permission, BasePermission::class)) {
+            if (! is_subclass_of($permission, BasePermission::class)) {
                 throw new InvalidArgumentException("Class {$permission} must extend BasePermission");
             }
 
             $permissionId = $permission::getId();
             $this->permissions[$guard][$permissionId] = $permission;
         } else {
-            throw new RuntimeException("permission must be string or array.");
+            throw new RuntimeException('permission must be string or array.');
         }
 
         return $this;
@@ -91,6 +92,7 @@ class PermissionManager
     {
         $manager = clone $this;
         $manager->defaultGuard = $guard;
+
         return $manager;
     }
 }

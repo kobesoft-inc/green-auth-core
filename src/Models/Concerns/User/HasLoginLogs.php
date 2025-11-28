@@ -2,10 +2,10 @@
 
 namespace Green\Auth\Models\Concerns\User;
 
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Green\Auth\Models\Concerns\HasModelConfig;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * ユーザーのログインログ機能を提供するトレイト
@@ -48,9 +48,9 @@ trait HasLoginLogs
     public function getLastLoginAt()
     {
         $latestLog = $this->latestLoginLog()->first();
+
         return $latestLog ? $latestLog->created_at : null;
     }
-
 
     /**
      * 最近のログインログを取得（デフォルト24時間）

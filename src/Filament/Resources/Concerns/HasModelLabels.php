@@ -2,8 +2,6 @@
 
 namespace Green\Auth\Filament\Resources\Concerns;
 
-use Illuminate\Support\Str;
-
 trait HasModelLabels
 {
     /**
@@ -25,7 +23,7 @@ trait HasModelLabels
     /**
      * 翻訳されたモデルラベルを取得（単数形または複数形）
      */
-    protected static function getTranslatedModelLabel(string $key = null, bool $plural = false): string
+    protected static function getTranslatedModelLabel(?string $key = null, bool $plural = false): string
     {
         $modelKey = $key ?? strtolower(static::getModel()::getModelType());
         $guard = static::getModel()::getGuardName();
@@ -42,7 +40,7 @@ trait HasModelLabels
         }
 
         // ラベルの定義なし
-        $translationKey = 'green-auth::admin.models.' . $modelKey;
+        $translationKey = 'green-auth::admin.models.'.$modelKey;
         $translation = __($translationKey);
 
         // 翻訳が存在する場合は返す
@@ -60,17 +58,17 @@ trait HasModelLabels
     protected static function getLocalizedFieldLabel(string $fieldKey, bool $pluralModels = false): string
     {
         $guard = static::getModel()::getGuardName();
-        
+
         // デフォルトのローカライズ文字列を準備
         $variables = [
             'user' => static::getTranslatedModelLabel('user', $pluralModels),
-            'group' => static::getTranslatedModelLabel('group', $pluralModels),  
+            'group' => static::getTranslatedModelLabel('group', $pluralModels),
             'role' => static::getTranslatedModelLabel('role', $pluralModels),
         ];
-        
+
         // ガード固有の設定を確認
         $labelKey = config("green-auth.guards.{$guard}.field_labels.{$fieldKey}");
-        
+
         if ($labelKey) {
             $translation = __($labelKey, $variables);
             if ($translation !== $labelKey) {
@@ -81,7 +79,7 @@ trait HasModelLabels
         // フォールバック: デフォルトの翻訳キー
         $fallbackKey = "green-auth::fields.{$fieldKey}";
         $fallbackTranslation = __($fallbackKey, $variables);
-        
+
         if ($fallbackTranslation !== $fallbackKey) {
             return $fallbackTranslation;
         }

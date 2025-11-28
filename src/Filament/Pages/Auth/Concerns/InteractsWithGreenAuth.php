@@ -3,7 +3,6 @@
 namespace Green\Auth\Filament\Pages\Auth\Concerns;
 
 use Filament\Panel;
-use Filament\Facades\Filament;
 use Green\Auth\Password\PasswordComplexity;
 
 trait InteractsWithGreenAuth
@@ -54,6 +53,7 @@ trait InteractsWithGreenAuth
         if (method_exists($userModel, 'getUsernameColumn')) {
             return $userModel::getUsernameColumn();
         }
+
         return null;
     }
 
@@ -62,13 +62,14 @@ trait InteractsWithGreenAuth
      *
      * ガード固有の設定を優先し、存在しない場合はグローバル設定にフォールバック
      *
-     * @param string $key 設定キー
-     * @param mixed|null $default デフォルト値
+     * @param  string  $key  設定キー
+     * @param  mixed|null  $default  デフォルト値
      * @return mixed 設定値
      */
     protected function getGuardConfig(string $key, mixed $default = null): mixed
     {
         $guard = $this->getCurrentGuard();
+
         return config("green-auth.guards.{$guard}.auth.{$key}", config("green-auth.auth.{$key}", $default));
     }
 
@@ -98,6 +99,7 @@ trait InteractsWithGreenAuth
     protected function getPasswordComplexity(): PasswordComplexity
     {
         $guard = $this->getCurrentGuard();
+
         return PasswordComplexity::fromAppConfig($guard);
     }
 
@@ -111,6 +113,7 @@ trait InteractsWithGreenAuth
     protected function getPasswordExpiredSessionKey(): string
     {
         $guard = $this->getCurrentGuard();
+
         return "password_expired_user_id_{$guard}";
     }
 
@@ -131,6 +134,6 @@ trait InteractsWithGreenAuth
      */
     protected function getPasswordExpiredUrl(): string
     {
-        return route('filament.' . filament()->getId() . '.password-expired');
+        return route('filament.'.filament()->getId().'.password-expired');
     }
 }

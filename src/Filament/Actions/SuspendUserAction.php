@@ -16,7 +16,7 @@ class SuspendUserAction
             ->modalHeading(__('green-auth::users.actions.modals.suspend_user.heading'))
             ->modalDescription(__('green-auth::users.actions.modals.suspend_user.description'))
             ->modalSubmitActionLabel(__('green-auth::users.actions.modals.suspend_user.submit'))
-            ->visible(fn ($record) => method_exists($record, 'isSuspended') && !$record->isSuspended())
+            ->visible(fn ($record) => method_exists($record, 'isSuspended') && ! $record->isSuspended())
             ->action(function ($record) {
                 if (method_exists($record, 'suspend')) {
                     $record->suspend();

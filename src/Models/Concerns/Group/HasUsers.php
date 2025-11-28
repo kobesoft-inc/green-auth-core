@@ -35,9 +35,9 @@ trait HasUsers
     public function hasUser($user): bool
     {
         if ($user instanceof Model) {
-            return $this->users()->where($this->users()->getRelated()->getTable() . '.id', $user->id)->exists();
+            return $this->users()->where($this->users()->getRelated()->getTable().'.id', $user->id)->exists();
         }
 
-        return $this->users()->where($this->users()->getRelated()->getTable() . '.id', $user)->exists();
+        return $this->users()->where($this->users()->getRelated()->getTable().'.id', $user)->exists();
     }
 }

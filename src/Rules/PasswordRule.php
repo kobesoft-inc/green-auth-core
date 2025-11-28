@@ -2,10 +2,10 @@
 
 namespace Green\Auth\Rules;
 
-use InvalidArgumentException;
 use Closure;
 use Green\Auth\Password\PasswordComplexity;
 use Illuminate\Contracts\Validation\ValidationRule;
+use InvalidArgumentException;
 
 /**
  * パスワード複雑性検証ルール
@@ -19,7 +19,7 @@ class PasswordRule implements ValidationRule
     /**
      * コンストラクタ
      *
-     * @param PasswordComplexity $complexity パスワード複雑性設定
+     * @param  PasswordComplexity  $complexity  パスワード複雑性設定
      */
     public function __construct(PasswordComplexity $complexity)
     {
@@ -29,17 +29,16 @@ class PasswordRule implements ValidationRule
     /**
      * パスワード複雑性の検証
      *
-     * @param string $attribute 属性名
-     * @param mixed $value 検証対象の値
-     * @param Closure $fail 失敗時のコールバック
-     * @return void
+     * @param  string  $attribute  属性名
+     * @param  mixed  $value  検証対象の値
+     * @param  Closure  $fail  失敗時のコールバック
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (!$this->complexity->isValid($value)) {
+        if (! $this->complexity->isValid($value)) {
             $requirements = $this->complexity->getRequirements();
             $message = __('green-auth::passwords.password_requirements', [
-                'requirements' => implode(',', $requirements)
+                'requirements' => implode(',', $requirements),
             ]);
             $fail($message);
         }
@@ -48,7 +47,7 @@ class PasswordRule implements ValidationRule
     /**
      * 詳細なエラーメッセージを取得
      *
-     * @param string $password 検証対象のパスワード
+     * @param  string  $password  検証対象のパスワード
      * @return array エラーメッセージ配列
      */
     public function getDetailedErrors(string $password): array
@@ -59,12 +58,13 @@ class PasswordRule implements ValidationRule
     /**
      * ガード設定からパスワードルールを作成
      *
-     * @param string $guard ガード名
+     * @param  string  $guard  ガード名
      * @return static パスワードルールインスタンス
      */
     public static function fromGuard(string $guard): static
     {
         $complexity = PasswordComplexity::fromAppConfig($guard);
+
         return new static($complexity);
     }
 
@@ -73,13 +73,14 @@ class PasswordRule implements ValidationRule
      *
      * ユーザーモデルのガード設定を自動検出してパスワードルールを作成
      *
-     * @param string $userModelClass ユーザーモデルクラス名
+     * @param  string  $userModelClass  ユーザーモデルクラス名
      * @return static パスワードルールインスタンス
+     *
      * @throws InvalidArgumentException ユーザーモデルが見つからない場合
      */
     public static function fromUserModel(string $userModelClass): static
     {
-        if (!class_exists($userModelClass)) {
+        if (! class_exists($userModelClass)) {
             throw new InvalidArgumentException("User model class '{$userModelClass}' does not exist.");
         }
 
@@ -97,6 +98,7 @@ class PasswordRule implements ValidationRule
     public static function fromCurrentPanel(): static
     {
         $guard = filament()->getCurrentOrDefaultPanel()->getAuthGuard();
+
         return static::fromGuard($guard);
     }
 
@@ -108,14 +110,16 @@ class PasswordRule implements ValidationRule
     public static function fromDefaultGuard(): static
     {
         $guard = config('auth.defaults.guard');
+
         return static::fromGuard($guard);
     }
 
     /**
      * ユーザーモデルクラスからガード名を取得
      *
-     * @param string $userModelClass ユーザーモデルクラス名
+     * @param  string  $userModelClass  ユーザーモデルクラス名
      * @return string ガード名
+     *
      * @throws InvalidArgumentException 対応するガードが見つからない場合
      */
     protected static function getGuardFromUserModel(string $userModelClass): string
@@ -123,7 +127,7 @@ class PasswordRule implements ValidationRule
         // すべての認証設定を確認
         foreach (config('auth.guards', []) as $guardName => $guardConfig) {
             $provider = $guardConfig['provider'] ?? null;
-            if (!$provider) {
+            if (! $provider) {
                 continue;
             }
 

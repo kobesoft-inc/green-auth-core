@@ -2,9 +2,8 @@
 
 namespace Green\Auth\Filament\Resources\Concerns\Role;
 
-use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
-use Filament\Tables;
+use Filament\Actions\EditAction;
 
 trait HasRoleActions
 {

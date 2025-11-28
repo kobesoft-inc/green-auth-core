@@ -36,5 +36,4 @@ trait HasGroupTraitChecks
     {
         return method_exists(static::getModel(), 'roles');
     }
-
 }

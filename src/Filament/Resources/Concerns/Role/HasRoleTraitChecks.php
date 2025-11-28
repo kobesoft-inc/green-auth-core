@@ -36,5 +36,4 @@ trait HasRoleTraitChecks
     {
         return method_exists(static::getModel(), 'getPermissions');
     }
-
 }

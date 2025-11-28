@@ -25,19 +25,16 @@ trait HasSuspension
 
     /**
      * 利用停止日時のタイムスタンプを取得
-     *
-     * @return \Carbon\Carbon|null
      */
     public function getSuspendedAt(): ?Carbon
     {
         $column = $this->getSuspendedAtColumn();
+
         return $this->{$column} ? Carbon::parse($this->{$column}) : null;
     }
 
     /**
      * ユーザーが利用停止中かチェック
-     *
-     * @return bool
      */
     public function isSuspended(): bool
     {
@@ -46,8 +43,6 @@ trait HasSuspension
 
     /**
      * ユーザーを利用停止にする
-     *
-     * @return void
      */
     public function suspend(): void
     {
@@ -59,8 +54,6 @@ trait HasSuspension
 
     /**
      * ユーザーの利用停止を解除する
-     *
-     * @return void
      */
     public function unsuspend(): void
     {
@@ -69,5 +62,4 @@ trait HasSuspension
             $column => null,
         ])->save();
     }
-
 }

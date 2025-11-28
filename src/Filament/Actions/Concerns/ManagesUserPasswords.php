@@ -5,21 +5,19 @@ namespace Green\Auth\Filament\Actions\Concerns;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Illuminate\Support\Facades\Mail;
-use Filament\Forms;
 use Green\Auth\Mail\UserPasswordNotification;
 use Green\Auth\Password\PasswordComplexity;
 use Green\Auth\Password\PasswordGenerator;
-use Green\Auth\Password\PasswordValidator;
 use Green\Auth\Rules\PasswordRule;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Mail;
 
 trait ManagesUserPasswords
 {
     /**
      * パスワード管理フィールドを作成
      *
-     * @param string $modelClass モデルクラス名
+     * @param  string  $modelClass  モデルクラス名
      * @return array フォームコンポーネント配列
      */
     public static function getPasswordFormComponents(string $modelClass): array
@@ -34,13 +32,14 @@ trait ManagesUserPasswords
                 ->label(__('green-auth::passwords.password'))
                 ->password()
                 ->maxLength(255)
-                ->hidden(fn(callable $get) => $get('auto_generate_password'))
-                ->required(fn(callable $get) => !$get('auto_generate_password'))
+                ->hidden(fn (callable $get) => $get('auto_generate_password'))
+                ->required(fn (callable $get) => ! $get('auto_generate_password'))
                 ->reactive()
                 ->helperText(function () use ($modelClass) {
                     $guard = $modelClass::getGuardName();
                     $complexity = PasswordComplexity::fromAppConfig($guard);
                     $requirements = $complexity->getRequirements();
+
                     return implode(' / ', $requirements);
                 })
                 ->rules([new PasswordRule(PasswordComplexity::fromAppConfig($modelClass::getGuardName()))]),
@@ -58,13 +57,13 @@ trait ManagesUserPasswords
     /**
      * パスワードを生成または指定されたパスワードを使用
      *
-     * @param array $data フォームデータ
-     * @param mixed $modelClass モデルクラス
+     * @param  array  $data  フォームデータ
+     * @param  mixed  $modelClass  モデルクラス
      * @return string パスワード
      */
     protected function generateOrUsePassword(array $data, $modelClass = null): string
     {
-        if (!($data['auto_generate_password'] ?? true) && !empty($data['password'])) {
+        if (! ($data['auto_generate_password'] ?? true) && ! empty($data['password'])) {
             return $data['password'];
         }
 
@@ -75,7 +74,7 @@ trait ManagesUserPasswords
     /**
      * パスワードを自動生成
      *
-     * @param mixed $modelClass モデルクラス
+     * @param  mixed  $modelClass  モデルクラス
      * @return string 生成されたパスワード
      */
     protected function generatePassword($modelClass = null): string
@@ -87,12 +86,11 @@ trait ManagesUserPasswords
         return PasswordGenerator::fromGuard($guard)->generate();
     }
 
-
     /**
      * ユーザー作成用のデータを準備
      *
-     * @param array $data フォームデータ
-     * @param mixed $modelClass モデルクラス
+     * @param  array  $data  フォームデータ
+     * @param  mixed  $modelClass  モデルクラス
      * @return array [処理済みデータ, 平文パスワード, パスワード設定]
      */
     protected function prepareUserData(array $data, $modelClass = null): array
@@ -121,10 +119,9 @@ trait ManagesUserPasswords
     /**
      * 作成後のユーザー通知を処理
      *
-     * @param Model $record ユーザーレコード
-     * @param string $plainPassword 平文パスワード
-     * @param array $passwordData パスワード設定データ
-     * @return void
+     * @param  Model  $record  ユーザーレコード
+     * @param  string  $plainPassword  平文パスワード
+     * @param  array  $passwordData  パスワード設定データ
      */
     protected function notifyUser(Model $record, string $plainPassword, array $passwordData): void
     {
@@ -148,13 +145,12 @@ trait ManagesUserPasswords
     /**
      * パスワード有効期限設定を処理
      *
-     * @param Model $record ユーザーレコード
-     * @param array $passwordData パスワード設定データ
-     * @return void
+     * @param  Model  $record  ユーザーレコード
+     * @param  array  $passwordData  パスワード設定データ
      */
     protected function handlePasswordExpiration(Model $record, array $passwordData): void
     {
-        if (!($passwordData['require_password_change'] ?? false)) {
+        if (! ($passwordData['require_password_change'] ?? false)) {
             return;
         }
         if (method_exists($record, 'resetPasswordExpiration')) {
@@ -166,9 +162,8 @@ trait ManagesUserPasswords
     /**
      * パスワードリセットを処理
      *
-     * @param Model $record ユーザーレコード
-     * @param array $data フォームデータ
-     * @return void
+     * @param  Model  $record  ユーザーレコード
+     * @param  array  $data  フォームデータ
      */
     protected function resetPassword(Model $record, array $data): void
     {
@@ -211,11 +206,10 @@ trait ManagesUserPasswords
     /**
      * パスワード通知メールを送信
      *
-     * @param Model $user ユーザー
-     * @param string $password パスワード
-     * @param string $subject 件名
-     * @param string $message メッセージ
-     * @return void
+     * @param  Model  $user  ユーザー
+     * @param  string  $password  パスワード
+     * @param  string  $subject  件名
+     * @param  string  $message  メッセージ
      */
     protected function sendEmail(Model $user, string $password, string $subject, string $message): void
     {

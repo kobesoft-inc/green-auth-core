@@ -2,9 +2,9 @@
 
 namespace Green\Auth\Filament\Actions;
 
-use Illuminate\Database\Eloquent\Model;
 use Filament\Actions\CreateAction;
 use Green\Auth\Filament\Actions\Concerns\ManagesUserPasswords;
+use Illuminate\Database\Eloquent\Model;
 
 class CreateUserAction extends CreateAction
 {
@@ -42,5 +42,4 @@ class CreateUserAction extends CreateAction
 
         return $record;
     }
-
 }

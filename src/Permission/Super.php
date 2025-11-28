@@ -4,7 +4,7 @@ namespace Green\Auth\Permission;
 
 class Super extends BasePermission
 {
-    static string $id = '*';
+    public static string $id = '*';
 
     public static function getName(): string
     {
