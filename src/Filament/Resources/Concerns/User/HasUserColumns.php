@@ -28,7 +28,6 @@ trait HasUserColumns
         if (static::hasAvatarTrait()) {
             return UserColumn::make('name')
                 ->label(__('green-auth::users.name'))
-                ->size(40)
                 ->circular();
         } else {
             return TextColumn::make('name')
