@@ -21,7 +21,7 @@ class UserColumn extends Column
 
     protected string | Closure | null $avatarAttribute = null;
 
-    protected int | Closure $size = 40;
+    protected int | Closure $size = 32;
 
     protected string | Closure | null $defaultImageUrl = null;
 
@@ -29,7 +29,7 @@ class UserColumn extends Column
 
     protected string | Filesystem | FilesystemAdapter | Closure | null $disk = null;
 
-    protected int | string | Closure | null $imageSize = '40px';
+    protected int | string | Closure | null $imageSize = '32px';
 
     protected string | Closure | null $textSize = 'text-sm';
 
@@ -246,6 +246,7 @@ class UserColumn extends Column
         }
 
         $record = $this->getRecord();
+
         return data_get($record, $nameAttribute);
     }
 
@@ -282,6 +283,16 @@ class UserColumn extends Column
     }
 
     /**
+     * stateが空かどうかを判定
+     */
+    public function isStateBlank(): bool
+    {
+        $state = $this->getState();
+
+        return blank($state);
+    }
+
+    /**
      * ユーザーカラム固有のビューデータを取得
      */
     public function getUserColumnViewData(): array
@@ -294,6 +305,8 @@ class UserColumn extends Column
             'size' => $this->getImageSize($state),
             'textSize' => $this->getTextSize($state),
             'isCircular' => $this->isCircular($state),
+            'isBlank' => $this->isStateBlank(),
+            'placeholder' => $this->getPlaceholder(),
         ];
     }
 
