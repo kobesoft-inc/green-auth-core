@@ -6,7 +6,7 @@ return [
     'send_email_notification' => 'メール通知を送信',
     'require_password_change' => '次回ログイン時にパスワード変更を要求',
     'change_password' => 'パスワード変更',
-    
+
     // Password validation and requirements
     'password_requirements' => 'パスワードは以下の要件を満たす必要があります: :requirements',
     'password_min_length' => 'パスワードは:min文字以上である必要があります。',
@@ -16,7 +16,7 @@ return [
     'password_require_numbers' => 'パスワードには数字を含める必要があります。',
     'password_require_symbols' => 'パスワードには記号（:symbols）を含める必要があります。',
     'password_forbidden_pattern' => '許可されていないパターンが含まれています。',
-    
+
     // Requirements display
     'requirements_length' => '文字数: :min文字以上:max',
     'requirements_length_max' => ':max文字以下',

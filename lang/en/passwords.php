@@ -6,7 +6,7 @@ return [
     'send_email_notification' => 'Send Email Notification',
     'require_password_change' => 'Require Password Change on Next Login',
     'change_password' => 'Change Password',
-    
+
     // Password validation and requirements
     'password_requirements' => 'Password must meet the following requirements: :requirements',
     'password_min_length' => 'Password must be at least :min characters long.',
@@ -16,7 +16,7 @@ return [
     'password_require_numbers' => 'Password must contain numbers.',
     'password_require_symbols' => 'Password must contain symbols (:symbols).',
     'password_forbidden_pattern' => 'Password contains forbidden patterns.',
-    
+
     // Requirements display
     'requirements_length' => 'Length: at least :min characters:max',
     'requirements_length_max' => ', no more than :max characters',

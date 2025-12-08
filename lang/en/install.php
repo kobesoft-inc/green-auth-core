@@ -2,7 +2,7 @@
 
 return [
     'title' => 'Green Auth Installation Wizard',
-    
+
     'steps' => [
         'basic' => 'Step 1: Basic Configuration',
         'models' => 'Step 2: Model Configuration',
@@ -10,20 +10,20 @@ return [
         'database' => 'Step 4: Database Configuration',
         'filament' => 'Step 5: Filament Configuration',
     ],
-    
+
     'prompts' => [
         // Basic Configuration
         'guard_name' => 'Guard name',
         'model_namespace' => 'Model namespace',
         'use_soft_deletes' => 'Use soft deletes?',
-        
+
         // Model Configuration
         'user_model' => 'User model name (enter "n" to disable)',
         'group_model' => 'Group model name (enter "n" to disable groups)',
         'role_model' => 'Role model name (enter "n" to disable roles)',
         'login_log_model' => 'Login log model name (enter "n" to disable login logging)',
         'extend_user' => 'Extend existing User model?',
-        
+
         // Feature Configuration
         'feature_config' => 'Feature Configuration:',
         'enable_groups' => 'Enable group functionality?',
@@ -35,14 +35,14 @@ return [
         'enable_username' => 'Enable username field?',
         'enable_login_logging' => 'Enable login logging?',
         'enable_group_roles' => 'Allow roles to be assigned to groups?',
-        
+
         // Authentication Configuration
         'login_with_email' => 'Allow login with email?',
         'login_with_username' => 'Allow login with username?',
         'multiple_groups' => 'Allow users to belong to multiple groups?',
         'multiple_roles' => 'Allow users to have multiple roles?',
         'configure_password_rules' => 'Configure password rules?',
-        
+
         // Password Rules
         'password_rules_config' => 'Password Rules Configuration:',
         'password_min_length' => 'Minimum password length',
@@ -53,7 +53,7 @@ return [
         'password_uncompromised' => 'Check against compromised passwords?',
         'password_expires_days' => 'Password expiration days',
         'password_warning_days' => 'Warning days before expiration',
-        
+
         // Database Configuration
         'customize_table_names' => 'Customize table names?',
         'table_users' => 'Users table name',
@@ -63,23 +63,23 @@ return [
         'table_user_roles' => 'User-roles pivot table name',
         'table_group_roles' => 'Group-roles pivot table name',
         'table_login_logs' => 'Login logs table name',
-        
+
         // Filament Configuration
         'generate_resources' => 'Generate Filament resources?',
         'resource_namespace' => 'Filament resource namespace',
         'use_custom_login' => 'Use custom login page?',
         'allow_password_change' => 'Allow users to change their passwords?',
-        
+
         // Confirmation
         'confirm_proceed' => 'Proceed with installation?',
     ],
-    
+
     'summary' => [
         'title' => 'Configuration Summary:',
         'features' => 'Features:',
         'password_rules' => 'Password Rules:',
     ],
-    
+
     'messages' => [
         'generating_files' => 'Generating files...',
         'publishing_config' => 'Publishing configuration...',
@@ -95,7 +95,7 @@ return [
         'installation_cancelled' => 'Installation cancelled.',
         'default_password_rules' => 'Default Password Rules:',
     ],
-    
+
     'next_steps' => [
         'title' => 'Next steps:',
         'update_auth_config' => 'Update your config/auth.php to use the new models',
@@ -103,7 +103,7 @@ return [
         'register_resources' => 'Register your Filament resources in your panel provider',
         'update_login_page' => 'Update your Filament panel to use the custom login page',
     ],
-    
+
     'settings' => [
         'guard' => 'Guard',
         'namespace' => 'Namespace',
@@ -116,7 +116,7 @@ return [
         'use_soft_deletes' => 'Use Soft Deletes',
         'generate_resources' => 'Generate Resources',
     ],
-    
+
     'features' => [
         'groups' => 'Groups',
         'roles' => 'Roles',
@@ -128,7 +128,7 @@ return [
         'login_logging' => 'Login Logging',
         'group_role_assignment' => 'Group-Role Assignment',
     ],
-    
+
     'password_rules_labels' => [
         'min_length' => 'Min Length',
         'require_uppercase' => 'Require Uppercase',
@@ -139,14 +139,14 @@ return [
         'expires_days' => 'Expires Days',
         'warning_days' => 'Warning Days',
     ],
-    
+
     'values' => [
         'yes' => 'Yes',
         'no' => 'No',
         'enabled' => 'Enabled',
         'disabled' => 'Disabled',
     ],
-    
+
     'labels' => [
         'rule' => 'Rule',
         'value' => 'Value',

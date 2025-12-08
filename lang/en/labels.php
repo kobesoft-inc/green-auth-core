@@ -8,7 +8,7 @@ return [
     'group_plural' => 'Groups',
     'role' => 'Role',
     'role_plural' => 'Roles',
-    
+
     // カスタムモデル名
     'admin_user' => 'Admin User',
     'admin_user_plural' => 'Admin Users',

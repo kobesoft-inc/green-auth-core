@@ -14,7 +14,7 @@ return [
     'send_email_notification' => 'メール通知を送信',
     'require_password_change' => '次回ログイン時にパスワード変更を要求',
     'email_or_username_required' => 'メールアドレスまたはユーザー名のいずれかが必要です。',
-    
+
     // Actions
     'actions' => [
         'create_user' => 'ユーザー作成',
@@ -34,7 +34,7 @@ return [
             ],
         ],
     ],
-    
+
     // Filters
     'filters' => [
         'groups' => 'グループ',
@@ -42,7 +42,7 @@ return [
         'suspended' => '停止状態',
         'email_verified' => 'メール認証',
     ],
-    
+
     // Validation
     'validation' => [
         'email_or_username_required' => 'メールアドレスまたはユーザー名のいずれかが必要です。',
