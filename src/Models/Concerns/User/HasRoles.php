@@ -18,10 +18,15 @@ trait HasRoles
     /**
      * ロールとの多対多リレーション
      */
-    public function roles(): BelongsToMany
+    public function roles(): ?BelongsToMany
     {
+        $roleClass = static::getRoleClass();
+        if ($roleClass === null) {
+            return null;
+        }
+
         return $this->belongsToMany(
-            static::getRoleClass(),
+            $roleClass,
             static::getUserRolesPivotTable()
         )->withTimestamps();
     }

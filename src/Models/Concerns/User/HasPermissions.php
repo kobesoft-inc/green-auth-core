@@ -11,16 +11,22 @@ trait HasPermissions
     public function hasPermission(string $permission): bool
     {
         // 直接所属するロールの権限をチェック
-        foreach ($this->roles as $role) {
-            if ($role->hasPermission($permission)) {
-                return true;
+        $roles = $this->roles;
+        if ($roles) {
+            foreach ($roles as $role) {
+                if ($role->hasPermission($permission)) {
+                    return true;
+                }
             }
         }
 
         // 所属グループから権限をチェック
-        foreach ($this->groups as $group) {
-            if ($group->hasPermission($permission)) {
-                return true;
+        $groups = $this->groups;
+        if ($groups) {
+            foreach ($groups as $group) {
+                if ($group->hasPermission($permission)) {
+                    return true;
+                }
             }
         }
 

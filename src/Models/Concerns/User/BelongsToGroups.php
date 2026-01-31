@@ -21,10 +21,15 @@ trait BelongsToGroups
     /**
      * グループとの多対多リレーション
      */
-    public function groups(): BelongsToMany
+    public function groups(): ?BelongsToMany
     {
+        $groupClass = static::getGroupClass();
+        if ($groupClass === null) {
+            return null;
+        }
+
         return $this->belongsToMany(
-            static::getGroupClass(),
+            $groupClass,
             static::getUserGroupsPivotTable()
         )->withTimestamps();
     }

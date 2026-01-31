@@ -24,7 +24,11 @@ trait HasUserTraitChecks
      */
     protected static function hasGroupsTrait(): bool
     {
-        return method_exists(static::getModel(), 'groups');
+        $model = static::getModel();
+
+        return method_exists($model, 'groups')
+            && method_exists($model, 'isModelEnabled')
+            && $model::isModelEnabled('group');
     }
 
     /**
@@ -34,7 +38,11 @@ trait HasUserTraitChecks
      */
     protected static function hasRolesTrait(): bool
     {
-        return method_exists(static::getModel(), 'roles');
+        $model = static::getModel();
+
+        return method_exists($model, 'roles')
+            && method_exists($model, 'isModelEnabled')
+            && $model::isModelEnabled('role');
     }
 
     /**
@@ -54,7 +62,11 @@ trait HasUserTraitChecks
      */
     protected static function hasLoginLogTrait(): bool
     {
-        return method_exists(static::getModel(), 'loginLogs');
+        $model = static::getModel();
+
+        return method_exists($model, 'loginLogs')
+            && method_exists($model, 'isModelEnabled')
+            && $model::isModelEnabled('login_log');
     }
 
     /**

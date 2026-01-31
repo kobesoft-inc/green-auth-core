@@ -19,25 +19,40 @@ trait HasLoginLogs
     /**
      * ログインログとの一対多リレーション
      */
-    public function loginLogs(): HasMany
+    public function loginLogs(): ?HasMany
     {
-        return $this->hasMany(static::getLoginLogClass(), $this->getForeignKey());
+        $logClass = static::getLoginLogClass();
+        if ($logClass === null) {
+            return null;
+        }
+
+        return $this->hasMany($logClass, $this->getForeignKey());
     }
 
     /**
      * 最新のログインログを取得
      */
-    public function latestLoginLog(): HasOne
+    public function latestLoginLog(): ?HasOne
     {
-        return $this->hasOne(static::getLoginLogClass(), $this->getForeignKey())->latest();
+        $logClass = static::getLoginLogClass();
+        if ($logClass === null) {
+            return null;
+        }
+
+        return $this->hasOne($logClass, $this->getForeignKey())->latest();
     }
 
     /**
      * 特定期間のログインログを取得
      */
-    public function loginLogsInPeriod($startDate, $endDate): HasMany
+    public function loginLogsInPeriod($startDate, $endDate): ?HasMany
     {
-        return $this->loginLogs()
+        $relation = $this->loginLogs();
+        if ($relation === null) {
+            return null;
+        }
+
+        return $relation
             ->whereBetween('created_at', [$startDate, $endDate])
             ->orderBy('created_at', 'desc');
     }
@@ -47,7 +62,12 @@ trait HasLoginLogs
      */
     public function getLastLoginAt()
     {
-        $latestLog = $this->latestLoginLog()->first();
+        $relation = $this->latestLoginLog();
+        if ($relation === null) {
+            return null;
+        }
+
+        $latestLog = $relation->first();
 
         return $latestLog ? $latestLog->created_at : null;
     }
@@ -55,9 +75,14 @@ trait HasLoginLogs
     /**
      * 最近のログインログを取得（デフォルト24時間）
      */
-    public function recentLoginLogs(int $hours = 24): HasMany
+    public function recentLoginLogs(int $hours = 24): ?HasMany
     {
-        return $this->loginLogs()
+        $relation = $this->loginLogs();
+        if ($relation === null) {
+            return null;
+        }
+
+        return $relation
             ->where('created_at', '>=', now()->subHours($hours))
             ->orderBy('created_at', 'desc');
     }
@@ -65,9 +90,14 @@ trait HasLoginLogs
     /**
      * 特定IPアドレスからのログインログを取得
      */
-    public function loginLogsFromIp(string $ipAddress): HasMany
+    public function loginLogsFromIp(string $ipAddress): ?HasMany
     {
-        return $this->loginLogs()->where('ip_address', $ipAddress);
+        $relation = $this->loginLogs();
+        if ($relation === null) {
+            return null;
+        }
+
+        return $relation->where('ip_address', $ipAddress);
     }
 
     /**
@@ -75,7 +105,9 @@ trait HasLoginLogs
      */
     public function getLoginCount(): int
     {
-        return $this->loginLogs()->count();
+        $relation = $this->loginLogs();
+
+        return $relation ? $relation->count() : 0;
     }
 
     /**
@@ -83,7 +115,12 @@ trait HasLoginLogs
      */
     public function getTodayLoginCount(): int
     {
-        return $this->loginLogs()
+        $relation = $this->loginLogs();
+        if ($relation === null) {
+            return 0;
+        }
+
+        return $relation
             ->whereDate('created_at', today())
             ->count();
     }

@@ -61,38 +61,60 @@ trait HasModelConfig
     }
 
     /**
+     * 指定モデルタイプが有効かどうかを判定
+     */
+    public static function isModelEnabled(string $modelType): bool
+    {
+        try {
+            $guard = static::getGuardName();
+        } catch (RuntimeException) {
+            return false;
+        }
+
+        $configClass = config("green-auth.guards.{$guard}.models.{$modelType}");
+
+        return $configClass !== null && class_exists($configClass);
+    }
+
+    /**
      * グループモデルクラスを取得
      *
-     * @return string グループモデルのクラス名
-     *
-     * @throws RuntimeException クラスが見つからない場合
+     * @return string|null グループモデルのクラス名（無効の場合null）
      */
-    protected static function getGroupClass(): string
+    protected static function getGroupClass(): ?string
     {
+        if (! static::isModelEnabled('group')) {
+            return null;
+        }
+
         return static::getRelatedModelClass('group');
     }
 
     /**
      * ロールモデルクラスを取得
      *
-     * @return string ロールモデルのクラス名
-     *
-     * @throws RuntimeException クラスが見つからない場合
+     * @return string|null ロールモデルのクラス名（無効の場合null）
      */
-    protected static function getRoleClass(): string
+    protected static function getRoleClass(): ?string
     {
+        if (! static::isModelEnabled('role')) {
+            return null;
+        }
+
         return static::getRelatedModelClass('role');
     }
 
     /**
      * ログインログモデルクラスを取得
      *
-     * @return string ログインログモデルのクラス名
-     *
-     * @throws RuntimeException クラスが見つからない場合
+     * @return string|null ログインログモデルのクラス名（無効の場合null）
      */
-    protected static function getLoginLogClass(): string
+    protected static function getLoginLogClass(): ?string
     {
+        if (! static::isModelEnabled('login_log')) {
+            return null;
+        }
+
         return static::getRelatedModelClass('login_log');
     }
 

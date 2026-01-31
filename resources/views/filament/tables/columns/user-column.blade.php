@@ -1,13 +1,15 @@
-<div class="flex w-full items-center gap-x-3 px-3 py-4">
-    @if($isBlank)
+@if($isBlank)
+    <div class="px-3 py-4">
         {!! $placeholder !!}
-    @else
+    </div>
+@else
+    <div class="flex items-center gap-x-3 px-3 py-4">
         @if($imageUrl)
             <img
                 src="{{ $imageUrl }}"
                 alt="{{ $name }}"
                 @class([
-                    'object-cover object-center flex-shrink-0',
+                    'object-cover object-center shrink-0',
                     'rounded-full' => $isCircular,
                     'rounded-lg' => !$isCircular,
                 ])
@@ -16,7 +18,7 @@
         @else
             <div
                 @class([
-                    'bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0',
+                    'bg-gray-200 dark:bg-gray-700 flex items-center justify-center shrink-0',
                     'rounded-full' => $isCircular,
                     'rounded-lg' => !$isCircular,
                 ])
@@ -41,5 +43,5 @@
                 {{ $name }}
             </span>
         @endif
-    @endif
-</div>
+    </div>
+@endif
