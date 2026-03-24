@@ -8,7 +8,7 @@ return [
         'account_suspended_message' => 'このアカウントは停止されているためログインできません',
         'invalid_credentials' => '認証情報が正しくありません',
         'title' => 'ログイン',
-        'heading' => 'アカウントにログイン',
+        'heading' => 'ログイン',
         'submit' => 'ログイン',
         'remember_me' => 'ログイン状態を保持',
         'fields' => [

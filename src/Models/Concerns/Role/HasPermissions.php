@@ -13,6 +13,11 @@ trait HasPermissions
     {
         $permissions = $this->permissions ?? [];
 
+        // super権限を持っていれば全権限にマッチ
+        if (in_array('super', $permissions) || in_array('*', $permissions)) {
+            return true;
+        }
+
         // 完全一致をチェック
         if (in_array($permission, $permissions)) {
             return true;
@@ -74,8 +79,13 @@ trait HasPermissions
             return $rolePermission === $checkPermission;
         }
 
-        // ワイルドカードを正規表現に変換
-        $pattern = str_replace('*', '.*', preg_quote($rolePermission, '/'));
+        // '*' のみの場合は全権限にマッチ
+        if ($rolePermission === '*') {
+            return true;
+        }
+
+        // ワイルドカードを正規表現に変換（先にエスケープしてから * を .* に置換）
+        $pattern = str_replace('\*', '.*', preg_quote($rolePermission, '/'));
 
         return preg_match("/^{$pattern}$/", $checkPermission) === 1;
     }

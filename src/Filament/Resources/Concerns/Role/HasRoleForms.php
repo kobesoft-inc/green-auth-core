@@ -3,6 +3,7 @@
 namespace Green\Auth\Filament\Resources\Concerns\Role;
 
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -56,23 +57,18 @@ trait HasRoleForms
             return [];
         }
 
-        // 権限をグループごとに分類し、各グループのセクションを作成
-        return $permissions
-            ->groupBy(fn ($permission) => $permission::getGroup() ?? __('green-auth::roles.other'))
-            ->map(fn ($permissions, $group) => static::getPermissionCheckboxListFormComponent($group, $permissions))
-            ->toArray();
-    }
+        // 全権限を1つのCheckboxListで表示（グループ名をプレフィックスとしてラベルに含める）
+        $options = $permissions->mapWithKeys(fn ($permission) => [
+            $permission::getId() => $permission::getName(),
+        ]);
 
-    /**
-     * 権限グループのセクションを作成
-     */
-    protected static function getPermissionCheckboxListFormComponent(string $groupName, Collection $permissions): CheckboxList
-    {
-        return CheckboxList::make('permissions')
-            ->label($groupName)
-            ->options($permissions->mapWithKeys(fn ($permission) => [$permission::getId() => $permission::getName()]))
-            ->columns(['default' => 1, 'sm' => 2, 'lg' => 3])
-            ->gridDirection('row');
+        return [
+            CheckboxList::make('permissions')
+                ->label(__('green-auth::roles.permissions', [], 'ja') ?: '権限')
+                ->options($options)
+                ->columns(['default' => 1, 'sm' => 2, 'lg' => 3])
+                ->gridDirection('row'),
+        ];
     }
 
     /**

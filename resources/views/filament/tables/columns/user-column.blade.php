@@ -3,7 +3,7 @@
         {!! $placeholder !!}
     </div>
 @else
-    <div class="flex items-center gap-x-3 px-3 py-4">
+    <div class="flex items-center gap-x-3 px-3 py-4" style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: nowrap;">
         @if($imageUrl)
             <img
                 src="{{ $imageUrl }}"

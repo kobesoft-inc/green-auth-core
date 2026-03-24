@@ -656,8 +656,7 @@ return new class extends Migration
             "\$table->text('description')->nullable();",
         ];
 
-        // NestedSetのカラム
-        $columns[] = '$table->nestedSet();';
+        $columns[] = "\$table->foreignId('parent_id')->nullable()->constrained(\$table->getTable())->nullOnDelete();";
 
         return $columns;
     }

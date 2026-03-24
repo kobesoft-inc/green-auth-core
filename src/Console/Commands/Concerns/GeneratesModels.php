@@ -551,7 +551,6 @@ class $name extends ".class_basename($baseClass).'
 
         // Eloquent Modelを継承する場合は全てのトレイトを追加
         $traits = [
-            'Kalnoy\\Nestedset\\NodeTrait',
             'Green\\Auth\\Models\\Concerns\\Group\\HasUsers',
             'Green\\Auth\\Models\\Concerns\\Group\\HasHierarchy',
         ];

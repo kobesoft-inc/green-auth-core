@@ -27,23 +27,9 @@ trait HasGroupColumns
             ->searchable()
             ->sortable()
             ->description(fn ($record) => $record->description)
-            ->extraAttributes(function ($record) {
-                $textIndent = '0px';
-
-                // NestedSetの深度に基づいてtext-indentを設定
-                if (method_exists($record, 'getDepth')) {
-                    $depth = $record->getDepth();
-                    $textIndent = ($depth * 20).'px'; // 20pxずつインデント
-                } elseif (method_exists($record, 'ancestors')) {
-                    // フォールバック: 祖先を使用して深度を計算
-                    $ancestorCount = $record->ancestors->count();
-                    $textIndent = ($ancestorCount * 20).'px';
-                }
-
-                return [
-                    'style' => "text-indent: {$textIndent};",
-                ];
-            });
+            ->extraAttributes(fn ($record) => [
+                'style' => 'text-indent: '.($record->getDepth() * 20).'px;',
+            ]);
     }
 
     /**
@@ -253,14 +239,6 @@ trait HasGroupColumns
             ->filters(static::getTableFilters())
             ->recordActions(static::getRecordActions())
             ->toolbarActions(static::getBulkActions())
-            ->defaultSort(function ($query) {
-                // NestedSet用のソート（_lftカラムを使用）
-                if (method_exists($query->getModel(), 'getLftName')) {
-                    return $query->orderBy($query->getModel()->getLftName());
-                }
-
-                // フォールバック: 通常の名前ソート
-                return $query->orderBy('name');
-            });
+            ->defaultSort('name');
     }
 }

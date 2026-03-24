@@ -230,8 +230,6 @@ trait CollectsConfiguration
                 $this->config['tables']['login_logs'] = $defaultLoginLogTable;
             }
         }
-
-        $this->config['use_laravel_nestedset'] = true;
     }
 
     /**
