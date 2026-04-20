@@ -1,6 +1,7 @@
 {
   "name": "kobesoft/green-auth-core",
   "type": "library",
+  "version": "9.9.9",
   "autoload": {
     "psr-4": {
       "Green\\Auth\\": "src/"
